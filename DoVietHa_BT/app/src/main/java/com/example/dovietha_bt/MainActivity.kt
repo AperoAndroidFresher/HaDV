@@ -1,12 +1,13 @@
 package com.example.dovietha_bt
 
-import android.icu.text.IDNA.Info
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,16 +34,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             DoVietHa_BTTheme {
                 InfoScreen()
@@ -57,8 +61,8 @@ fun InputText(
     desc: String = "Desc...",
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
-    value:String = "",
-    onValueChange: (String) ->Unit = {},
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
     isSingleLine: Boolean = true,
 
     ) {
@@ -67,7 +71,7 @@ fun InputText(
         Spacer(Modifier.padding(8.dp))
         OutlinedTextField(
             value = value,
-            
+
             onValueChange = onValueChange,
             placeholder = { Text(desc, color = Color.Gray, maxLines = 1, fontSize = 14.sp) },
             modifier = textFieldModifier
@@ -83,9 +87,11 @@ fun InputText(
 @Composable
 fun InfoScreen() {
     var name by remember { mutableStateOf("") }
-    var phoneNum by remember { mutableStateOf("")  }
-    var university by remember { mutableStateOf("")  }
-    var desc by remember { mutableStateOf("")  }
+    var phoneNum by remember { mutableStateOf("") }
+    var university by remember { mutableStateOf("") }
+    var desc by remember { mutableStateOf("") }
+    var dialogState by remember { mutableStateOf(false) }
+    var editState by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,13 +109,16 @@ fun InfoScreen() {
                 modifier = Modifier.align(Alignment.Center),
                 fontWeight = FontWeight.Bold
             )
-            Image(
-                painterResource(R.drawable.ic_edit),
-                "",
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.TopEnd)
-            )
+            if (!editState) {
+                Image(
+                    painterResource(R.drawable.ic_edit),
+                    "",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.TopEnd)
+                        .clickable(onClick = { editState = true })
+                )
+            }
         }
         Spacer(Modifier.padding(16.dp))
         Image(
@@ -123,28 +132,83 @@ fun InfoScreen() {
         )
         Spacer(Modifier.padding(16.dp))
         Row(Modifier.fillMaxWidth()) {
-            InputText("NAME", "Enter your name...", modifier = Modifier.weight(1f), value = name, onValueChange = {name = it})
+            InputText(
+                "NAME",
+                "Enter your name...",
+                modifier = Modifier.weight(1f),
+                value = name,
+                onValueChange = { name = it })
             Spacer(Modifier.padding(8.dp))
-            InputText("PHONE NUMBER", "Your phone number...", modifier = Modifier.weight(1f),value = phoneNum, onValueChange = {phoneNum = it})
+            InputText(
+                "PHONE NUMBER",
+                "Your phone number...",
+                modifier = Modifier.weight(1f),
+                value = phoneNum,
+                onValueChange = { phoneNum = it })
         }
-        InputText("UNIVERSITY NAME", "Your university name...", value = university, onValueChange = {university=it})
+        InputText(
+            "UNIVERSITY NAME",
+            "Your university name...",
+            value = university,
+            onValueChange = { university = it })
         InputText(
             "DESCRIBE YOURSELF",
             "Enter a description about yourself...",
             isSingleLine = false,
             textFieldModifier = Modifier.height(200.dp),
             value = desc,
-            onValueChange = {desc = it}
+            onValueChange = { desc = it }
         )
-        Button(
-            onClick = {},
-            Modifier.size(172.dp, 64.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
-        ) {
-            Text(text = "Submit",
-                fontSize = 16.sp,)
+        if (editState) {
+            Button(
+                onClick = { dialogState = true },
+                Modifier.size(172.dp, 64.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
+            ) {
+                Text(
+                    text = "Submit",
+                    fontSize = 16.sp,
+                )
+            }
         }
-
+        if (dialogState) {
+            Dialog(
+                onDismissRequest = {
+                    dialogState = false
+                    editState = false
+                }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .size(355.dp, 340.dp)
+                        .background(Color.White, RoundedCornerShape(20.dp)),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(Modifier.padding(20.dp))
+                    Image(
+                        painterResource(R.drawable.img_check),
+                        contentDescription = "",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    Spacer(Modifier.padding(8.dp))
+                    Text(
+                        "Success!",
+                        fontWeight = Bold,
+                        fontSize = 32.sp,
+                        color = Color(0xFF2E7D32),
+                        style = TextStyle(letterSpacing = 2.sp)
+                    )
+                    Spacer(Modifier.padding(9.dp))
+                    Text(
+                        "Your information has been updated!",
+                        modifier = Modifier.padding(horizontal = 50.dp),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(letterSpacing = 1.sp)
+                    )
+                }
+            }
+        }
     }
 }
