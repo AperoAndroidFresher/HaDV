@@ -72,7 +72,7 @@ fun InputText(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            placeholder = { Text(desc, color = Color.Blue, maxLines = 1, fontSize = 14.sp) },
+            placeholder = { Text(desc, color = Color.Gray, maxLines = 1, fontSize = 14.sp) },
             modifier = textFieldModifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
