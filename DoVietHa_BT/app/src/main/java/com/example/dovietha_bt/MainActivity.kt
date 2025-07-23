@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -38,15 +39,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -75,11 +75,13 @@ fun InputText(
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
     value: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit = {},
     isSingleLine: Boolean = true,
     editable: Boolean = false,
-    isError: Boolean = false
-) {
+    isError: Boolean = false,
+
+    ) {
     Column(modifier.fillMaxWidth()) {
         Text(title, fontSize = 14.sp, color = Color.DarkGray)
         Spacer(Modifier.padding(8.dp))
@@ -91,6 +93,7 @@ fun InputText(
                 .fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
             singleLine = isSingleLine,
+            keyboardOptions = keyboardOptions,
             enabled = editable,
             colors = TextFieldDefaults.colors(
                 disabledTextColor = Color.Black,
@@ -100,7 +103,7 @@ fun InputText(
             )
         )
         Spacer(Modifier.padding(4.dp))
-        if(isError) Text("Invalid format", color = Color.Red)
+        if (isError) Text("Invalid format", color = Color.Red)
         //Spacer(Modifier.padding(7.dp))
     }
 }
@@ -120,7 +123,7 @@ fun InfoScreen() {
 
     Box(
         Modifier.fillMaxSize()
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -170,6 +173,9 @@ fun InfoScreen() {
                     onValueChange = {
                         name = it
                     },
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words
+                    ),
                     editable = editState,
                     isError = isNameError
                 )
@@ -185,6 +191,9 @@ fun InfoScreen() {
                         phoneNum = it
 
                     },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone
+                    ),
                     editable = editState,
                     isError = isPhoneError
                 )
