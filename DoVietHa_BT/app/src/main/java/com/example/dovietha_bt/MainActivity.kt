@@ -71,7 +71,6 @@ fun InputText(
         Spacer(Modifier.padding(8.dp))
         OutlinedTextField(
             value = value,
-
             onValueChange = onValueChange,
             placeholder = { Text(desc, color = Color.Gray, maxLines = 1, fontSize = 14.sp) },
             modifier = textFieldModifier
