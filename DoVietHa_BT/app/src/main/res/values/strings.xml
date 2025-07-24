@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DoVietHa_BT</string>
+    <string name="title_activity_playlist_screen">PlaylistScreen</string>
 </resources>
