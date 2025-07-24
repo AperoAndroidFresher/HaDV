@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoVietHa_BT">
         <activity
+            android:name=".PlaylistScreen"
+            android:exported="false"
+            android:label="@string/title_activity_playlist_screen"
+            android:theme="@style/Theme.DoVietHa_BT" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
