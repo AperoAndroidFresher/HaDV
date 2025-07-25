@@ -1,4 +1,4 @@
-package com.example.dovietha_bt
+package com.example.dovietha_bt.information
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -8,9 +8,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.dovietha_bt.R
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.delay
@@ -230,7 +228,7 @@ fun InfoScreen() {
                                     .size(355.dp, 340.dp)
                                     .background(
                                         Color.White,
-                                        androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                                        RoundedCornerShape(20.dp)
                                     ),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
