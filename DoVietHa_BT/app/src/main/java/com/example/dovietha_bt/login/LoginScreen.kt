@@ -33,9 +33,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dovietha_bt.MainActivity
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.User
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 @Preview(showBackground = true)
