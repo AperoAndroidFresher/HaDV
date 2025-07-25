@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DoVietHa_BT">
         <activity
-            android:name=".PlaylistScreen"
+            android:name=".login.SignUpScreenActivity"
             android:exported="false"
-            android:label="@string/title_activity_playlist_screen"
+            android:label="@string/title_activity_login_screen"
             android:theme="@style/Theme.DoVietHa_BT" />
         <activity
             android:name=".MainActivity"
@@ -23,7 +23,6 @@
             android:theme="@style/Theme.DoVietHa_BT">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

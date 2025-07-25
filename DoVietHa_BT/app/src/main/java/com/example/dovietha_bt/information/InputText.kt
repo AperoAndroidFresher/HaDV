@@ -1,4 +1,4 @@
-package com.example.dovietha_bt
+package com.example.dovietha_bt.information
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.sp
 fun InputText(
     title: String = "Title",
     desc: String = "Desc...",
-    modifier: Modifier = Modifier.Companion,
-    textFieldModifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     value: String = "",
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Companion.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit = {},
     isSingleLine: Boolean = true,
     editable: Boolean = false,
@@ -32,14 +32,14 @@ fun InputText(
     ) {
     Column(modifier.fillMaxWidth()) {
         Text(title, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
-        Spacer(Modifier.Companion.padding(8.dp))
+        Spacer(Modifier.padding(8.dp))
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
             placeholder = {
                 Text(
                     desc,
-                    color = Color.Companion.Gray,
+                    color = Color.Gray,
                     maxLines = 1,
                     fontSize = 14.sp
                 )
@@ -56,8 +56,8 @@ fun InputText(
                 disabledContainerColor = MaterialTheme.colorScheme.onSecondary
             )
         )
-        Spacer(Modifier.Companion.padding(4.dp))
-        if (isError) Text("Invalid format", color = Color.Companion.Red)
-        //Spacer(Modifier.padding(7.dp))
+        Spacer(Modifier.padding(4.dp))
+        if (isError) Text("Invalid format", color = Color.Red)
+        Spacer(Modifier.padding(7.dp))
     }
 }
