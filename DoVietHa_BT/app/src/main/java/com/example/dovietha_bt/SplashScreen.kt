@@ -30,15 +30,12 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun SplashScreen(navController: NavHostController) {
+fun SplashScreen(changeScreen:()-> Unit) {
     LaunchedEffect(Unit) {
-        delay(3000) // Hiển thị 3 giây
-        navController.navigate("main") {
-            popUpTo("splash") { inclusive = true }
-        }
+        delay(3000) // Hiển thị 3
+        changeScreen()
     }
     ContentSplash()
-
 }
 @Preview(showBackground = true)
 @Composable
@@ -46,7 +43,7 @@ fun ContentSplash(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.background)
             .padding(top = 64.dp),
 
     ) {

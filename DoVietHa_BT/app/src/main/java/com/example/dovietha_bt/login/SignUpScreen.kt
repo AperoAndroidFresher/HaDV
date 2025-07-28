@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,20 +28,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dovietha_bt.Destination
 import com.example.dovietha_bt.MainActivity
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.model.User
-import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 import com.example.dovietha_bt.model.userList
+import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
+
 
 @Composable
-fun SignUpScreen(context: Context) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        DoVietHa_BTTheme {
+fun SignUpScreen(onClick: (String,String) -> Unit) {
+    DoVietHa_BTTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
             var isValid by remember { mutableStateOf(true) }
             var errorUsername by remember { mutableStateOf(false) }
             var errorPassword by remember { mutableStateOf(false) }
@@ -52,20 +57,22 @@ fun SignUpScreen(context: Context) {
             var isShowPassword by remember { mutableStateOf(false) }
             var isShowConfirmPassword by remember { mutableStateOf(false) }
             Column(modifier = Modifier.fillMaxWidth()) {
-                Image(
-                    painterResource(R.drawable.img_logo),
-                    "",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .align(Alignment.CenterHorizontally),
-                    contentScale = ContentScale.Crop
-                )
-                Text(
-                    "Sign Up",
-                    fontWeight = Bold,
-                    fontSize = 30.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally)){
+                    Image(
+                        painterResource(R.drawable.img_logo),
+                        "",
+                        modifier = Modifier
+                            .size(300.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        "Sign Up",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = Bold,
+                        fontSize = 30.sp,
+                        modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                }
                 Spacer(Modifier.padding(16.dp))
                 InfoInput(
                     R.drawable.ic_user_outline,
@@ -113,33 +120,35 @@ fun SignUpScreen(context: Context) {
             Button(
                 onClick = {
                     isValid = true
-                    errorUsername = Regex("[^a-z0-9]").containsMatchIn(username.lowercase()) || username.isEmpty()
-                    errorPassword = Regex("[^a-zA-Z0-9]").containsMatchIn(password) || password.isEmpty()
-                    errorConfirmPass = Regex("[^a-zA-Z0-9]").containsMatchIn(confirmPassword) || confirmPassword != password
-                    errorEmail = !Regex("[a-z0-9._-]+@apero\\.com$").matches(email) ||email.isEmpty()
-                    Log.d("Check error email", errorEmail.toString())
-                    if(errorUsername) {
+                    errorUsername =
+                        Regex("[^a-z0-9]").containsMatchIn(username.lowercase()) || username.isEmpty()
+                    errorPassword =
+                        Regex("[^a-zA-Z0-9]").containsMatchIn(password) || password.isEmpty()
+                    errorConfirmPass =
+                        Regex("[^a-zA-Z0-9]").containsMatchIn(confirmPassword) || confirmPassword != password
+                    errorEmail =
+                        !Regex("[a-z0-9._-]+@apero\\.com$").matches(email) || email.isEmpty()
+
+                    if (errorUsername) {
                         username = ""
                         isValid = false
                     }
-                    if(errorPassword) {
+                    if (errorPassword) {
                         password = ""
                         isValid = false
                     }
-                    if(errorConfirmPass) {
+                    if (errorConfirmPass) {
                         confirmPassword = ""
                         isValid = false
                     }
-                    if(errorEmail) {
+                    if (errorEmail) {
                         email = ""
                         isValid = false
                     }
-                    if (isValid){
-                        userList += User(username,password,email)
-                        val intent = Intent(context, MainActivity::class.java)
-                        intent.putExtra("username", username)
-                        intent.putExtra("password",password)
-                        context.startActivity(Intent(intent))
+                    if (isValid) {
+                        Log.d("isValid","True")
+                        userList += User(username, password, email)
+                        onClick(username,password)
                     }
                 },
                 modifier = Modifier

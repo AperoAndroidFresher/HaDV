@@ -1,0 +1,14 @@
+package com.example.dovietha_bt
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+fun Playlist(){
+    Column(Modifier.fillMaxSize()){
+        Text("Playlist Screen")
+    }
+}
