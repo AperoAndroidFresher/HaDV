@@ -11,6 +11,7 @@ import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.information.DismissKeyboardOnTap
 import com.example.dovietha_bt.information.InfoScreen
 import com.example.dovietha_bt.login.LoginScreen
@@ -25,20 +26,13 @@ class MainActivity : ComponentActivity() {
                 DismissKeyboardOnTap {
                     //MyPlaylistScreen()
                     //InfoScreen()
-                    MyAppNavHost(intent)
+                    Example()
                     //LoginScreen(LocalContext.current,intent)
                 }
+
             }
         }
     }
 }
 
-@Composable
-fun MyAppNavHost(intent : Intent = Intent()){
-    val navController = rememberNavController()
-    NavHost(navController, startDestination = "splash") {
-        composable("splash") { SplashScreen(navController) }
-        composable("main") { LoginScreen(LocalContext.current,intent) }
-    }
-}
 

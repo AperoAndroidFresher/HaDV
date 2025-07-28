@@ -3,6 +3,7 @@ package com.example.dovietha_bt.login
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,21 +34,21 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dovietha_bt.Destination
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.model.userList
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreen(context: Context = LocalContext.current, intent: Intent=Intent()) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    username = intent.getStringExtra("username")?:""
-    password = intent.getStringExtra("password")?:""
+fun LoginScreen(username:String = "", password:String = "", onClick:() -> Unit = {}, onLogin:()->Unit = {}) {
+    var username by remember { mutableStateOf(username) }
+    var password by remember { mutableStateOf(password) }
     var isShowPassword by remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         DoVietHa_BTTheme {
@@ -62,6 +63,7 @@ fun LoginScreen(context: Context = LocalContext.current, intent: Intent=Intent()
                 )
                 Text(
                     "Login to your account",
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = Bold,
                     fontSize = 30.sp,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -84,11 +86,19 @@ fun LoginScreen(context: Context = LocalContext.current, intent: Intent=Intent()
                         checked = false,
                         onCheckedChange = {}
                     )
-                    Text("Remember me", fontWeight = Bold)
+                    Text("Remember me", fontWeight = Bold, color = MaterialTheme.colorScheme.onBackground)
                 }
                 Spacer(Modifier.padding(8.dp))
                 Button(
-                    onClick = {},
+                    onClick = {
+                        userList.forEach {
+                            if(it.username == username){
+                                if(it.password == password){
+                                    onLogin()
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Log in")
@@ -101,6 +111,7 @@ fun LoginScreen(context: Context = LocalContext.current, intent: Intent=Intent()
                 Text(
                     "Don't have an account? ",
                     style = TextStyle(
+                        color = MaterialTheme.colorScheme.primary,
                         shadow = Shadow(
                             color = MaterialTheme.colorScheme.primary,
                             offset = Offset(0f, 0f),
@@ -119,9 +130,7 @@ fun LoginScreen(context: Context = LocalContext.current, intent: Intent=Intent()
                             blurRadius = 14f
                         )
                     ),
-                    modifier = Modifier.clickable(onClick = {
-                        context.startActivity(Intent(context, SignUpScreenActivity::class.java))
-                    })
+                    modifier = Modifier.clickable(onClick = onClick)
                 )
             }
 
