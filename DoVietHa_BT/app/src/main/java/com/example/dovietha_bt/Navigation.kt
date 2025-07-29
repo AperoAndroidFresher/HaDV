@@ -1,6 +1,5 @@
 package com.example.dovietha_bt
 
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -10,19 +9,12 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.information.InfoScreen
 import com.example.dovietha_bt.login.LoginScreen
 import com.example.dovietha_bt.login.SignUpScreen
-import com.example.dovietha_bt.my_playlist.MyPlaylistScreen
-
-
-enum class Destination {
-    HOME,
-    SIGNUP
-}
 
 sealed interface Screen {
     data object SplashScreen : Screen
     data class Login(var username: String = "", var password: String = "") : Screen
     data object SignUp : Screen
-    data object UnitedScreen: Screen
+    data object UnitedScreen : Screen
     data object Home : Screen
     data object Playlist : Screen
     data object MyPlaylist : Screen
@@ -57,10 +49,10 @@ fun Example() {
                     backStack.add(Screen.Login(username, password))
                 }
             }
-            entry<Screen.UnitedScreen>{
-                UnitedScreen({ backStack.add(Screen.Profile) })
+            entry<Screen.UnitedScreen> {
+                UnitedScreen { backStack.add(Screen.Profile) }
             }
-            entry<Screen.Profile>{
+            entry<Screen.Profile> {
                 InfoScreen()
             }
         }

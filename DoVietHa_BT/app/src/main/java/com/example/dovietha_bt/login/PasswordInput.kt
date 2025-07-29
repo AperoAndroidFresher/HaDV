@@ -27,7 +27,7 @@ fun PasswordInput(
     checkError: Boolean = false,
     errorDesc: String = "Error"
 ) {
-    Column(Modifier.padding(8.dp)){
+    Column(Modifier.padding(8.dp)) {
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,

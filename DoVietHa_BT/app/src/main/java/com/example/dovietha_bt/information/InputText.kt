@@ -28,7 +28,6 @@ fun InputText(
     isSingleLine: Boolean = true,
     editable: Boolean = false,
     isError: Boolean = false,
-
     ) {
     Column(modifier.fillMaxWidth()) {
         Text(title, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
