@@ -1,7 +1,5 @@
 package com.example.dovietha_bt.login
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,8 +26,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.dovietha_bt.Destination
-import com.example.dovietha_bt.MainActivity
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.model.User
 import com.example.dovietha_bt.model.userList
@@ -37,7 +33,7 @@ import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 
 @Composable
-fun SignUpScreen(onClick: (String,String) -> Unit) {
+fun SignUpScreen(onClick: (String, String) -> Unit) {
     DoVietHa_BTTheme {
         Box(
             modifier = Modifier
@@ -57,7 +53,7 @@ fun SignUpScreen(onClick: (String,String) -> Unit) {
             var isShowPassword by remember { mutableStateOf(false) }
             var isShowConfirmPassword by remember { mutableStateOf(false) }
             Column(modifier = Modifier.fillMaxWidth()) {
-                Box(modifier = Modifier.align(Alignment.CenterHorizontally)){
+                Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     Image(
                         painterResource(R.drawable.img_logo),
                         "",
@@ -146,9 +142,9 @@ fun SignUpScreen(onClick: (String,String) -> Unit) {
                         isValid = false
                     }
                     if (isValid) {
-                        Log.d("isValid","True")
+                        Log.d("isValid", "True")
                         userList += User(username, password, email)
-                        onClick(username,password)
+                        onClick(username, password)
                     }
                 },
                 modifier = Modifier

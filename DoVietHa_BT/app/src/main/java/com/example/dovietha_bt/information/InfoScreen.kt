@@ -1,5 +1,9 @@
 package com.example.dovietha_bt.information
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -39,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +54,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.UserInformation
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.delay
@@ -57,10 +66,10 @@ import kotlinx.coroutines.delay
 @Preview(showBackground = true)
 @Composable
 fun InfoScreen() {
-    var name by rememberSaveable { mutableStateOf("") }
-    var phoneNum by rememberSaveable { mutableStateOf("") }
-    var university by rememberSaveable { mutableStateOf("") }
-    var desc by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf(UserInformation.name) }
+    var phoneNum by rememberSaveable { mutableStateOf(UserInformation.phone) }
+    var university by rememberSaveable { mutableStateOf(UserInformation.university) }
+    var desc by rememberSaveable { mutableStateOf(UserInformation.desc) }
     var dialogState by rememberSaveable { mutableStateOf(false) }
     var editState by rememberSaveable { mutableStateOf(false) }
     var isNameError by rememberSaveable { mutableStateOf(false) }
@@ -68,6 +77,11 @@ fun InfoScreen() {
     var isUNameError by rememberSaveable { mutableStateOf(false) }
     var isDarkMode by rememberSaveable { mutableStateOf(false) }
     var currentTheme by remember { mutableStateOf(lightTheme) }
+
+    val context = LocalContext.current
+    var avatarPath by rememberSaveable { mutableStateOf<Any?>(null) }
+
+
     MaterialTheme(
         colorScheme = currentTheme.color,
         typography = currentTheme.typo,
@@ -78,6 +92,14 @@ fun InfoScreen() {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.PickVisualMedia()
+            ) { uri ->
+                if (uri != null) {
+                    avatarPath = uri
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -122,15 +144,41 @@ fun InfoScreen() {
                     }
                 }
                 Spacer(Modifier.padding(16.dp))
-                Image(
-                    painter = painterResource(R.drawable.avatar),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                Box(Modifier.height(168.dp)) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = ImageRequest
+                                .Builder(context)
+                                .data(avatarPath)
+                                .size(300,300)
+                                .scale(Scale.FILL)
+                                .build()
+                        ),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_camera),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                            .padding(5.dp)
+                            .clickable(onClick = {
+                                launcher.launch(
+                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                )
+                            }),
+                        tint = Color.White,
+
+                        )
+
+                }
                 Spacer(Modifier.padding(16.dp))
                 Row(Modifier.fillMaxWidth()) {
 
@@ -158,7 +206,6 @@ fun InfoScreen() {
                         value = phoneNum,
                         onValueChange = {
                             phoneNum = it
-
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Phone
@@ -174,6 +221,7 @@ fun InfoScreen() {
                     value = university,
                     onValueChange = {
                         university = it
+
                     },
                     editable = editState,
                     isError = isUNameError
@@ -199,6 +247,10 @@ fun InfoScreen() {
                                 Regex("[^a-zA-Z]").containsMatchIn(university) || university.isEmpty()
                             if (!isNameError && !isPhoneError && !isUNameError) {
                                 dialogState = true
+                                UserInformation.name = name
+                                UserInformation.phone = phoneNum
+                                UserInformation.university = university
+                                UserInformation.desc = desc
                             }
                         },
                         Modifier.size(172.dp, 64.dp),

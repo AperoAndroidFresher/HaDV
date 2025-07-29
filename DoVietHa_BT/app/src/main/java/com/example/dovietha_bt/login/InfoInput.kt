@@ -20,10 +20,10 @@ import com.example.dovietha_bt.R
 fun InfoInput(
     leadingIcon: Int = R.drawable.ic_launcher_foreground,
     hint: String = "Hint",
-    value:String="",
-    onValueChange:(String) -> Unit = {},
-    checkError:Boolean = false,
-    errorDesc:String ="Error"
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
+    checkError: Boolean = false,
+    errorDesc: String = "Error"
 ) {
     Column(Modifier.padding(8.dp)) {
         OutlinedTextField(
@@ -40,7 +40,7 @@ fun InfoInput(
             },
             placeholder = { Text(hint) }
         )
-        if(checkError) {
+        if (checkError) {
             Text(errorDesc, color = Color.Red)
         }
     }

@@ -20,6 +20,12 @@ fun HomeScreen(goProfile: () -> Unit = {}) {
     Row(Modifier.fillMaxWidth()) {
         Text(text = "Home", fontSize = 40.sp, modifier = Modifier)
         Spacer(Modifier.weight(1f))
-        Icon(painterResource(R.drawable.ic_person), "", Modifier.size(40.dp).clickable(onClick = goProfile))
+        Icon(
+            painterResource(R.drawable.ic_person),
+            "",
+            Modifier
+                .size(40.dp)
+                .clickable(onClick = goProfile)
+        )
     }
 }

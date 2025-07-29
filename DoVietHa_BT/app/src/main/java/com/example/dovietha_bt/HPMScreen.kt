@@ -1,6 +1,6 @@
 package com.example.dovietha_bt
 
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +25,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.my_playlist.MyPlaylistScreen
 
 @Preview(showBackground = true)
-//@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UnitedScreen(goProfile: () -> Unit = {}) {
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
@@ -74,13 +73,14 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                 }
             }
         }
-    ) {paddingValues ->
+    ) { paddingValues ->
         NavDisplay(
             modifier = Modifier.padding(paddingValues),
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
             entryProvider = entryProvider {
                 entry<Screen.Home> {
+                    Log.d("Check click", "click")
                     HomeScreen(goProfile = goProfile)
                 }
                 entry<Screen.Playlist> {
