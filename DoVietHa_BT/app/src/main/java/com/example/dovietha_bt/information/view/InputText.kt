@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.information
+package com.example.dovietha_bt.information.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
