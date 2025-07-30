@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,10 +55,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.information.InfoEvent
+import com.example.dovietha_bt.information.InfoIntent
+import com.example.dovietha_bt.information.InfoScreenViewModel
 import com.example.dovietha_bt.information.UserInformation
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
@@ -67,40 +72,47 @@ import kotlinx.coroutines.delay
 @Composable
 //Intent: Edit profile
 //Event: Check
-fun InfoScreen() {
-    var name by rememberSaveable { mutableStateOf(UserInformation.name) }
-    var phoneNum by rememberSaveable { mutableStateOf(UserInformation.phone) }
-    var university by rememberSaveable { mutableStateOf(UserInformation.university) }
-    var desc by rememberSaveable { mutableStateOf(UserInformation.desc) }
-    var dialogState by rememberSaveable { mutableStateOf(false) }
-    var editState by rememberSaveable { mutableStateOf(false) }
-    var isNameError by rememberSaveable { mutableStateOf(false) }
-    var isPhoneError by rememberSaveable { mutableStateOf(false) }
-    var isUNameError by rememberSaveable { mutableStateOf(false) }
-    var isDarkMode by rememberSaveable { mutableStateOf(false) }
-    var currentTheme by remember { mutableStateOf(lightTheme) }
-
+fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
+    val state = viewModel.state.collectAsState()
     val context = LocalContext.current
-    var avatarPath by rememberSaveable { mutableStateOf<Uri?>(UserInformation.image) }
+    val eventFlow = viewModel.event
+    var showDialog by remember { mutableStateOf(false) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.processIntent(InfoIntent.UpdateAvatar(uri))
+        }
+    }
 
+    LaunchedEffect(Unit) {
+        eventFlow.collect {event ->
+            when(event){
+                is InfoEvent.ShowDialog -> {
+                    showDialog = true
+                    delay(2000)
+                    showDialog = false
+                }
+                InfoEvent.ShowImagePicker -> {
+                    launcher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
+            }
+        }
+    }
 
     MaterialTheme(
-        colorScheme = currentTheme.color,
-        typography = currentTheme.typo,
-        shapes = currentTheme.shape
+        colorScheme = state.value.currentTheme.color,
+        typography = state.value.currentTheme.typo,
+        shapes = state.value.currentTheme.shape
     ) {
         Box(
             Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.PickVisualMedia()
-            ) { uri ->
-                if (uri != null) {
-                    avatarPath = uri
-                }
-            }
+
 
             Column(
                 modifier = Modifier
@@ -114,15 +126,12 @@ fun InfoScreen() {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
-                        painter = painterResource(if (isDarkMode) R.drawable.ic_darkmode else R.drawable.ic_lightmode),
+                        painter = painterResource(if (state.value.isDarkMode) R.drawable.ic_darkmode else R.drawable.ic_lightmode),
                         contentDescription = "",
                         modifier = Modifier
                             .size(28.dp)
                             .clickable(onClick = {
-                                isDarkMode = !isDarkMode
-                                currentTheme = if (isDarkMode) {
-                                    darkTheme
-                                } else lightTheme
+                                viewModel.processIntent(InfoIntent.ToggleTheme)
                             }),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -133,14 +142,14 @@ fun InfoScreen() {
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
-                    if (!editState) {
+                    if (!state.value.isEditing) {
                         Icon(
                             painterResource(R.drawable.ic_edit),
                             "",
                             modifier = Modifier
                                 .size(24.dp)
                                 .align(Alignment.TopEnd)
-                                .clickable(onClick = { editState = true }),
+                                .clickable(onClick = { viewModel.processIntent(InfoIntent.Editable) }),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -149,12 +158,12 @@ fun InfoScreen() {
                 Box(Modifier.height(168.dp)) {
                     Image(
                         painter =
-                            if (avatarPath == null) painterResource(R.drawable.avatar)
+                            if (state.value.avatarUri == null) painterResource(R.drawable.avatar)
                             else {
                                 rememberAsyncImagePainter(
                                     model = ImageRequest
                                         .Builder(context)
-                                        .data(avatarPath)
+                                        .data(state.value.avatarUri)
                                         .size(300, 300)
                                         .scale(Scale.FILL)
                                         .build()
@@ -167,7 +176,7 @@ fun InfoScreen() {
                             .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
                         contentScale = ContentScale.Crop
                     )
-                    if (editState) {
+                    if (state.value.isEditing) {
                         Icon(
                             painterResource(R.drawable.ic_camera),
                             contentDescription = "",
@@ -177,9 +186,7 @@ fun InfoScreen() {
                                 .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                                 .padding(5.dp)
                                 .clickable(onClick = {
-                                    launcher.launch(
-                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                    )
+                                    viewModel.processIntent(InfoIntent.TriggerImagePicker)
                                 }),
                             tint = Color.White,
                         )
@@ -193,15 +200,15 @@ fun InfoScreen() {
                         "NAME",
                         "Enter your name...",
                         modifier = Modifier.weight(1f),
-                        value = name,
+                        value = state.value.name,
                         onValueChange = {
-                            name = it
+                            viewModel.processIntent(InfoIntent.UpdateName(it))
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words
                         ),
-                        editable = editState,
-                        isError = isNameError
+                        editable = state.value.isEditing,
+                        isError = state.value.nameError
                     )
 
                     Spacer(Modifier.padding(8.dp))
@@ -210,28 +217,27 @@ fun InfoScreen() {
                         "PHONE NUMBER",
                         "Your phone number...",
                         modifier = Modifier.weight(1f),
-                        value = phoneNum,
+                        value = state.value.phone,
                         onValueChange = {
-                            phoneNum = it
+                            viewModel.processIntent(InfoIntent.UpdatePhone(it))
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Phone
                         ),
-                        editable = editState,
-                        isError = isPhoneError
+                        editable = state.value.isEditing,
+                        isError = state.value.phoneError
                     )
                 }
 
                 InputText(
                     "UNIVERSITY NAME",
                     "Your university name...",
-                    value = university,
+                    value = state.value.uni,
                     onValueChange = {
-                        university = it
-
+                        viewModel.processIntent(InfoIntent.UpdateUni(it))
                     },
-                    editable = editState,
-                    isError = isUNameError
+                    editable = state.value.isEditing,
+                    isError = state.value.uniError
                 )
 
                 InputText(
@@ -239,25 +245,15 @@ fun InfoScreen() {
                     "Enter a description about yourself...",
                     isSingleLine = false,
                     textFieldModifier = Modifier.height(200.dp),
-                    value = desc,
-                    onValueChange = { desc = it },
-                    editable = editState
+                    value = state.value.desc,
+                    onValueChange = { viewModel.processIntent(InfoIntent.UpdateDesc(it)) },
+                    editable = state.value.isEditing
                 )
 
-                if (editState) {
+                if (state.value.isEditing) {
                     Button(
                         onClick = {
-                            validation(
-                                name = name,
-                                phone = phoneNum,
-                                university = university,
-                                desc = desc,
-                                avatarPath = avatarPath,
-                                setNameError = { isNameError = it },
-                                setPhoneError = { isPhoneError = it },
-                                setUNameError = { isUNameError = it },
-                                onSuccess = { dialogState = true }
-                            )
+                            viewModel.processIntent(InfoIntent.SubmitInfo)
                         },
                         Modifier.size(172.dp, 64.dp),
                         shape = RoundedCornerShape(16.dp),
@@ -269,15 +265,14 @@ fun InfoScreen() {
                         )
                     }
                 }
-                if (dialogState) {
+                if(showDialog) {
                     Dialog(
                         onDismissRequest = {
-                            dialogState = false
-                            editState = false
+                            showDialog = false
                         }
                     ) {
                         AnimatedVisibility(
-                            visible = dialogState,
+                            visible = showDialog,
                             enter = fadeIn(animationSpec = tween(1000)),
                             exit = fadeOut(animationSpec = tween(1000))
                         ) {
@@ -315,11 +310,7 @@ fun InfoScreen() {
                             }
                         }
                     }
-                    LaunchedEffect(Unit) {
-                        delay(2000)
-                        dialogState = false
-                        editState = false
-                    }
+
                 }
             }
         }
