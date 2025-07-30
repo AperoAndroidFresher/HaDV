@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.information
+package com.example.dovietha_bt.information.view
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -58,13 +58,15 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.UserInformation
+import com.example.dovietha_bt.information.UserInformation
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.delay
 
 @Preview(showBackground = true)
 @Composable
+//Intent: Edit profile
+//Event: Check
 fun InfoScreen() {
     var name by rememberSaveable { mutableStateOf(UserInformation.name) }
     var phoneNum by rememberSaveable { mutableStateOf(UserInformation.phone) }
@@ -79,7 +81,7 @@ fun InfoScreen() {
     var currentTheme by remember { mutableStateOf(lightTheme) }
 
     val context = LocalContext.current
-    var avatarPath by rememberSaveable { mutableStateOf<Any?>(null) }
+    var avatarPath by rememberSaveable { mutableStateOf<Uri?>(UserInformation.image) }
 
 
     MaterialTheme(
@@ -146,14 +148,18 @@ fun InfoScreen() {
                 Spacer(Modifier.padding(16.dp))
                 Box(Modifier.height(168.dp)) {
                     Image(
-                        painter = rememberAsyncImagePainter(
-                            model = ImageRequest
-                                .Builder(context)
-                                .data(avatarPath)
-                                .size(300,300)
-                                .scale(Scale.FILL)
-                                .build()
-                        ),
+                        painter =
+                            if (avatarPath == null) painterResource(R.drawable.avatar)
+                            else {
+                                rememberAsyncImagePainter(
+                                    model = ImageRequest
+                                        .Builder(context)
+                                        .data(avatarPath)
+                                        .size(300, 300)
+                                        .scale(Scale.FILL)
+                                        .build()
+                                )
+                            },
                         contentDescription = "",
                         modifier = Modifier
                             .size(150.dp)
@@ -161,22 +167,23 @@ fun InfoScreen() {
                             .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
                         contentScale = ContentScale.Crop
                     )
-                    Icon(
-                        painterResource(R.drawable.ic_camera),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .align(Alignment.BottomCenter)
-                            .background(Color.Black.copy(alpha = 0.5f), CircleShape)
-                            .padding(5.dp)
-                            .clickable(onClick = {
-                                launcher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            }),
-                        tint = Color.White,
-
+                    if (editState) {
+                        Icon(
+                            painterResource(R.drawable.ic_camera),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .align(Alignment.BottomCenter)
+                                .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                                .padding(5.dp)
+                                .clickable(onClick = {
+                                    launcher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                }),
+                            tint = Color.White,
                         )
+                    }
 
                 }
                 Spacer(Modifier.padding(16.dp))
@@ -240,18 +247,17 @@ fun InfoScreen() {
                 if (editState) {
                     Button(
                         onClick = {
-                            isNameError = Regex("[^a-zA-Z]").containsMatchIn(name) || name.isEmpty()
-                            isPhoneError =
-                                Regex("[^0-9]").containsMatchIn(phoneNum) || phoneNum.isEmpty()
-                            isUNameError =
-                                Regex("[^a-zA-Z]").containsMatchIn(university) || university.isEmpty()
-                            if (!isNameError && !isPhoneError && !isUNameError) {
-                                dialogState = true
-                                UserInformation.name = name
-                                UserInformation.phone = phoneNum
-                                UserInformation.university = university
-                                UserInformation.desc = desc
-                            }
+                            validation(
+                                name = name,
+                                phone = phoneNum,
+                                university = university,
+                                desc = desc,
+                                avatarPath = avatarPath,
+                                setNameError = { isNameError = it },
+                                setPhoneError = { isPhoneError = it },
+                                setUNameError = { isUNameError = it },
+                                onSuccess = { dialogState = true }
+                            )
                         },
                         Modifier.size(172.dp, 64.dp),
                         shape = RoundedCornerShape(16.dp),
@@ -317,5 +323,34 @@ fun InfoScreen() {
                 }
             }
         }
+    }
+}
+
+fun validation(
+    name: String,
+    phone: String,
+    university: String,
+    desc: String,
+    avatarPath: Uri?,
+    setNameError: (Boolean) -> Unit,
+    setPhoneError: (Boolean) -> Unit,
+    setUNameError: (Boolean) -> Unit,
+    onSuccess: () -> Unit
+) {
+    val nameErr = Regex("[^a-zA-Z]").containsMatchIn(name) || name.isEmpty()
+    val phoneErr = Regex("[^0-9]").containsMatchIn(phone) || phone.isEmpty()
+    val uniErr = Regex("[^a-zA-Z]").containsMatchIn(university) || university.isEmpty()
+
+    setNameError(nameErr)
+    setPhoneError(phoneErr)
+    setUNameError(uniErr)
+
+    if (!nameErr && !phoneErr && !uniErr) {
+        UserInformation.name = name
+        UserInformation.phone = phone
+        UserInformation.university = university
+        UserInformation.desc = desc
+        UserInformation.image = avatarPath
+        onSuccess()
     }
 }

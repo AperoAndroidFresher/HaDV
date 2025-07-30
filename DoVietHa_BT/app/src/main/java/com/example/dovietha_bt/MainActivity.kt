@@ -3,7 +3,7 @@ package com.example.dovietha_bt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.dovietha_bt.information.DismissKeyboardOnTap
+import com.example.dovietha_bt.information.view.DismissKeyboardOnTap
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 class MainActivity : ComponentActivity() {
