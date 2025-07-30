@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.login
+package com.example.dovietha_bt.signup
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,14 +27,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.login.InfoInput
+import com.example.dovietha_bt.login.PasswordInput
 import com.example.dovietha_bt.model.User
 import com.example.dovietha_bt.model.userList
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 
 @Composable
-fun SignUpScreen(onClick: (String, String) -> Unit) {
+fun SignUpScreen(
+    onClick: (String, String) -> Unit,
+    viewModel: SignUpScreenViewModel = viewModel()
+) {
     DoVietHa_BTTheme {
         Box(
             modifier = Modifier
@@ -41,17 +48,7 @@ fun SignUpScreen(onClick: (String, String) -> Unit) {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            var isValid by remember { mutableStateOf(true) }
-            var errorUsername by remember { mutableStateOf(false) }
-            var errorPassword by remember { mutableStateOf(false) }
-            var errorConfirmPass by remember { mutableStateOf(false) }
-            var errorEmail by remember { mutableStateOf(false) }
-            var username by remember { mutableStateOf("") }
-            var password by remember { mutableStateOf("") }
-            var confirmPassword by remember { mutableStateOf("") }
-            var email by remember { mutableStateOf("") }
-            var isShowPassword by remember { mutableStateOf(false) }
-            var isShowConfirmPassword by remember { mutableStateOf(false) }
+            val state = viewModel.state.collectAsState()
             Column(modifier = Modifier.fillMaxWidth()) {
                 Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
                     Image(
@@ -73,78 +70,49 @@ fun SignUpScreen(onClick: (String, String) -> Unit) {
                 InfoInput(
                     R.drawable.ic_user_outline,
                     "Username",
-                    value = username,
+                    value = state.value.username,
                     onValueChange = {
-                        errorUsername = false
-                        username = it
+                        viewModel.processIntent(SignUpIntent.EditUsername(it))
                     },
-                    checkError = errorUsername
+                    checkError = state.value.errUsername
                 )
                 PasswordInput(
                     hint = "Password",
-                    isShowPassword = isShowPassword,
-                    onToggle = { isShowPassword = !isShowPassword },
-                    value = password,
+                    isShowPassword = state.value.isShowPassword,
+                    onToggle = { viewModel.processIntent(SignUpIntent.IsShowPassword) },
+                    value = state.value.password,
                     onValueChange = {
-                        errorPassword = false
-                        password = it
+                        viewModel.processIntent(SignUpIntent.EditPassword(it))
                     },
-                    checkError = errorPassword
+                    checkError = state.value.errPassword
                 )
                 PasswordInput(
                     hint = "Confirm password",
-                    isShowPassword = isShowConfirmPassword,
+                    isShowPassword = state.value.isShowConfirmPass,
                     onToggle = {
-                        errorConfirmPass = false
-                        isShowConfirmPassword = !isShowConfirmPassword
+                        viewModel.processIntent(SignUpIntent.IsShowConfirmPassword)
                     },
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    checkError = errorConfirmPass
+                    value = state.value.confirmPassword,
+                    onValueChange = { viewModel.processIntent(SignUpIntent.EditConfirmPass(it)) },
+                    checkError = state.value.errConfirmPass
                 )
                 InfoInput(
                     R.drawable.ic_email,
                     "Email",
-                    value = email,
+                    value = state.value.email,
                     onValueChange = {
-                        errorEmail = false
-                        email = it
+                        viewModel.processIntent(SignUpIntent.EditEmail(it))
                     },
-                    checkError = errorEmail
+                    checkError = state.value.errEmail
                 )
             }
             Button(
                 onClick = {
-                    isValid = true
-                    errorUsername =
-                        Regex("[^a-z0-9]").containsMatchIn(username.lowercase()) || username.isEmpty()
-                    errorPassword =
-                        Regex("[^a-zA-Z0-9]").containsMatchIn(password) || password.isEmpty()
-                    errorConfirmPass =
-                        Regex("[^a-zA-Z0-9]").containsMatchIn(confirmPassword) || confirmPassword != password
-                    errorEmail =
-                        !Regex("[a-z0-9._-]+@apero\\.com$").matches(email) || email.isEmpty()
-
-                    if (errorUsername) {
-                        username = ""
-                        isValid = false
-                    }
-                    if (errorPassword) {
-                        password = ""
-                        isValid = false
-                    }
-                    if (errorConfirmPass) {
-                        confirmPassword = ""
-                        isValid = false
-                    }
-                    if (errorEmail) {
-                        email = ""
-                        isValid = false
-                    }
-                    if (isValid) {
+                    viewModel.processIntent(SignUpIntent.IsValid)
+                    if (state.value.isValid) {
                         Log.d("isValid", "True")
-                        userList += User(username, password, email)
-                        onClick(username, password)
+                        userList += User(state.value.username, state.value.password, state.value.email)
+                        onClick(state.value.username, state.value.password)
                     }
                 },
                 modifier = Modifier

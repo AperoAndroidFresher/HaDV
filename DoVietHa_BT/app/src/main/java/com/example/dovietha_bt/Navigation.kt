@@ -8,7 +8,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.information.view.InfoScreen
 import com.example.dovietha_bt.login.LoginScreen
-import com.example.dovietha_bt.login.SignUpScreen
+import com.example.dovietha_bt.signup.SignUpScreen
 
 sealed interface Screen {
     data object SplashScreen : Screen
@@ -45,9 +45,9 @@ fun Example() {
                     })
             }
             entry<Screen.SignUp> {
-                SignUpScreen { username, password ->
+                SignUpScreen( { username, password ->
                     backStack.add(Screen.Login(username, password))
-                }
+                })
             }
             entry<Screen.UnitedScreen> {
                 UnitedScreen { backStack.add(Screen.Profile) }
