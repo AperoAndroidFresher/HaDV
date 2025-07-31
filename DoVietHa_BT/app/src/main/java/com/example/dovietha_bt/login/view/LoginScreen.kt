@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.login
+package com.example.dovietha_bt.login.view
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -19,14 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.model.userList
+import com.example.dovietha_bt.login.LoginEvent
+import com.example.dovietha_bt.login.LoginIntent
+import com.example.dovietha_bt.login.LoginScreenViewModel
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
 
 @Preview(showBackground = true)
@@ -53,10 +50,6 @@ fun LoginScreen(
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
     val context = LocalContext.current
-//    var username by remember { mutableStateOf(username) }
-//    var password by remember { mutableStateOf(password) }
-//    var isShowPassword by remember { mutableStateOf(false) }
-//    var isValid by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.processIntent(LoginIntent.InitData(username,password))
         event.collect { event->

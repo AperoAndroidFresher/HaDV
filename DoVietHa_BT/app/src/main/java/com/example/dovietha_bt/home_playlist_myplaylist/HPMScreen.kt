@@ -1,4 +1,4 @@
-package com.example.dovietha_bt
+package com.example.dovietha_bt.home_playlist_myplaylist
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -14,20 +14,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.example.dovietha_bt.my_playlist.MyPlaylistScreen
+import com.example.dovietha_bt.Screen
+import com.example.dovietha_bt.home.HomeScreen
+import com.example.dovietha_bt.myplaylist.view.MyPlaylistScreen
+import com.example.dovietha_bt.permission
+import com.example.dovietha_bt.playlist.Playlist
 
 @Preview(showBackground = true)
 @Composable
 fun UnitedScreen(goProfile: () -> Unit = {}) {
+    val context = LocalContext.current
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
+    LaunchedEffect(Unit) {
+        permission(context)
+    }
     Scaffold(
         bottomBar = {
             BottomAppBar(

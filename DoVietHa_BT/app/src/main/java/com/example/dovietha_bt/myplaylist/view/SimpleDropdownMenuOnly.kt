@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist
+package com.example.dovietha_bt.myplaylist.view
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -6,7 +6,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import com.example.dovietha_bt.my_playlist.model.Option
+import com.example.dovietha_bt.myplaylist.model.Option
 
 @Composable
 fun SimpleDropdownMenuOnly(

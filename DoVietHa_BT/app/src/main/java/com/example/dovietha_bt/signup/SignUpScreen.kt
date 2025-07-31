@@ -16,10 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.login.InfoInput
-import com.example.dovietha_bt.login.PasswordInput
+import com.example.dovietha_bt.login.view.InfoInput
+import com.example.dovietha_bt.login.view.PasswordInput
 import com.example.dovietha_bt.model.User
 import com.example.dovietha_bt.model.userList
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
@@ -110,8 +106,6 @@ fun SignUpScreen(
                 onClick = {
                     viewModel.processIntent(SignUpIntent.IsValid)
                     if (state.value.isValid) {
-                        Log.d("isValid", "True")
-                        userList += User(state.value.username, state.value.password, state.value.email)
                         onClick(state.value.username, state.value.password)
                     }
                 },

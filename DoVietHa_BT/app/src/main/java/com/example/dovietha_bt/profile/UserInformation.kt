@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.information
+package com.example.dovietha_bt.profile
 
 import android.net.Uri
 

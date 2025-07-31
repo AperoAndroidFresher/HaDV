@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist
+package com.example.dovietha_bt.myplaylist.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,40 +23,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.my_playlist.model.Music
-import com.example.dovietha_bt.my_playlist.model.Option
-
-val a = listOf(
-    Music(R.drawable.avatar, "Dung lam trai tim anh dau", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Buong doi tay nhau ra", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Con mua ngang qua", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Em cua ngay hom qua", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Nhu ngay hom qua", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Chung ta khong thuoc ve nhau", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Dung ve tre", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Nang am xa dan", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Khuon mat dang thuong", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Remember me", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Chung ta cua tuong lai", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Khong phai dang vua dau", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Lac troi", "Son Tung MTP", "04:23"),
-    Music(R.drawable.avatar, "Noi nay co anh", "Son Tung MTP", "04:23"),
-)
+import com.example.dovietha_bt.getAllMp3Files
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
+import com.example.dovietha_bt.myplaylist.model.Option
+import com.example.dovietha_bt.profile.InfoScreenViewModel
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),
     Option(R.drawable.ic_share, "Share (Coming soon)")
 )
-
 @Composable
-fun MyPlaylistScreen() {
-    var isViewChanged by remember { mutableStateOf(false) }
-    val list = remember { mutableStateListOf<Music>().apply { addAll(a) } }
+fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
+    val state = viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(MyPlaylistIntent.LoadSong)
+    }
     Column(
         Modifier
             .fillMaxSize()
@@ -76,12 +68,12 @@ fun MyPlaylistScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painterResource(if (!isViewChanged) R.drawable.ic_view else R.drawable.ic_list),
+                    painterResource(if (!state.value.isViewChange) R.drawable.ic_view else R.drawable.ic_list),
                     "",
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .size(26.dp)
-                        .clickable(onClick = { isViewChanged = !isViewChanged })
+                        .clickable(onClick = { viewModel.processIntent(MyPlaylistIntent.ToggleView) })
                 )
                 Spacer(Modifier.padding(8.dp))
                 Icon(
@@ -92,10 +84,10 @@ fun MyPlaylistScreen() {
                 )
             }
         }
-        if (isViewChanged) {
-            GridList(list)
+        if (state.value.isViewChange) {
+            GridList(state.value.musics,viewModel)
         } else {
-            ColumnList(list)
+            ColumnList(state.value.musics,viewModel)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.login
+package com.example.dovietha_bt.login.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

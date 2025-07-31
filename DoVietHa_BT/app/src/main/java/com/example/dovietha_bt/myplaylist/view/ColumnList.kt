@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist
+package com.example.dovietha_bt.myplaylist.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,11 +7,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.dovietha_bt.my_playlist.model.Music
-import com.example.dovietha_bt.my_playlist.utils.removeByOption
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
+
 
 @Composable
-fun ColumnList(list: MutableList<Music> = mutableListOf()) {
+fun ColumnList(list: List<Music> = listOf(),viewModel: MyPlaylistViewModel = viewModel()) {
     LazyColumn(
         Modifier.Companion
             .fillMaxSize(),
@@ -23,8 +26,8 @@ fun ColumnList(list: MutableList<Music> = mutableListOf()) {
                 name = item.name,
                 author = item.author,
                 duration = item.duration,
-                onItemClick = {
-                    list.removeByOption(it, item)
+                onOptionClick = {
+                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item))
                 }
             )
         }

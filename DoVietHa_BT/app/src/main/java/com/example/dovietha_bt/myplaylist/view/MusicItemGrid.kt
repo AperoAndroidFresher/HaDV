@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist
+package com.example.dovietha_bt.myplaylist.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,25 +28,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.my_playlist.model.Option
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.myplaylist.model.Option
 
 @Composable
 fun MusicItemGrid(
-    image: Int = R.drawable.ic_launcher_background,
+    image: ByteArray? =null,
     name: String = "Name",
     author: String = "Author",
     duration: String = "00:00",
-    onItemClick: (Option) -> Unit = {}
+    onItemClick: (Option) -> Unit = {},
+    viewModel: MyPlaylistViewModel = viewModel()
 ) {
     Column(
         horizontalAlignment = Alignment.Companion.CenterHorizontally,
     ) {
+        val state = viewModel.state.collectAsState()
         var menuExpanded by remember { mutableStateOf(false) }
 
         Box() {
             Image(
-                painter = painterResource(image), "",
+                painter = musicImage(image), "",
                 modifier = Modifier.Companion
                     .size(135.dp)
                     .clip(RoundedCornerShape(5.dp)),
