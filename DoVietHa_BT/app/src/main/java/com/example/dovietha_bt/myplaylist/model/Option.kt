@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist.model
+package com.example.dovietha_bt.myplaylist.model
 
 data class Option(
     val image: Int,

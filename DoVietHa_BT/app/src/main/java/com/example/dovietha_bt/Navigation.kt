@@ -6,9 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.example.dovietha_bt.information.view.InfoScreen
-import com.example.dovietha_bt.login.LoginScreen
+import com.example.dovietha_bt.profile.view.InfoScreen
+import com.example.dovietha_bt.login.view.LoginScreen
 import com.example.dovietha_bt.signup.SignUpScreen
+import com.example.dovietha_bt.splashscreen.SplashScreen
 
 sealed interface Screen {
     data object SplashScreen : Screen
@@ -22,7 +23,7 @@ sealed interface Screen {
 }
 
 @Composable
-fun Example() {
+fun Navigator() {
     val backStack = remember { mutableStateListOf<Screen>(Screen.SplashScreen) }
     NavDisplay(
         backStack = backStack,
@@ -50,7 +51,11 @@ fun Example() {
                 })
             }
             entry<Screen.UnitedScreen> {
-                UnitedScreen { backStack.add(Screen.Profile) }
+                _root_ide_package_.com.example.dovietha_bt.home_playlist_myplaylist.UnitedScreen {
+                    backStack.add(
+                        Screen.Profile
+                    )
+                }
             }
             entry<Screen.Profile> {
                 InfoScreen()

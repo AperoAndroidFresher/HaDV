@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel: ViewModel() {
-    private val _state = MutableStateFlow<LoginState>(LoginState())
+
+    private val _state = MutableStateFlow(LoginState())
     var state = _state.asStateFlow()
     private val _event = MutableSharedFlow<LoginEvent>()
     var event = _event.asSharedFlow()

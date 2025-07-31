@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.information.view
+package com.example.dovietha_bt.profile.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

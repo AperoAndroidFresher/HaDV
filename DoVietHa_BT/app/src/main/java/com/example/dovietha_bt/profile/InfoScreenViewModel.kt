@@ -1,6 +1,5 @@
-package com.example.dovietha_bt.information
+package com.example.dovietha_bt.profile
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.ui.theme.darkTheme

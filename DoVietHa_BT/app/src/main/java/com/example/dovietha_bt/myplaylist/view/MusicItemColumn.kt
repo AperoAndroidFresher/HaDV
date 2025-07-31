@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.my_playlist
+package com.example.dovietha_bt.myplaylist.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +28,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.my_playlist.model.Option
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.myplaylist.model.Option
 
 @Composable
 fun MusicItemColumn(
-    image: Int = R.drawable.ic_launcher_background,
+    image: ByteArray?,
     name: String = "Name",
     author: String = "author",
     duration: String = "00:00",
-    onItemClick: (Option) -> Unit = {}
+    onOptionClick: (Option) -> Unit = {},
+    viewModel: MyPlaylistViewModel = viewModel()
 ) {
+    val state = viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.Companion
@@ -46,7 +53,7 @@ fun MusicItemColumn(
 
     ) {
         Image(
-            painterResource(image),
+            musicImage(image),
             "",
             modifier = Modifier.Companion
                 .size(72.dp)
@@ -96,8 +103,17 @@ fun MusicItemColumn(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
                 items = options,
-                onItemClick = onItemClick
+                onItemClick = onOptionClick
             )
         }
     }
+}
+
+@Composable
+fun musicImage( image: ByteArray?) : AsyncImagePainter{
+    return rememberAsyncImagePainter(
+        model = image ?: R.drawable.avatar,
+        placeholder = painterResource(R.drawable.avatar),
+        error = painterResource(R.drawable.avatar)
+    )
 }

@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.login
+package com.example.dovietha_bt.login.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

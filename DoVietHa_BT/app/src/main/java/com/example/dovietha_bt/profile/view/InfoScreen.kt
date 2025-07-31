@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.information.view
+package com.example.dovietha_bt.profile.view
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,7 +37,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,12 +59,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.information.InfoEvent
-import com.example.dovietha_bt.information.InfoIntent
-import com.example.dovietha_bt.information.InfoScreenViewModel
-import com.example.dovietha_bt.information.UserInformation
-import com.example.dovietha_bt.ui.theme.darkTheme
-import com.example.dovietha_bt.ui.theme.lightTheme
+import com.example.dovietha_bt.profile.InfoEvent
+import com.example.dovietha_bt.profile.InfoIntent
+import com.example.dovietha_bt.profile.InfoScreenViewModel
+import com.example.dovietha_bt.profile.UserInformation
 import kotlinx.coroutines.delay
 
 @Preview(showBackground = true)

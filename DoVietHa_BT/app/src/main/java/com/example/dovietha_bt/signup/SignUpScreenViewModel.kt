@@ -1,6 +1,9 @@
 package com.example.dovietha_bt.signup
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.dovietha_bt.model.User
+import com.example.dovietha_bt.model.userList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -59,6 +62,10 @@ class SignUpScreenViewModel : ViewModel() {
                     errEmail = errorEmail,
                     isValid = isValid
                 )
+                if (isValid) {
+                    Log.d("isValid", "True")
+                    userList += User(state.value.username, state.value.password, state.value.email)
+                }
             }
 
             is SignUpIntent.EditConfirmPass -> {
