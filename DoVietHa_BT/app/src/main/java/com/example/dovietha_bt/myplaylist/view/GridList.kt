@@ -11,9 +11,10 @@ import com.example.dovietha_bt.login.LoginScreenViewModel
 import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
+import com.example.dovietha_bt.myplaylist.model.Option
 
 @Composable
-fun GridList(list: List<Music> = listOf(), viewModel: MyPlaylistViewModel = viewModel()) {
+fun GridList(list: List<Music> = listOf(), viewModel: MyPlaylistViewModel = viewModel(),option: List<Option> = emptyList()) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -27,7 +28,8 @@ fun GridList(list: List<Music> = listOf(), viewModel: MyPlaylistViewModel = view
                 item.duration,
                 onItemClick = {
                     viewModel.processIntent(MyPlaylistIntent.RemoveSong(item))
-                }
+                },
+                option = option
             )
         }
     }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.dovietha_bt.home_playlist_myplaylist.UnitedScreen
 import com.example.dovietha_bt.profile.view.InfoScreen
 import com.example.dovietha_bt.login.view.LoginScreen
 import com.example.dovietha_bt.signup.SignUpScreen
@@ -51,7 +52,7 @@ fun Navigator() {
                 })
             }
             entry<Screen.UnitedScreen> {
-                _root_ide_package_.com.example.dovietha_bt.home_playlist_myplaylist.UnitedScreen {
+                UnitedScreen {
                     backStack.add(
                         Screen.Profile
                     )
