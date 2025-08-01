@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import kotlinx.coroutines.flow.update
 
 class MyPlaylistViewModel(application: Application) : AndroidViewModel(application) {
     private val _state = MutableStateFlow(MyPlaylistState())
@@ -25,9 +26,7 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
             }
 
             MyPlaylistIntent.LoadSong ->{
-                _state.value = _state.value.copy(
-                    musics = getAllMp3Files(getApplication())
-                )
+
             }
 
             MyPlaylistIntent.ShowOption -> {
@@ -40,6 +39,38 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                 _state.value = _state.value.copy(
                     showOption = false
                 )
+            }
+
+            is MyPlaylistIntent.AddPlaylist -> {
+                val newPlaylists = _state.value.playlists.toMutableList()
+                newPlaylists.add(intent.playlist)
+                _state.update {
+                    it.copy(
+                        playlists = newPlaylists
+                    )
+                }
+            }
+            is MyPlaylistIntent.RemovePlaylist -> {
+                val newPlaylists = _state.value.playlists.toMutableList()
+                newPlaylists.remove(intent.playlist)
+                _state.update {
+                    it.copy(
+                        playlists = newPlaylists
+                    )
+                }
+            }
+            is MyPlaylistIntent.RenamePlaylist -> {
+                _state.update { currentState ->
+                    currentState.copy(
+                        playlists = currentState.playlists.map { playlist ->
+                            if (playlist.id == intent.id) {
+                                playlist.copy(name = intent.name)
+                            } else {
+                                playlist
+                            }
+                        }
+                    )
+                }
             }
         }
     }

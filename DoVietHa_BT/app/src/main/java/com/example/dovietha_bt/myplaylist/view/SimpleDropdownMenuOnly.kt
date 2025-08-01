@@ -5,7 +5,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.myplaylist.model.Option
 
 @Composable
@@ -13,12 +16,15 @@ fun SimpleDropdownMenuOnly(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     items: List<Option>,
-    onItemClick: (Option) -> Unit
+    onItemClick: (Option) -> Unit,
+    viewModel: MyPlaylistViewModel= viewModel()
 ) {
+    val state = viewModel.state.collectAsState()
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest
     ) {
+
         items.forEach { item ->
             DropdownMenuItem(
                 onClick = {

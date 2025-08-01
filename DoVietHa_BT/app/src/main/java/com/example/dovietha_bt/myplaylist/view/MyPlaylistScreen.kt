@@ -42,7 +42,7 @@ val options = listOf(
     Option(R.drawable.ic_share, "Share (Coming soon)")
 )
 @Composable
-fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
+fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel()) {
     val state = viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.processIntent(MyPlaylistIntent.LoadSong)
@@ -85,9 +85,17 @@ fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
             }
         }
         if (state.value.isViewChange) {
-            GridList(state.value.musics,viewModel)
+            GridList(state.value.musics,viewModel,options)
         } else {
-            ColumnList(state.value.musics,viewModel)
+            ColumnList(
+                list = state.value.musics,
+                option = options,
+                onOptionClick = { option, music ->
+                    if (option.desc == "Remove from playlist") viewModel.processIntent(
+                        MyPlaylistIntent.RemoveSong(music)
+                    )
+                }
+            )
         }
     }
 }

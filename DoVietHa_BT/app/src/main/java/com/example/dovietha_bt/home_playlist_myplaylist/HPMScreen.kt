@@ -26,7 +26,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.Screen
 import com.example.dovietha_bt.home.HomeScreen
-import com.example.dovietha_bt.myplaylist.view.MyPlaylistScreen
+import com.example.dovietha_bt.myplaylist.MyPlaylistScreen
 import com.example.dovietha_bt.permission
 import com.example.dovietha_bt.playlist.Playlist
 
@@ -94,7 +94,12 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                     HomeScreen(goProfile = goProfile)
                 }
                 entry<Screen.Playlist> {
-                    Playlist()
+                    Playlist(
+                        onAddClicked = {
+                            backStack.clear()
+                            backStack.add(Screen.MyPlaylist)
+                        }
+                    )
                 }
                 entry<Screen.MyPlaylist> {
                     MyPlaylistScreen()

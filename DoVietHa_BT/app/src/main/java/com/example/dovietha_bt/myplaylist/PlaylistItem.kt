@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.myplaylist.view
+package com.example.dovietha_bt.myplaylist
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -32,15 +32,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.myplaylist.model.Option
+import com.example.dovietha_bt.myplaylist.model.Playlist
+import com.example.dovietha_bt.myplaylist.view.SimpleDropdownMenuOnly
 
 @Composable
-fun MusicItemColumn(
+fun PlaylistItemColumn(
     image: ByteArray? = null,
     name: String = "Name",
-    author: String = "author",
-    duration: String = "",
+    sumSongs: Int = 0,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel()
@@ -77,7 +77,7 @@ fun MusicItemColumn(
             )
             Spacer(Modifier.Companion.padding(1.dp))
             Text(
-                text = author,
+                text = "$sumSongs songs",
                 fontWeight = FontWeight.Companion.Bold,
                 fontSize = 16.sp,
                 color = Color.Companion.DarkGray,
@@ -86,10 +86,7 @@ fun MusicItemColumn(
             )
         }
         Row(modifier = Modifier.Companion.align(Alignment.Companion.CenterVertically)) {
-            Text(
-                duration,
-                fontSize = 20.sp,
-            )
+
             Spacer(Modifier.Companion.padding(8.dp))
             Icon(
                 painterResource(R.drawable.ic_option),

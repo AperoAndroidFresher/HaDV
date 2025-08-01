@@ -313,32 +313,3 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
         }
     }
 }
-
-fun validation(
-    name: String,
-    phone: String,
-    university: String,
-    desc: String,
-    avatarPath: Uri?,
-    setNameError: (Boolean) -> Unit,
-    setPhoneError: (Boolean) -> Unit,
-    setUNameError: (Boolean) -> Unit,
-    onSuccess: () -> Unit
-) {
-    val nameErr = Regex("[^a-zA-Z]").containsMatchIn(name) || name.isEmpty()
-    val phoneErr = Regex("[^0-9]").containsMatchIn(phone) || phone.isEmpty()
-    val uniErr = Regex("[^a-zA-Z]").containsMatchIn(university) || university.isEmpty()
-
-    setNameError(nameErr)
-    setPhoneError(phoneErr)
-    setUNameError(uniErr)
-
-    if (!nameErr && !phoneErr && !uniErr) {
-        UserInformation.name = name
-        UserInformation.phone = phone
-        UserInformation.university = university
-        UserInformation.desc = desc
-        UserInformation.image = avatarPath
-        onSuccess()
-    }
-}
