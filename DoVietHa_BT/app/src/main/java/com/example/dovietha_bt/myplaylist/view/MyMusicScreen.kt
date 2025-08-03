@@ -16,33 +16,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.getAllMp3Files
+import com.example.dovietha_bt.Screen
 import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.myplaylist.model.Option
-import com.example.dovietha_bt.profile.InfoScreenViewModel
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),
     Option(R.drawable.ic_share, "Share (Coming soon)")
 )
 @Composable
-fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel()) {
+fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), musics: List<Music> = emptyList()) {
     val state = viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.processIntent(MyPlaylistIntent.LoadSong)
@@ -85,10 +78,10 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel()) {
             }
         }
         if (state.value.isViewChange) {
-            GridList(state.value.musics,viewModel,options)
+            GridList(musics,viewModel,options)
         } else {
             ColumnList(
-                list = state.value.musics,
+                list = musics,
                 option = options,
                 onOptionClick = { option, music ->
                     if (option.desc == "Remove from playlist") viewModel.processIntent(

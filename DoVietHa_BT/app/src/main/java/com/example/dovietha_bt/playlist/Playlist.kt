@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -29,7 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.myplaylist.PlaylistItemColumn
+import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.Option
+import com.example.dovietha_bt.myplaylist.model.Playlist
+import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
 import com.example.dovietha_bt.myplaylist.view.ColumnList
 
 val libOptions = listOf(
@@ -38,9 +45,15 @@ val libOptions = listOf(
 )
 
 @Composable
-fun Playlist(viewModel: LibraryViewModel = viewModel(), onAddClicked: () -> Unit = {}) {
+fun LibraryScreen(
+    viewModel: LibraryViewModel = viewModel(),
+    onAddClicked: () -> Unit = {},
+    listPlaylist: List<Playlist> = emptyList(),
+) {
+    val playlists by PlaylistRepository.playlists.collectAsState()
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
+    var musicAdded by remember { mutableStateOf(Music()) }
     var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.processIntent(LibraryIntent.LoadSong)
@@ -67,7 +80,9 @@ fun Playlist(viewModel: LibraryViewModel = viewModel(), onAddClicked: () -> Unit
                 )
                 Row() {
                     Button(
-                        onClick = {}
+                        onClick = {
+                            viewModel.processIntent(LibraryIntent.LoadSong)
+                        }
                     ) {
                         Text("Local")
                     }
@@ -84,25 +99,35 @@ fun Playlist(viewModel: LibraryViewModel = viewModel(), onAddClicked: () -> Unit
                     list = state.value.musics,
                     option = libOptions,
                     onOptionClick = { option, music ->
-                        if (option.desc == "Add to playlist") viewModel.processIntent(
-                            LibraryIntent.AddToPlaylist(
-                                music
-                            )
-                        )
+                        if (option.desc == "Add to playlist") {
+                            showDialog = true
+                            musicAdded = music
+                        }
                     }
                 )
             }
 
         }
-        if (showDialog) AddDialog({ showDialog = false }, Modifier.align(Alignment.Center), onAddClicked)
+        if (showDialog) {
+            AddDialog(
+                playlistList = playlists,
+                onDismissRequest = { showDialog = false },
+                modifier = Modifier.align(Alignment.Center),
+                onAddClicked = onAddClicked,
+                onPlaylistClick = {
+                    PlaylistRepository.addMusicToPlaylist(musicAdded, it.id)
+                })
+        }
     }
 }
 
 @Composable
 fun AddDialog(
+    playlistList: List<Playlist> = emptyList(),
     onDismissRequest: () -> Unit = {},
     modifier: Modifier = Modifier,
-    onAddClicked:()->Unit = {}
+    onAddClicked: () -> Unit = {},
+    onPlaylistClick: (Playlist) -> Unit = {}
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
@@ -114,15 +139,34 @@ fun AddDialog(
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Choose playlist")
-            Text("You don't have any playlists. Click the \"+\" button to add")
-            OutlinedButton(
-                onClick = onAddClicked,
-                modifier = Modifier.size(80.dp),
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                Icon(painterResource(R.drawable.ic_add), "")
-            }
+            if (playlistList.isEmpty()) AddCase(onAddClicked)
+            else PlaylistCase(playlistList, onClick = onPlaylistClick)
+        }
+    }
+}
+
+@Composable
+fun AddCase(onAddClicked: () -> Unit = {}) {
+    Text("Choose playlist")
+    Text("You don't have any playlists. Click the \"+\" button to add")
+    OutlinedButton(
+        onClick = onAddClicked,
+        modifier = Modifier.size(80.dp),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Icon(painterResource(R.drawable.ic_add), "")
+    }
+}
+
+@Composable
+fun PlaylistCase(list: List<Playlist> = emptyList(), onClick: (Playlist) -> Unit = {}) {
+    LazyColumn {
+        items(list) { playlist ->
+            PlaylistItemColumn(
+                name = playlist.name,
+                sumSongs = playlist.musics.size,
+                onClick = { onClick(playlist) }
+            )
         }
     }
 }

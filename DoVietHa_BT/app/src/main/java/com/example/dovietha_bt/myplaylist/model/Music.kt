@@ -28,11 +28,10 @@ data class MyPlaylistState(
 sealed interface MyPlaylistIntent{
     data class AddPlaylist(val playlist: Playlist): MyPlaylistIntent
     data class RemovePlaylist(val playlist: Playlist) : MyPlaylistIntent
-    data class RenamePlaylist(val id:Long, val name: String): MyPlaylistIntent
+    data class RenamePlaylist(val playlist: Playlist, val name: String): MyPlaylistIntent
     object ToggleView : MyPlaylistIntent
     data class RemoveSong(val item: Music) : MyPlaylistIntent
     data object LoadSong : MyPlaylistIntent
     data object ShowOption : MyPlaylistIntent
     data object HideOption : MyPlaylistIntent
-    data class EditPlaylistName(val name:String): MyPlaylistIntent
 }

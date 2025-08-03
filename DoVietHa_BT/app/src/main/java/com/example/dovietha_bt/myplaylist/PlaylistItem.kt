@@ -43,7 +43,8 @@ fun PlaylistItemColumn(
     sumSongs: Int = 0,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel()
+    viewModel: MyPlaylistViewModel = viewModel(),
+    onClick: () -> Unit = {}
 ) {
     val state = viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -51,17 +52,18 @@ fun PlaylistItemColumn(
         modifier = Modifier.Companion
             .fillMaxWidth()
             .height(72.dp)
+            .clickable(onClick = onClick)
 
     ) {
         Image(
             musicImage(image),
             "",
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .size(72.dp)
                 .clip(
                     RoundedCornerShape(5.dp)
                 ),
-            contentScale = ContentScale.Companion.Crop
+            contentScale = ContentScale.Crop
         )
         Column(
             Modifier.Companion
