@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.myplaylist
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,13 +34,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.myplaylist.model.Option
 import com.example.dovietha_bt.myplaylist.model.Playlist
+import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
 
 @Composable
-fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
+fun MyPlaylistScreen(
+    viewModel: MyPlaylistViewModel = viewModel(),
+    onClick: (List<Music>) -> Unit = {},
+
+) {
     val state = viewModel.state.collectAsState()
+    val playlists by PlaylistRepository.playlists.collectAsState()
+    var playlistName by remember { mutableStateOf("") }
     var addClicked by remember { mutableStateOf(false) }
     Column(
         Modifier
@@ -63,7 +73,7 @@ fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
-        if (state.value.playlists.isEmpty()) {
+        if (playlists.isEmpty()) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,23 +90,27 @@ fun MyPlaylistScreen(viewModel: MyPlaylistViewModel = viewModel()) {
             }
         } else {
             AllPlaylists(
-                list = state.value.playlists, onOptionClick = { option, playlist ->
+                list = playlists,
+                onOptionClick = { option, playlist ->
                     if (option.desc == "Remove Playlist") {
                         viewModel.processIntent(MyPlaylistIntent.RemovePlaylist(playlist))
                     }
                 },
-                option = listOf(Option(image = R.drawable.ic_remove, desc = "Remove Playlist"))
+                option = listOf(Option(image = R.drawable.ic_remove, desc = "Remove Playlist")),
+                onClick = onClick
             )
         }
         if (addClicked)
             AddDialog(
-                name = "",
+                name = playlistName,
                 onDismissRequest = { addClicked = false },
                 addPlaylist = {
                     viewModel.processIntent(
-                        MyPlaylistIntent.AddPlaylist(Playlist())
+                        MyPlaylistIntent.AddPlaylist(Playlist(name = playlistName))
                     )
+                    Log.d("TAG", "AddDialog: ${state.value.playlists}")
                 },
+                onValueChange = { playlistName = it }
             )
     }
 }
@@ -107,7 +121,8 @@ fun AddDialog(
     onDismissRequest: () -> Unit = {},
     addPlaylist: () -> Unit = {},
     name: String = "",
-    onValueChange: (String) -> Unit = {}
+    onValueChange: (String) -> Unit = {},
+    getPlaylists: (List<Playlist>) -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -128,7 +143,11 @@ fun AddDialog(
             Text("Cancel", modifier = Modifier.clickable(onClick = onDismissRequest))
         },
         confirmButton = {
-            Text("Create", modifier = Modifier.clickable(onClick = addPlaylist))
+            Text("Create", modifier = Modifier.clickable(onClick = {
+                addPlaylist()
+//                getPlaylists()
+                onDismissRequest()
+            }))
         }
     )
 }

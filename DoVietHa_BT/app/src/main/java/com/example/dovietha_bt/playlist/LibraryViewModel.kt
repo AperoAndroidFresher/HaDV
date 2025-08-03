@@ -19,6 +19,11 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     fun processIntent(intent: LibraryIntent) {
         when (intent) {
             is LibraryIntent.AddToPlaylist -> {
+                val newPlaylist =intent.playlist
+                newPlaylist.musics.toMutableList().add(intent.music)
+                _state.value = _state.value.copy(
+                    playlist = newPlaylist
+                )
 //                val newList = _state.value.musics.toMutableList()
 //                newList.add(intent.music)
 //                _state.value = _state.value.copy(

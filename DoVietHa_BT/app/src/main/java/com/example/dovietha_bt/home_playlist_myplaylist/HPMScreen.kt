@@ -27,8 +27,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.Screen
 import com.example.dovietha_bt.home.HomeScreen
 import com.example.dovietha_bt.myplaylist.MyPlaylistScreen
+import com.example.dovietha_bt.myplaylist.view.MyMusicScreen
 import com.example.dovietha_bt.permission
-import com.example.dovietha_bt.playlist.Playlist
+import com.example.dovietha_bt.playlist.LibraryScreen
 
 @Preview(showBackground = true)
 @Composable
@@ -60,7 +61,7 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                 IconButton(
                     onClick = {
                         backStack.clear()
-                        backStack.add(Screen.Playlist)
+                        backStack.add(Screen.Library())
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -93,8 +94,9 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                     Log.d("Check click", "click")
                     HomeScreen(goProfile = goProfile)
                 }
-                entry<Screen.Playlist> {
-                    Playlist(
+                entry<Screen.Library> {(list) ->
+                    LibraryScreen(
+                        listPlaylist = list,
                         onAddClicked = {
                             backStack.clear()
                             backStack.add(Screen.MyPlaylist)
@@ -102,7 +104,13 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                     )
                 }
                 entry<Screen.MyPlaylist> {
-                    MyPlaylistScreen()
+                    MyPlaylistScreen(onClick = {
+                        backStack.clear()
+                        backStack.add(Screen.MusicList(it))
+                    })
+                }
+                entry<Screen.MusicList> { (list) ->
+                    MyMusicScreen(musics = list)
                 }
             }
         )

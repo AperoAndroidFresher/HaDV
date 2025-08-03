@@ -16,7 +16,8 @@ import com.example.dovietha_bt.myplaylist.view.MusicItemColumn
 fun AllPlaylists(
     list:List<Playlist> = emptyList(),
     option: List<Option> = emptyList(),
-    onOptionClick: (Option, Playlist) -> Unit
+    onOptionClick: (Option, Playlist) -> Unit,
+    onClick: (List<Music>) -> Unit
 ){
     LazyColumn(
         Modifier.Companion
@@ -28,7 +29,8 @@ fun AllPlaylists(
                 name = item.name,
                 sumSongs = item.musics.size,
                 onOptionClick = { onOptionClick(it, item) },
-                option = option
+                option = option,
+                onClick = {onClick(item.musics)}
             )
         }
     }

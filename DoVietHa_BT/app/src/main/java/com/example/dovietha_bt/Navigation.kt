@@ -11,6 +11,8 @@ import com.example.dovietha_bt.profile.view.InfoScreen
 import com.example.dovietha_bt.login.view.LoginScreen
 import com.example.dovietha_bt.signup.SignUpScreen
 import com.example.dovietha_bt.splashscreen.SplashScreen
+import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.Playlist
 
 sealed interface Screen {
     data object SplashScreen : Screen
@@ -18,9 +20,10 @@ sealed interface Screen {
     data object SignUp : Screen
     data object UnitedScreen : Screen
     data object Home : Screen
-    data object Playlist : Screen
+    data class Library(var playlists:List<Playlist> = emptyList()) : Screen
     data object MyPlaylist : Screen
     data object Profile : Screen
+    data class MusicList(var listSong:List<Music>) : Screen
 }
 
 @Composable
