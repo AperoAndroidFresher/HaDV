@@ -23,7 +23,7 @@ object PlaylistRepository {
         _playlists.value = _playlists.value.filterNot { it.id == playlistId }
     }
 
-    fun removeMusicFromPlaylist(music: Music, playlistId: Long) {
+    fun removeMusicFromPlaylist(music: Music,playlistId: Long) {
         _playlists.value = _playlists.value.map { playlist ->
             if (playlist.id == playlistId) {
                 playlist.copy(musics = playlist.musics.filterNot { it == music })

@@ -1,9 +1,5 @@
 package com.example.dovietha_bt.myplaylist.model
 
-import android.graphics.Bitmap
-import com.example.dovietha_bt.Screen
-import java.util.UUID
-
 data class Music(
     val image: ByteArray? = null,
     val name: String = "",
@@ -30,8 +26,7 @@ sealed interface MyPlaylistIntent{
     data class RemovePlaylist(val playlist: Playlist) : MyPlaylistIntent
     data class RenamePlaylist(val playlist: Playlist, val name: String): MyPlaylistIntent
     object ToggleView : MyPlaylistIntent
-    data class RemoveSong(val item: Music) : MyPlaylistIntent
-    data object LoadSong : MyPlaylistIntent
+    data class RemoveSong(val item: Music,val playlistId:Long) : MyPlaylistIntent
     data object ShowOption : MyPlaylistIntent
     data object HideOption : MyPlaylistIntent
 }

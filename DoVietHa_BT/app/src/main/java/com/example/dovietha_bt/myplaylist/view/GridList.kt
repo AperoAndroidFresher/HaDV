@@ -27,7 +27,7 @@ fun GridList(list: List<Music> = listOf(), viewModel: MyPlaylistViewModel = view
                 item.author,
                 item.duration,
                 onItemClick = {
-                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item))
+                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item,0))
                 },
                 option = option
             )

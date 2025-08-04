@@ -1,16 +1,21 @@
 package com.example.dovietha_bt.signup
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.example.dovietha_bt.model.User
-import com.example.dovietha_bt.model.userList
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
+import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.db.AppDB
+import com.example.dovietha_bt.db.entity.User
+import com.example.dovietha_bt.db.repository.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class SignUpScreenViewModel : ViewModel() {
-    private val _state = MutableStateFlow<SignUpState>(SignUpState())
+class SignUpScreenViewModel(application: Application) : AndroidViewModel(application) {
+    private val _state = MutableStateFlow(SignUpState())
     var state = _state.asStateFlow()
     private val _event = MutableSharedFlow<SignUpEvent>()
     var event = _event.asSharedFlow()
@@ -30,42 +35,59 @@ class SignUpScreenViewModel : ViewModel() {
             }
 
             SignUpIntent.IsValid -> {
-                var isValid = true
-                val errorUsername =
-                    Regex("[^a-z0-9]").containsMatchIn(_state.value.username.lowercase()) || _state.value.username.isEmpty()
-                val errorPassword =
-                    Regex("[^a-zA-Z0-9]").containsMatchIn(_state.value.password) || _state.value.password.isEmpty()
-                val errorConfirmPass =
-                    Regex("[^a-zA-Z0-9]").containsMatchIn(_state.value.confirmPassword) || _state.value.confirmPassword != _state.value.password
-                val errorEmail =
-                    !Regex("[a-z0-9._-]+@apero\\.com$").matches(_state.value.email) || _state.value.email.isEmpty()
-                if (errorUsername) {
-                    _state.value = _state.value.copy(username = "")
-                    isValid = false
+                viewModelScope.launch {
+                    val userRepository = UserRepositoryImpl(application)
+                    var isValid = true
+                    val errorUsername =
+                        Regex("[^a-z0-9]").containsMatchIn(_state.value.username.lowercase()) || _state.value.username.isEmpty()
+                    val errorPassword =
+                        Regex("[^a-zA-Z0-9]").containsMatchIn(_state.value.password) || _state.value.password.isEmpty()
+                    val errorConfirmPass =
+                        Regex("[^a-zA-Z0-9]").containsMatchIn(_state.value.confirmPassword) || _state.value.confirmPassword != _state.value.password
+                    val errorEmail =
+                        !Regex("[a-z0-9._-]+@apero\\.com$").matches(_state.value.email) || _state.value.email.isEmpty()
+                    if (errorUsername) {
+                        _state.value = _state.value.copy(username = "")
+                        isValid = false
+                    }
+                    if (errorPassword) {
+                        _state.value = _state.value.copy(password = "")
+                        isValid = false
+                    }
+                    if (errorConfirmPass) {
+                        _state.value = _state.value.copy(confirmPassword = "")
+                        isValid = false
+                    }
+                    if (errorEmail) {
+                        _state.value = _state.value.copy(email = "")
+                        isValid = false
+                    }
+                    val existingUser = userRepository.getUserByUsername(_state.value.username)
+                    if (existingUser == null) {
+                        userRepository.addUser(
+                            User(
+                                userName = _state.value.username,
+                                password = _state.value.password,
+                                email = _state.value.email
+                            )
+                        )
+                        Log.d("isValid", "True")
+                    } else {
+                        isValid = false
+                        Log.d("isValid", "False")
+                    }
+                    _state.value = _state.value.copy(
+                        errUsername = errorUsername,
+                        errPassword = errorPassword,
+                        errConfirmPass = errorConfirmPass,
+                        errEmail = errorEmail,
+                        isValid = isValid
+                    )
+                    if (!isValid) {
+                        _event.emit(SignUpEvent.ShowNotify) // Hoặc event khác
+                    }
                 }
-                if (errorPassword) {
-                    _state.value = _state.value.copy(password = "")
-                    isValid = false
-                }
-                if (errorConfirmPass) {
-                    _state.value = _state.value.copy(confirmPassword = "")
-                    isValid = false
-                }
-                if (errorEmail) {
-                    _state.value = _state.value.copy(email = "")
-                    isValid = false
-                }
-                _state.value = _state.value.copy(
-                    errUsername = errorUsername,
-                    errPassword = errorPassword,
-                    errConfirmPass = errorConfirmPass,
-                    errEmail = errorEmail,
-                    isValid = isValid
-                )
-                if (isValid) {
-                    Log.d("isValid", "True")
-                    userList += User(state.value.username, state.value.password, state.value.email)
-                }
+
             }
 
             is SignUpIntent.EditConfirmPass -> {

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("kapt")
 }
 
 android {
@@ -40,6 +41,18 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.androidx.room.runtime)
+    kapt("androidx.room:room-compiler:2.7.2")
+    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
+    // See Add the KSP plugin to your project
+
+    // If this project only uses Java source, use the Java annotationProcessor
+    // No additional plugins are necessary
+    annotationProcessor(libs.androidx.room.compiler)
+    implementation("androidx.room:room-ktx:2.7.2")
+// Test helpers
+    testImplementation("androidx.room:room-testing:2.7.2")
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coil.compose)

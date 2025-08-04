@@ -1,5 +1,7 @@
 package com.example.dovietha_bt.signup
 
+import android.content.Context
+
 data class SignUpState(
     val username: String = "",
     val password: String = "",
@@ -11,7 +13,7 @@ data class SignUpState(
     val errPassword: Boolean = false,
     val errConfirmPass: Boolean = false,
     val errEmail: Boolean = false,
-    val isValid: Boolean = false
+    val isValid: Boolean = false,
 )
 
 sealed interface SignUpIntent{

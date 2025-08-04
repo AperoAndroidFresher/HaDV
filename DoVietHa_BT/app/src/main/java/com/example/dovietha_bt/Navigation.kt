@@ -23,7 +23,7 @@ sealed interface Screen {
     data class Library(var playlists:List<Playlist> = emptyList()) : Screen
     data object MyPlaylist : Screen
     data object Profile : Screen
-    data class MusicList(var listSong:List<Music>) : Screen
+    data class MusicList(var playlist: Playlist) : Screen
 }
 
 @Composable

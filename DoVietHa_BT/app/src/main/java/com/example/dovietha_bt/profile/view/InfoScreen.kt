@@ -99,6 +99,10 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
         }
     }
 
+    LaunchedEffect(UserInformation) {
+
+    }
+
     MaterialTheme(
         colorScheme = state.value.currentTheme.color,
         typography = state.value.currentTheme.typo,

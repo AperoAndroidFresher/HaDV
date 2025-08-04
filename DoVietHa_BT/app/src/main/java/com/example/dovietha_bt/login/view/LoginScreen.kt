@@ -57,9 +57,6 @@ fun LoginScreen(
                 LoginEvent.ShowNotify -> {
                     Toast.makeText(context,"Invalid Infomation", Toast.LENGTH_SHORT).show()
                 }
-//                is LoginEvent.InitDataEvent -> {
-//                    event.username = username
-//                }
             }
         }
     }

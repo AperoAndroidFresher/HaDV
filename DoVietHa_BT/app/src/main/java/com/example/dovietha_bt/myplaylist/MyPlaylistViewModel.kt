@@ -18,17 +18,9 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
     var state = _state.asStateFlow()
     fun processIntent(intent: MyPlaylistIntent) {
         when (intent) {
-            is MyPlaylistIntent.RemoveSong -> {
-                val list = _state.value.musics.toMutableList()
-                list.remove(intent.item)
-                _state.value = _state.value.copy(musics = list)
-            }
+            is MyPlaylistIntent.RemoveSong -> PlaylistRepository.removeMusicFromPlaylist(intent.item,intent.playlistId)
             MyPlaylistIntent.ToggleView -> {
                 _state.value = _state.value.copy(isViewChange = !_state.value.isViewChange)
-            }
-
-            MyPlaylistIntent.LoadSong ->{
-
             }
 
             MyPlaylistIntent.ShowOption -> {
