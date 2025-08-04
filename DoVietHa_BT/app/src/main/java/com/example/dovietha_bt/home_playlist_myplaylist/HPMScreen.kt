@@ -110,7 +110,7 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                     })
                 }
                 entry<Screen.MusicList> { (list) ->
-                    MyMusicScreen(musics = list)
+                    MyMusicScreen(playlist = list)
                 }
             }
         )

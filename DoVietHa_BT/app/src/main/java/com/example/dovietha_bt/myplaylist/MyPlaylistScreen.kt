@@ -43,9 +43,9 @@ import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
 @Composable
 fun MyPlaylistScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
-    onClick: (List<Music>) -> Unit = {},
+    onClick: (Playlist) -> Unit = {},
 
-) {
+    ) {
     val state = viewModel.state.collectAsState()
     val playlists by PlaylistRepository.playlists.collectAsState()
     var playlistName by remember { mutableStateOf("") }
@@ -122,7 +122,6 @@ fun AddDialog(
     addPlaylist: () -> Unit = {},
     name: String = "",
     onValueChange: (String) -> Unit = {},
-    getPlaylists: (List<Playlist>) -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -145,7 +144,6 @@ fun AddDialog(
         confirmButton = {
             Text("Create", modifier = Modifier.clickable(onClick = {
                 addPlaylist()
-//                getPlaylists()
                 onDismissRequest()
             }))
         }

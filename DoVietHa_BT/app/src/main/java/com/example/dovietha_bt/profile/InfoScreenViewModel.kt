@@ -1,7 +1,11 @@
 package com.example.dovietha_bt.profile
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.db.entity.User
+import com.example.dovietha_bt.db.repository.UserRepositoryImpl
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,12 +14,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class InfoScreenViewModel: ViewModel() {
+class InfoScreenViewModel(application: Application): AndroidViewModel(application) {
     private val _state = MutableStateFlow<InfoState>(InfoState())
     var state = _state.asStateFlow()
     private val _event = MutableSharedFlow<InfoEvent>()
     var event = _event.asSharedFlow()
-
+    val userRepository = UserRepositoryImpl(application)
     fun processIntent(intent: InfoIntent){
         when(intent){
             is InfoIntent.Editable -> {
@@ -42,12 +46,13 @@ class InfoScreenViewModel: ViewModel() {
                 )
 
                 if (!nameErr && !phoneErr && !universityErr) {
+
                     UserInformation.name = _state.value.name
                     UserInformation.phone = _state.value.phone
                     UserInformation.university = _state.value.uni
                     UserInformation.desc = _state.value.desc
                     UserInformation.image = _state.value.avatarUri
-
+                    userRepository.updateUser(User())
                     _state.value = _state.value.copy(isEditing = false)
 
                     viewModelScope.launch {

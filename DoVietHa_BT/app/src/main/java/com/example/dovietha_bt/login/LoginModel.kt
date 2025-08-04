@@ -3,6 +3,7 @@ package com.example.dovietha_bt.login
 data class LoginState(
     val username: String = "",
     val password: String = "",
+    val email:String = "",
     val isShowPassword: Boolean = false,
     val isValid: Boolean = false
 )
