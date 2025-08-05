@@ -4,14 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.dovietha_bt.db.dao.MusicDao
+import com.example.dovietha_bt.db.dao.MusicPlaylistCrossRefDao
 import com.example.dovietha_bt.db.dao.PlaylistDao
 import com.example.dovietha_bt.db.dao.UserDao
 import com.example.dovietha_bt.db.entity.User
-import com.example.dovietha_bt.myplaylist.model.Playlist
 
-@Database(entities = [User::class], version = 1)
+@Database(entities = [User::class], version = 2)
 abstract class AppDB : RoomDatabase() {
     abstract fun UserDao() : UserDao
+    abstract fun MusicDao() : MusicDao
+    abstract fun PlaylistDao() : PlaylistDao
+    abstract fun MusicPlaylistCrossRefDao() : MusicPlaylistCrossRefDao
     companion object{
         @Volatile
         private var INSTANCE: AppDB?=null

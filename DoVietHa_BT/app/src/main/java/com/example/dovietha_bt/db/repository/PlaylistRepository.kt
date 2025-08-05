@@ -1,10 +1,12 @@
 package com.example.dovietha_bt.db.repository
 
 import com.example.dovietha_bt.db.dao.PlaylistDao
-import com.example.dovietha_bt.myplaylist.model.Playlist
+import com.example.dovietha_bt.db.entity.Playlist
 
-class PlaylistRepository(val dao: PlaylistDao) {
-    fun getAllPlaylist():List<Playlist>{
-        return dao.getAllPlaylist()
-    }
+
+interface PlaylistRepository{
+    suspend fun getAllPlaylist():List<Playlist>
+    suspend fun addPlaylist(username:String,name:String)
+    suspend fun removePlaylist(id: Long)
+    suspend fun renamePlaylist(id: Long, newName:String)
 }

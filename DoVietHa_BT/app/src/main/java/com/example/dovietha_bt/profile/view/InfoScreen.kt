@@ -1,6 +1,9 @@
 package com.example.dovietha_bt.profile.view
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,7 +64,7 @@ import coil.size.Scale
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.profile.InfoEvent
 import com.example.dovietha_bt.profile.InfoIntent
-import com.example.dovietha_bt.profile.InfoScreenViewModel
+import com.example.dovietha_bt.profile.ProfileScreenViewModel
 import com.example.dovietha_bt.profile.UserInformation
 import kotlinx.coroutines.delay
 
@@ -69,27 +72,22 @@ import kotlinx.coroutines.delay
 @Composable
 //Intent: Edit profile
 //Event: Check
-fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
+fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
     val state = viewModel.state.collectAsState()
     val context = LocalContext.current
     val eventFlow = viewModel.event
     var showDialog by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia()
-    ) { uri ->
-        if (uri != null) {
-            viewModel.processIntent(InfoIntent.UpdateAvatar(uri))
-        }
-    }
+    val launcher = rememberLauncherForActivityResult(viewModel,context)
 
     LaunchedEffect(Unit) {
-        eventFlow.collect {event ->
-            when(event){
+        eventFlow.collect { event ->
+            when (event) {
                 is InfoEvent.ShowDialog -> {
                     showDialog = true
                     delay(2000)
                     showDialog = false
                 }
+
                 InfoEvent.ShowImagePicker -> {
                     launcher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
@@ -100,7 +98,7 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
     }
 
     LaunchedEffect(UserInformation) {
-
+        viewModel.processIntent(InfoIntent.LoadInfo)
     }
 
     MaterialTheme(
@@ -113,7 +111,6 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-
 
             Column(
                 modifier = Modifier
@@ -136,6 +133,7 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                             }),
                         tint = MaterialTheme.colorScheme.primary
                     )
+
                     Text(
                         "MY INFORMATION",
                         fontSize = 20.sp,
@@ -143,6 +141,7 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
+
                     if (!state.value.isEditing) {
                         Icon(
                             painterResource(R.drawable.ic_edit),
@@ -155,7 +154,9 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                         )
                     }
                 }
+
                 Spacer(Modifier.padding(16.dp))
+
                 Box(Modifier.height(168.dp)) {
                     Image(
                         painter =
@@ -177,6 +178,7 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                             .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape),
                         contentScale = ContentScale.Crop
                     )
+
                     if (state.value.isEditing) {
                         Icon(
                             painterResource(R.drawable.ic_camera),
@@ -192,11 +194,11 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                             tint = Color.White,
                         )
                     }
-
                 }
-                Spacer(Modifier.padding(16.dp))
-                Row(Modifier.fillMaxWidth()) {
 
+                Spacer(Modifier.padding(16.dp))
+
+                Row(Modifier.fillMaxWidth()) {
                     InputText(
                         "NAME",
                         "Enter your name...",
@@ -266,7 +268,8 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                         )
                     }
                 }
-                if(showDialog) {
+
+                if (showDialog) {
                     Dialog(
                         onDismissRequest = {
                             showDialog = false
@@ -287,12 +290,15 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Spacer(Modifier.padding(20.dp))
+
                                 Image(
                                     painterResource(R.drawable.img_check),
                                     contentDescription = "",
                                     modifier = Modifier.size(100.dp)
                                 )
+
                                 Spacer(Modifier.padding(8.dp))
+
                                 Text(
                                     "Success!",
                                     fontWeight = FontWeight.Bold,
@@ -300,7 +306,9 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
                                     color = Color(0xFF2E7D32),
                                     style = TextStyle(letterSpacing = 2.sp)
                                 )
+
                                 Spacer(Modifier.padding(9.dp))
+
                                 Text(
                                     "Your information has been updated!",
                                     modifier = Modifier.padding(horizontal = 50.dp),
@@ -314,6 +322,24 @@ fun InfoScreen(viewModel: InfoScreenViewModel = viewModel()) {
 
                 }
             }
+        }
+    }
+}
+@Composable
+fun rememberLauncherForActivityResult(viewModel: ProfileScreenViewModel, context: Context): ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?> {
+    return rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }catch (e: Exception){
+                null
+            }
+            viewModel.processIntent(InfoIntent.UpdateAvatar(uri))
         }
     }
 }

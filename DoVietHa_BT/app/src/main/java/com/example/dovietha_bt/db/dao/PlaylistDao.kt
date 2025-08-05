@@ -4,16 +4,20 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.dovietha_bt.db.entity.PlaylistDB
-import com.example.dovietha_bt.myplaylist.model.Music
-import com.example.dovietha_bt.myplaylist.model.Playlist
+import androidx.room.Update
+import com.example.dovietha_bt.db.entity.Playlist
 @Dao
 interface PlaylistDao {
     @Query("SELECT * FROM playlist")
-    fun getAllPlaylist():List<Playlist>
+    suspend fun getAllPlaylist():List<Playlist>
     @Insert
-    fun addPlaylist(vararg playlist: Playlist)
+    suspend fun addPlaylist(playlist: Playlist)
     @Delete
-    fun removePlaylist(playlist: Playlist)
-
+    suspend fun removePlaylist(playlist: Playlist)
+    @Update
+    suspend fun renamePlaylist(playlist: Playlist)
+    @Query("SELECT * FROM playlist WHERE name = :playlistName AND username =:username")
+    suspend fun findPlaylistByNameAndUser(playlistName:String,username:String): Playlist
+    @Query("SELECT * FROM playlist WHERE playlistId = :id")
+    suspend fun findPlaylistById(id: Long): Playlist
 }

@@ -31,12 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.myplaylist.PlaylistItemColumn
 import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.Option
-import com.example.dovietha_bt.myplaylist.model.Playlist
-import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
+import com.example.dovietha_bt.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.myplaylist.model.MyPlaylistRepository
 import com.example.dovietha_bt.myplaylist.view.ColumnList
 
 val libOptions = listOf(
@@ -48,9 +47,9 @@ val libOptions = listOf(
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(),
     onAddClicked: () -> Unit = {},
-    listPlaylist: List<Playlist> = emptyList(),
+    listPlaylist: List<PlaylistVM> = emptyList(),
 ) {
-    val playlists by PlaylistRepository.playlists.collectAsState()
+    val playlists by MyPlaylistRepository.playlists.collectAsState()
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
     var musicAdded by remember { mutableStateOf(Music()) }
@@ -115,7 +114,7 @@ fun LibraryScreen(
                 modifier = Modifier.align(Alignment.Center),
                 onAddClicked = onAddClicked,
                 onPlaylistClick = {
-                    PlaylistRepository.addMusicToPlaylist(musicAdded, it.id)
+                    MyPlaylistRepository.addMusicToPlaylist(musicAdded, it.id)
                 })
         }
     }
@@ -123,11 +122,11 @@ fun LibraryScreen(
 
 @Composable
 fun AddDialog(
-    playlistList: List<Playlist> = emptyList(),
+    playlistList: List<PlaylistVM> = emptyList(),
     onDismissRequest: () -> Unit = {},
     modifier: Modifier = Modifier,
     onAddClicked: () -> Unit = {},
-    onPlaylistClick: (Playlist) -> Unit = {}
+    onPlaylistClick: (PlaylistVM) -> Unit = {}
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
@@ -159,7 +158,7 @@ fun AddCase(onAddClicked: () -> Unit = {}) {
 }
 
 @Composable
-fun PlaylistCase(list: List<Playlist> = emptyList(), onClick: (Playlist) -> Unit = {}) {
+fun PlaylistCase(list: List<PlaylistVM> = emptyList(), onClick: (PlaylistVM) -> Unit = {}) {
     LazyColumn {
         items(list) { playlist ->
             PlaylistItemColumn(

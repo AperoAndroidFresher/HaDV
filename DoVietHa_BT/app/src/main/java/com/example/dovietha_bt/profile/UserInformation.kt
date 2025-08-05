@@ -4,11 +4,9 @@ import android.net.Uri
 
 object UserInformation {
     var username: String = ""
-    var password: String = ""
-    var email: String = ""
-    var name: String = ""
-    var phone: String = ""
-    var university: String = ""
-    var desc: String = ""
+    var name: String? = null
+    var phone: String? = null
+    var university: String? = null
+    var desc: String? = null
     var image: Uri? = null
 }

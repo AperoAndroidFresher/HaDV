@@ -7,7 +7,7 @@ import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.db.AppDB
 import com.example.dovietha_bt.db.entity.User
-import com.example.dovietha_bt.db.repository.UserRepositoryImpl
+import com.example.dovietha_bt.db.repository.impl.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow

@@ -1,24 +1,31 @@
 package com.example.dovietha_bt.myplaylist
 
-import androidx.lifecycle.ViewModel
-import com.example.dovietha_bt.getAllMp3Files
-import com.example.dovietha_bt.myplaylist.model.Music
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.db.converter.toPlaylistVM
+import com.example.dovietha_bt.db.repository.impl.MusicPlaylistRepositoryImpl
+import com.example.dovietha_bt.db.repository.impl.PlaylistRepositoryImpl
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MyPlaylistViewModel(application: Application) : AndroidViewModel(application) {
     private val _state = MutableStateFlow(MyPlaylistState())
     var state = _state.asStateFlow()
+    val playlistDao = PlaylistRepositoryImpl(application)
+    val musicPlaylistDao = MusicPlaylistRepositoryImpl(application)
     fun processIntent(intent: MyPlaylistIntent) {
         when (intent) {
-            is MyPlaylistIntent.RemoveSong -> PlaylistRepository.removeMusicFromPlaylist(intent.item,intent.playlistId)
+            is MyPlaylistIntent.RemoveSong -> {
+                viewModelScope.launch {
+                    //MyPlaylistRepository.removeMusicFromPlaylist(intent.item, intent.playlistId)
+                    musicPlaylistDao.deleteSongInPlaylist(intent.playlistId, intent.musicId)
+                }
+            }
+
             MyPlaylistIntent.ToggleView -> {
                 _state.value = _state.value.copy(isViewChange = !_state.value.isViewChange)
             }
@@ -35,10 +42,32 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                 )
             }
 
-            is MyPlaylistIntent.AddPlaylist -> PlaylistRepository.addPlaylist(intent.playlist)
-            is MyPlaylistIntent.RemovePlaylist -> PlaylistRepository.removePlaylist(intent.playlist.id)
-            is MyPlaylistIntent.RenamePlaylist -> PlaylistRepository.renamePlaylist(intent.playlist.id, intent.name)
+            is MyPlaylistIntent.AddPlaylist -> {
+                viewModelScope.launch {
+                    playlistDao.addPlaylist(intent.username, intent.playlistName)
+                }
+                //MyPlaylistRepository.addPlaylist(intent.playlist)
+            }
 
+            is MyPlaylistIntent.RemovePlaylist -> {
+                viewModelScope.launch {
+                    playlistDao.removePlaylist(intent.playlistId)
+                    //MyPlaylistRepository.removePlaylist(intent.playlist.id)
+                }
+            }
+
+            is MyPlaylistIntent.RenamePlaylist -> {
+                viewModelScope.launch {
+                    playlistDao.renamePlaylist(intent.playlistId, intent.newPlaylistName)
+                }
+            }
+
+            MyPlaylistIntent.LoadPlaylist -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(
+                        playlists = playlistDao.getAllPlaylist().map { it.toPlaylistVM() })
+                }
+            }
         }
     }
 }

@@ -7,12 +7,11 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.home_playlist_myplaylist.UnitedScreen
-import com.example.dovietha_bt.profile.view.InfoScreen
+import com.example.dovietha_bt.profile.view.ProfileScreen
 import com.example.dovietha_bt.login.view.LoginScreen
 import com.example.dovietha_bt.signup.SignUpScreen
 import com.example.dovietha_bt.splashscreen.SplashScreen
-import com.example.dovietha_bt.myplaylist.model.Music
-import com.example.dovietha_bt.myplaylist.model.Playlist
+import com.example.dovietha_bt.myplaylist.model.PlaylistVM
 
 sealed interface Screen {
     data object SplashScreen : Screen
@@ -20,10 +19,10 @@ sealed interface Screen {
     data object SignUp : Screen
     data object UnitedScreen : Screen
     data object Home : Screen
-    data class Library(var playlists:List<Playlist> = emptyList()) : Screen
+    data class Library(var playlists:List<PlaylistVM> = emptyList()) : Screen
     data object MyPlaylist : Screen
     data object Profile : Screen
-    data class MusicList(var playlist: Playlist) : Screen
+    data class MusicList(var playlist: PlaylistVM) : Screen
 }
 
 @Composable
@@ -62,7 +61,7 @@ fun Navigator() {
                 }
             }
             entry<Screen.Profile> {
-                InfoScreen()
+                ProfileScreen()
             }
         }
     )
