@@ -19,7 +19,7 @@ sealed interface Screen {
     data object SignUp : Screen
     data object UnitedScreen : Screen
     data object Home : Screen
-    data class Library(var playlists:List<PlaylistVM> = emptyList()) : Screen
+    data object Library: Screen
     data object MyPlaylist : Screen
     data object Profile : Screen
     data class MusicList(var playlist: PlaylistVM) : Screen

@@ -7,15 +7,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.MusicVM
 import com.example.dovietha_bt.myplaylist.model.Option
 
 
 @Composable
 fun ColumnList(
-    list: List<Music> = listOf(),
+    list: List<MusicVM> = listOf(),
     option: List<Option> = emptyList(),
-    onOptionClick: (Option, Music) -> Unit
+    onOptionClick: (Option, MusicVM) -> Unit
 ) {
     LazyColumn(
         Modifier.Companion

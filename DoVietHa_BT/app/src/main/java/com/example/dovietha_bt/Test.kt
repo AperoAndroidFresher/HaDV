@@ -6,10 +6,10 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.MusicVM
 
-fun getAllMp3Files(context: Context): List<Music> {
-    val listMusic = mutableListOf<Music>()
+fun getAllMp3Files(context: Context): List<MusicVM> {
+    val listMusic = mutableListOf<MusicVM>()
     val contentResolver: ContentResolver = context.contentResolver
     val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
     val selection = "${MediaStore.Audio.Media.DURATION}>0"
@@ -34,7 +34,7 @@ fun getAllMp3Files(context: Context): List<Music> {
             val duration = it.getString(durationColumn)
             val data = it.getString(dataColumn)
             val image = getEmbeddedImageBytes(data)
-            val music = Music(image = image, name = title, author = artist, duration = formatDuration(duration.toLong()))
+            val music = MusicVM(image = image, name = title, author = artist, duration = formatDuration(duration.toLong()), pathImg = data)
             Log.d("check", "ID: $id, title: $title, artist: $artist, data: $data, image:$image")
             listMusic.add(music)
         }

@@ -10,6 +10,5 @@ import androidx.room.PrimaryKey
     val name:String,
     val author:String,
     val duration: String,
-    val image:String?,
-    val data:String?
+    val image:String?
 )

@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.dovietha_bt.db.AppDB
 import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
 import com.example.dovietha_bt.db.repository.MusicPlaylistRepository
+import kotlinx.coroutines.flow.Flow
 
 class MusicPlaylistRepositoryImpl(context: Context): MusicPlaylistRepository {
     val musicPlaylistDao = AppDB.Companion.getInstance(context).MusicPlaylistCrossRefDao()
@@ -14,7 +15,7 @@ class MusicPlaylistRepositoryImpl(context: Context): MusicPlaylistRepository {
         musicPlaylistDao.deleteSongInPlaylist(MusicPlaylistCrossRef(playlistId,musicId))
     }
 
-    override suspend fun getAllSongFromPlaylist(playlistId: Long):List<Long> {
+    override suspend fun getAllSongFromPlaylist(playlistId: Long): Flow<List<Long>> {
         return musicPlaylistDao.getAllSongInPlaylist(playlistId)
     }
 }

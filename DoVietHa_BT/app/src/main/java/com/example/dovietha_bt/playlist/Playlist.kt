@@ -32,10 +32,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.myplaylist.PlaylistItemColumn
-import com.example.dovietha_bt.myplaylist.model.Music
+import com.example.dovietha_bt.myplaylist.model.MusicVM
 import com.example.dovietha_bt.myplaylist.model.Option
 import com.example.dovietha_bt.myplaylist.model.PlaylistVM
-import com.example.dovietha_bt.myplaylist.model.MyPlaylistRepository
 import com.example.dovietha_bt.myplaylist.view.ColumnList
 
 val libOptions = listOf(
@@ -47,12 +46,10 @@ val libOptions = listOf(
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(),
     onAddClicked: () -> Unit = {},
-    listPlaylist: List<PlaylistVM> = emptyList(),
 ) {
-    val playlists by MyPlaylistRepository.playlists.collectAsState()
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
-    var musicAdded by remember { mutableStateOf(Music()) }
+    var musicAdded by remember { mutableStateOf(MusicVM()) }
     var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.processIntent(LibraryIntent.LoadSong)
@@ -105,17 +102,18 @@ fun LibraryScreen(
                     }
                 )
             }
-
         }
         if (showDialog) {
             AddDialog(
-                playlistList = playlists,
+                playlistList = state.value.playlists,
                 onDismissRequest = { showDialog = false },
                 modifier = Modifier.align(Alignment.Center),
                 onAddClicked = onAddClicked,
                 onPlaylistClick = {
-                    MyPlaylistRepository.addMusicToPlaylist(musicAdded, it.id)
-                })
+                    viewModel.processIntent(LibraryIntent.AddToPlaylist(musicAdded,it.id))
+                    showDialog =false
+                }
+            )
         }
     }
 }

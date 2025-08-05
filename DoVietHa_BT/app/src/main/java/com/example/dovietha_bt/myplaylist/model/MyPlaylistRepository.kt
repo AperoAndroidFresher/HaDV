@@ -11,7 +11,7 @@ object MyPlaylistRepository {
         _playlists.value = _playlists.value + playlist
     }
 
-    fun addMusicToPlaylist(music: Music, playlistId: Long) {
+    fun addMusicToPlaylist(music: MusicVM, playlistId: Long) {
         _playlists.value = _playlists.value.map { playlist ->
             if (playlist.id == playlistId) {
                 playlist.copy(musics = playlist.musics + music)
@@ -22,7 +22,7 @@ object MyPlaylistRepository {
         _playlists.value = _playlists.value.filterNot { it.id == playlistId }
     }
 
-    fun removeMusicFromPlaylist(music: Music,playlistId: Long) {
+    fun removeMusicFromPlaylist(music: MusicVM, playlistId: Long) {
         _playlists.value = _playlists.value.map { playlist ->
             if (playlist.id == playlistId) {
                 playlist.copy(musics = playlist.musics.filterNot { it == music })
