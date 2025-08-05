@@ -8,9 +8,12 @@ import com.example.dovietha_bt.db.dao.MusicDao
 import com.example.dovietha_bt.db.dao.MusicPlaylistCrossRefDao
 import com.example.dovietha_bt.db.dao.PlaylistDao
 import com.example.dovietha_bt.db.dao.UserDao
+import com.example.dovietha_bt.db.entity.Music
+import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
+import com.example.dovietha_bt.db.entity.Playlist
 import com.example.dovietha_bt.db.entity.User
 
-@Database(entities = [User::class], version = 2)
+@Database(entities = [User::class, Music::class, Playlist::class, MusicPlaylistCrossRef::class], version = 1)
 abstract class AppDB : RoomDatabase() {
     abstract fun UserDao() : UserDao
     abstract fun MusicDao() : MusicDao

@@ -38,8 +38,7 @@ val options = listOf(
 @Composable
 fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: PlaylistVM = PlaylistVM()) {
     val state = viewModel.state.collectAsState()
-    val playlists by MyPlaylistRepository.playlists.collectAsState()
-    val currentList = playlists.find {
+    val currentList = state.value.playlists.find {
         it.id == playlist.id
     }?: return
 
@@ -92,7 +91,7 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playli
                 onOptionClick = { option, music ->
                     if (option.desc == "Remove from playlist") {
                         viewModel.processIntent(
-                            MyPlaylistIntent.RemoveSong(music,currentList.id)
+                            MyPlaylistIntent.RemoveSong(music.id,currentList.id)
                         )
                     }
                 }

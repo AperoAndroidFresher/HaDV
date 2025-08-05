@@ -4,11 +4,12 @@ import android.content.Context
 import com.example.dovietha_bt.db.AppDB
 import com.example.dovietha_bt.db.entity.Playlist
 import com.example.dovietha_bt.db.repository.PlaylistRepository
+import kotlinx.coroutines.flow.Flow
 
 
 class PlaylistRepositoryImpl(context: Context): PlaylistRepository {
     val playlistDao = AppDB.getInstance(context).PlaylistDao()
-    override suspend fun getAllPlaylist(): List<Playlist> {
+    override suspend fun getAllPlaylist(): Flow<List<Playlist>> {
         return playlistDao.getAllPlaylist()
     }
 

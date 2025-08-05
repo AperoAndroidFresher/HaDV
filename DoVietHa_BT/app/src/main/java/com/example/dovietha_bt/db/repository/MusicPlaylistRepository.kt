@@ -1,9 +1,10 @@
 package com.example.dovietha_bt.db.repository
 
 import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
+import kotlinx.coroutines.flow.Flow
 
 interface MusicPlaylistRepository {
     suspend fun addSongToPlaylist(musicId:Long, playlistId:Long)
     suspend fun deleteSongInPlaylist(musicId:Long, playlistId:Long)
-    suspend fun getAllSongFromPlaylist(playlistId: Long): List<Long>
+    suspend fun getAllSongFromPlaylist(playlistId: Long): Flow<List<Long>>
 }

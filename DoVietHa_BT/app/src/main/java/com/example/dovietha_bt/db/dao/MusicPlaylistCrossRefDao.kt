@@ -6,15 +6,17 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
 import com.example.dovietha_bt.db.entity.Playlist
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MusicPlaylistCrossRefDao {
     @Query("SELECT musicId FROM musicplaylistcrossref WHERE playlistId = :playlistId")
-    suspend fun getAllSongInPlaylist(playlistId: Long):List<Long>
+    fun getAllSongInPlaylist(playlistId: Long): Flow<List<Long>>
     @Insert
     suspend fun addSongToPlaylist(crossRef: MusicPlaylistCrossRef)
     @Delete
     suspend fun deleteSongInPlaylist(crossRef: MusicPlaylistCrossRef)
+
 //    @Query("""
 //        DELETE FROM MusicPlaylistCrossRef WHERE playlistId = :playlistId
 //    """)

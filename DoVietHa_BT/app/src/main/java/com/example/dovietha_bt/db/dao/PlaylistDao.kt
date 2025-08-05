@@ -6,10 +6,12 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.dovietha_bt.db.entity.Playlist
+import kotlinx.coroutines.flow.Flow
+
 @Dao
 interface PlaylistDao {
     @Query("SELECT * FROM playlist")
-    suspend fun getAllPlaylist():List<Playlist>
+    fun getAllPlaylist(): Flow<List<Playlist>>
     @Insert
     suspend fun addPlaylist(playlist: Playlist)
     @Delete

@@ -61,7 +61,7 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                 IconButton(
                     onClick = {
                         backStack.clear()
-                        backStack.add(Screen.Library())
+                        backStack.add(Screen.Library)
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -94,9 +94,8 @@ fun UnitedScreen(goProfile: () -> Unit = {}) {
                     Log.d("Check click", "click")
                     HomeScreen(goProfile = goProfile)
                 }
-                entry<Screen.Library> {(list) ->
+                entry<Screen.Library> {
                     LibraryScreen(
-                        listPlaylist = list,
                         onAddClicked = {
                             backStack.clear()
                             backStack.add(Screen.MyPlaylist)
