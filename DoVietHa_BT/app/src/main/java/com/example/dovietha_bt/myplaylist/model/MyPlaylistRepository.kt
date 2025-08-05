@@ -1,14 +1,13 @@
 package com.example.dovietha_bt.myplaylist.model
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-object PlaylistRepository {
-    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
+object MyPlaylistRepository {
+    private val _playlists = MutableStateFlow<List<PlaylistVM>>(emptyList())
     val playlists = _playlists.asStateFlow()
 
-    fun addPlaylist(playlist: Playlist) {
+    fun addPlaylist(playlist: PlaylistVM) {
         _playlists.value = _playlists.value + playlist
     }
 

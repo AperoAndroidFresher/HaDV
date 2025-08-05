@@ -1,10 +1,11 @@
 package com.example.dovietha_bt.login
 
 import android.app.Application
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.db.repository.UserRepositoryImpl
+import com.example.dovietha_bt.db.repository.impl.UserRepositoryImpl
 import com.example.dovietha_bt.profile.UserInformation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,8 +41,12 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
                     if (check == null || check.password != _state.value.password) {
                         _event.emit(LoginEvent.ShowNotify)
                     } else {
-                        UserInformation.username = _state.value.username
-                        UserInformation.password = _state.value.password
+                        UserInformation.username = check.userName
+                        UserInformation.name = check.profileName
+                        UserInformation.phone =check.phoneNumber
+                        UserInformation.university = check.university
+                        UserInformation.desc =check.desc
+                        UserInformation.image = check.avatarUrl.takeIf { it?.isNotBlank() == true }?.toUri()
                         _state.value = _state.value.copy(isValid = true)
                     }
                 }

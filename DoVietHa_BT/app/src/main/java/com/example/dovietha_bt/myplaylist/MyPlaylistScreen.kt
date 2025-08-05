@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,20 +33,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.myplaylist.model.Option
-import com.example.dovietha_bt.myplaylist.model.Playlist
-import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
+import com.example.dovietha_bt.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.myplaylist.model.MyPlaylistRepository
+import com.example.dovietha_bt.profile.UserInformation
 
 @Composable
 fun MyPlaylistScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
-    onClick: (Playlist) -> Unit = {},
+    onClick: (PlaylistVM) -> Unit = {},
 
     ) {
     val state = viewModel.state.collectAsState()
-    val playlists by PlaylistRepository.playlists.collectAsState()
     var playlistName by remember { mutableStateOf("") }
     var addClicked by remember { mutableStateOf(false) }
     Column(
@@ -73,7 +71,7 @@ fun MyPlaylistScreen(
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
         }
-        if (playlists.isEmpty()) {
+        if (state.value.playlists.isEmpty()) {
             Column(
                 modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,10 +88,10 @@ fun MyPlaylistScreen(
             }
         } else {
             AllPlaylists(
-                list = playlists,
+                list = state.value.playlists,
                 onOptionClick = { option, playlist ->
                     if (option.desc == "Remove Playlist") {
-                        viewModel.processIntent(MyPlaylistIntent.RemovePlaylist(playlist))
+                        viewModel.processIntent(MyPlaylistIntent.RemovePlaylist(playlist.id))
                     }
                 },
                 option = listOf(Option(image = R.drawable.ic_remove, desc = "Remove Playlist")),
@@ -106,7 +104,7 @@ fun MyPlaylistScreen(
                 onDismissRequest = { addClicked = false },
                 addPlaylist = {
                     viewModel.processIntent(
-                        MyPlaylistIntent.AddPlaylist(Playlist(name = playlistName))
+                        MyPlaylistIntent.AddPlaylist(playlistName, UserInformation.name?: "")
                     )
                     Log.d("TAG", "AddDialog: ${state.value.playlists}")
                 },

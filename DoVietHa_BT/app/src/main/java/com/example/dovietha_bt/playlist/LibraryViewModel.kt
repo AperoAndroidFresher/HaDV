@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.getAllMp3Files
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,18 +21,15 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     fun processIntent(intent: LibraryIntent) {
         when (intent) {
             is LibraryIntent.AddToPlaylist -> {
-                val newPlaylist =intent.playlist
-                newPlaylist.musics.toMutableList().add(intent.music)
-                _state.value = _state.value.copy(
-                    playlist = newPlaylist
-                )
-//                val newList = _state.value.musics.toMutableList()
-//                newList.add(intent.music)
-//                _state.value = _state.value.copy(
-//                    musics = newList
-//                )
-                viewModelScope.launch {
-                    _event.emit(LibraryEvent.ShowDialog)
+                CoroutineScope(Dispatchers.IO).launch{
+                    val newPlaylist = intent.playlist
+                    newPlaylist.musics.toMutableList().add(intent.music)
+                    _state.value = _state.value.copy(
+                        playlist = newPlaylist
+                    )
+                    viewModelScope.launch {
+                        _event.emit(LibraryEvent.ShowDialog)
+                    }
                 }
             }
 

@@ -25,22 +25,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.Screen
 import com.example.dovietha_bt.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.myplaylist.model.Music
 import com.example.dovietha_bt.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.myplaylist.model.Option
-import com.example.dovietha_bt.myplaylist.model.Playlist
-import com.example.dovietha_bt.myplaylist.model.PlaylistRepository
+import com.example.dovietha_bt.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.myplaylist.model.MyPlaylistRepository
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),
     Option(R.drawable.ic_share, "Share (Coming soon)")
 )
 @Composable
-fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playlist = Playlist()) {
+fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: PlaylistVM = PlaylistVM()) {
     val state = viewModel.state.collectAsState()
-    val playlists by PlaylistRepository.playlists.collectAsState()
+    val playlists by MyPlaylistRepository.playlists.collectAsState()
     val currentList = playlists.find {
         it.id == playlist.id
     }?: return

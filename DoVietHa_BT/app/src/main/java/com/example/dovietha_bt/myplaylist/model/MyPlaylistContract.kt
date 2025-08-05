@@ -1,20 +1,26 @@
 package com.example.dovietha_bt.myplaylist.model
 
+import com.example.dovietha_bt.db.entity.Playlist
+
 data class Music(
+    val id:Long = 0,
     val image: ByteArray? = null,
     val name: String = "",
     val author: String = "",
     val duration: String =""
 )
 
-data class Playlist(
+data class PlaylistVM(
     val id: Long = 0,
     val name:String = "",
+    val username:String = "",
     val musics: List<Music> = emptyList(),
 )
 
+
+
 data class MyPlaylistState(
-    val playlists: List<Playlist> = emptyList(),
+    val playlists: List<PlaylistVM> = emptyList(),
     val musics: List<Music> = emptyList(),
     val isViewChange: Boolean = false,
     val showOption: Boolean = false,
@@ -22,11 +28,12 @@ data class MyPlaylistState(
 )
 
 sealed interface MyPlaylistIntent{
-    data class AddPlaylist(val playlist: Playlist): MyPlaylistIntent
-    data class RemovePlaylist(val playlist: Playlist) : MyPlaylistIntent
-    data class RenamePlaylist(val playlist: Playlist, val name: String): MyPlaylistIntent
+    data object LoadPlaylist: MyPlaylistIntent
+    data class AddPlaylist(val playlistName: String, val username: String): MyPlaylistIntent
+    data class RemovePlaylist(val playlistId: Long) : MyPlaylistIntent
+    data class RenamePlaylist(val playlistId: Long, val newPlaylistName: String): MyPlaylistIntent
     object ToggleView : MyPlaylistIntent
-    data class RemoveSong(val item: Music,val playlistId:Long) : MyPlaylistIntent
+    data class RemoveSong(val musicId: Long, val playlistId:Long) : MyPlaylistIntent
     data object ShowOption : MyPlaylistIntent
     data object HideOption : MyPlaylistIntent
 }

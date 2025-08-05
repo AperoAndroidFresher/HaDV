@@ -33,7 +33,6 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.myplaylist.model.Option
-import com.example.dovietha_bt.myplaylist.model.Playlist
 import com.example.dovietha_bt.myplaylist.view.SimpleDropdownMenuOnly
 
 @Composable
