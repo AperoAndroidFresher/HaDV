@@ -16,12 +16,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DoVietHa_BTTheme {
-                DismissKeyboardOnTap {
-                    //MyPlaylistScreen()
-                    //InfoScreen()
-                    Navigator()
-                    //LoginScreen(LocalContext.current,intent)
-                }
+                DismissKeyboardOnTap(content = { Navigator() })
             }
         }
     }

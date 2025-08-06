@@ -5,8 +5,8 @@ import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -43,10 +43,11 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
                     } else {
                         UserInformation.username = check.userName
                         UserInformation.name = check.profileName
-                        UserInformation.phone =check.phoneNumber
+                        UserInformation.phone = check.phoneNumber
                         UserInformation.university = check.university
-                        UserInformation.desc =check.desc
-                        UserInformation.image = check.avatarUrl.takeIf { it?.isNotBlank() == true }?.toUri()
+                        UserInformation.desc = check.desc
+                        UserInformation.image =
+                            check.avatarUrl.takeIf { it?.isNotBlank() == true }?.toUri()
                         _state.value = _state.value.copy(isValid = true)
                     }
                 }

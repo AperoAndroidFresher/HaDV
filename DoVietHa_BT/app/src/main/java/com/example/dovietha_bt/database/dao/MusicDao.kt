@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface MusicDao {
     @Query("SELECT * FROM Music")
     fun getAllMusics(): Flow<List<Music>>
+
     @Query("SELECT * FROM music WHERE MusicId = :id")
-    suspend fun getMusicsById(id:Long): Music
+    suspend fun getMusicsById(id: Long): Music
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertMusic(music: Music):Long
+    suspend fun insertMusic(music: Music): Long
 }

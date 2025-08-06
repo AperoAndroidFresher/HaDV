@@ -3,12 +3,12 @@ package com.example.dovietha_bt.ui.main.library
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.common.getAllMp3Files
 import com.example.dovietha_bt.database.converter.toMusicVM
 import com.example.dovietha_bt.database.converter.toPlaylistVM
 import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
-import com.example.dovietha_bt.common.getAllMp3Files
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,7 +80,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
             }
 
             LibraryIntent.LoadSong -> {
-                viewModelScope.launch{
+                viewModelScope.launch {
                     _state.value = _state.value.copy(
                         musics = getAllMp3Files(getApplication())
                     )

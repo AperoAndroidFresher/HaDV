@@ -4,9 +4,9 @@ import com.example.dovietha_bt.database.entity.Playlist
 import kotlinx.coroutines.flow.Flow
 
 
-interface PlaylistRepository{
+interface PlaylistRepository {
     suspend fun getAllPlaylist(): Flow<List<Playlist>>
-    suspend fun addPlaylist(username:String,name:String)
+    suspend fun addPlaylist(username: String, name: String)
     suspend fun removePlaylist(id: Long)
-    suspend fun renamePlaylist(id: Long, newName:String)
+    suspend fun renamePlaylist(id: Long, newName: String)
 }

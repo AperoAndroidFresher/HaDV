@@ -73,7 +73,7 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
     val context = LocalContext.current
     val eventFlow = viewModel.event
     var showDialog by remember { mutableStateOf(false) }
-    val launcher = rememberLauncherForActivityResult(viewModel,context)
+    val launcher = rememberLauncherForActivityResult(viewModel, context)
 
     LaunchedEffect(Unit) {
         eventFlow.collect { event ->
@@ -320,8 +320,12 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
         }
     }
 }
+
 @Composable
-fun rememberLauncherForActivityResult(viewModel: ProfileScreenViewModel, context: Context): ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?> {
+fun rememberLauncherForActivityResult(
+    viewModel: ProfileScreenViewModel,
+    context: Context
+): ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?> {
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -331,7 +335,7 @@ fun rememberLauncherForActivityResult(viewModel: ProfileScreenViewModel, context
                     it,
                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 null
             }
             viewModel.processIntent(InfoIntent.UpdateAvatar(uri))

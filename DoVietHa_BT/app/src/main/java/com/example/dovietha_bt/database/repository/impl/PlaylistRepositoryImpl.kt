@@ -7,13 +7,13 @@ import com.example.dovietha_bt.database.repository.PlaylistRepository
 import kotlinx.coroutines.flow.Flow
 
 
-class PlaylistRepositoryImpl(context: Context): PlaylistRepository {
+class PlaylistRepositoryImpl(context: Context) : PlaylistRepository {
     val playlistDao = AppDB.getInstance(context).PlaylistDao()
     override suspend fun getAllPlaylist(): Flow<List<Playlist>> {
         return playlistDao.getAllPlaylist()
     }
 
-    override suspend fun addPlaylist(username:String,name:String) {
+    override suspend fun addPlaylist(username: String, name: String) {
         playlistDao.addPlaylist(Playlist(username = username, name = name))
     }
 
@@ -22,7 +22,7 @@ class PlaylistRepositoryImpl(context: Context): PlaylistRepository {
         playlistDao.removePlaylist(removedPlaylist)
     }
 
-    override suspend fun renamePlaylist(id:Long, newName:String) {
+    override suspend fun renamePlaylist(id: Long, newName: String) {
         val renamedPlaylist = playlistDao.findPlaylistById(id)
         playlistDao.renamePlaylist(renamedPlaylist.copy(name = newName))
     }

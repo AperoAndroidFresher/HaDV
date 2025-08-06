@@ -12,11 +12,11 @@ import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 
 @Composable
 fun AllPlaylists(
-    list:List<PlaylistVM> = emptyList(),
+    list: List<PlaylistVM> = emptyList(),
     option: List<Option> = emptyList(),
     onOptionClick: (Option, PlaylistVM) -> Unit,
     onClick: (PlaylistVM) -> Unit
-){
+) {
     LazyColumn(
         Modifier.Companion
             .fillMaxSize(),
@@ -28,7 +28,7 @@ fun AllPlaylists(
                 sumSongs = item.musics.size,
                 onOptionClick = { onOptionClick(it, item) },
                 option = option,
-                onClick = {onClick(item)}
+                onClick = { onClick(item) }
             )
         }
     }

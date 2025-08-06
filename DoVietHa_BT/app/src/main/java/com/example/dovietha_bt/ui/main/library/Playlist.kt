@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistItemColumn
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 import com.example.dovietha_bt.ui.main.myplaylist.view.ColumnList
 
@@ -60,7 +60,7 @@ fun LibraryScreen(
             }
         }
     }
-    Box() {
+    Box {
         Column(
             Modifier
                 .fillMaxSize()
@@ -75,7 +75,7 @@ fun LibraryScreen(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(16.dp)
                 )
-                Row() {
+                Row {
                     Button(
                         onClick = {
                             viewModel.processIntent(LibraryIntent.LoadSong)
@@ -111,9 +111,9 @@ fun LibraryScreen(
                 modifier = Modifier.align(Alignment.Center),
                 onAddClicked = onAddClicked,
                 onPlaylistClick = {
-                    viewModel.processIntent(LibraryIntent.AddToPlaylist(musicAdded,it.id))
+                    viewModel.processIntent(LibraryIntent.AddToPlaylist(musicAdded, it.id))
                     viewModel.processIntent(LibraryIntent.LoadPlaylists)
-                    showDialog =false
+                    showDialog = false
                 }
             )
         }
@@ -122,9 +122,9 @@ fun LibraryScreen(
 
 @Composable
 fun AddDialog(
+    modifier: Modifier = Modifier,
     playlistList: List<PlaylistVM> = emptyList(),
     onDismissRequest: () -> Unit = {},
-    modifier: Modifier = Modifier,
     onAddClicked: () -> Unit = {},
     onPlaylistClick: (PlaylistVM) -> Unit = {}
 ) {

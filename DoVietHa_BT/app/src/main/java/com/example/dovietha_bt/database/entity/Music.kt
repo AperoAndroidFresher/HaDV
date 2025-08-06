@@ -4,11 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
- data class Music(
+data class Music(
     @PrimaryKey(autoGenerate = true)
-    val musicId:Long = 0L,
-    val name:String,
-    val author:String,
+    val musicId: Long = 0L,
+    val name: String,
+    val author: String,
     val duration: String,
-    val image:String?
+    val image: String?
 )

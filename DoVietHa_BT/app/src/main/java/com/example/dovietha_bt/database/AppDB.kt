@@ -13,15 +13,19 @@ import com.example.dovietha_bt.database.entity.MusicPlaylistCrossRef
 import com.example.dovietha_bt.database.entity.Playlist
 import com.example.dovietha_bt.database.entity.User
 
-@Database(entities = [User::class, Music::class, Playlist::class, MusicPlaylistCrossRef::class], version = 1)
+@Database(
+    entities = [User::class, Music::class, Playlist::class, MusicPlaylistCrossRef::class],
+    version = 1
+)
 abstract class AppDB : RoomDatabase() {
-    abstract fun UserDao() : UserDao
-    abstract fun MusicDao() : MusicDao
-    abstract fun PlaylistDao() : PlaylistDao
-    abstract fun MusicPlaylistCrossRefDao() : MusicPlaylistCrossRefDao
-    companion object{
+    abstract fun UserDao(): UserDao
+    abstract fun MusicDao(): MusicDao
+    abstract fun PlaylistDao(): PlaylistDao
+    abstract fun MusicPlaylistCrossRefDao(): MusicPlaylistCrossRefDao
+
+    companion object {
         @Volatile
-        private var INSTANCE: AppDB?=null
+        private var INSTANCE: AppDB? = null
         fun getInstance(context: Context): AppDB {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(

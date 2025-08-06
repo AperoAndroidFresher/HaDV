@@ -45,7 +45,7 @@ fun PlaylistItemColumn(
     viewModel: MyPlaylistViewModel = viewModel(),
     onClick: () -> Unit = {}
 ) {
-    val state = viewModel.state.collectAsState()
+    viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.Companion
@@ -109,7 +109,7 @@ fun PlaylistItemColumn(
 }
 
 @Composable
-fun musicImage( image: ByteArray?) : AsyncImagePainter{
+fun musicImage(image: ByteArray?): AsyncImagePainter {
     return rememberAsyncImagePainter(
         model = image ?: R.drawable.avatar,
         placeholder = painterResource(R.drawable.avatar),

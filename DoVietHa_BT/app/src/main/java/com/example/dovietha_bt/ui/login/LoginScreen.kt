@@ -50,11 +50,11 @@ fun LoginScreen(
     val event = viewModel.event
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.processIntent(LoginIntent.InitData(username,password))
-        event.collect { event->
-            when(event){
+        viewModel.processIntent(LoginIntent.InitData(username, password))
+        event.collect { event ->
+            when (event) {
                 LoginEvent.ShowNotify -> {
-                    Toast.makeText(context,"Invalid Infomation", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Invalid Infomation", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -111,7 +111,7 @@ fun LoginScreen(
                 Button(
                     onClick = {
                         viewModel.processIntent(LoginIntent.IsValid)
-                        if(state.value.isValid) onLogin()
+                        if (state.value.isValid) onLogin()
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

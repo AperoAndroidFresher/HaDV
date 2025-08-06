@@ -11,8 +11,10 @@ import com.example.dovietha_bt.database.entity.MusicPlaylistCrossRef
 interface MusicPlaylistCrossRefDao {
     @Query("SELECT musicId FROM musicplaylistcrossref WHERE playlistId = :playlistId")
     fun getAllSongInPlaylist(playlistId: Long): List<Long>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addSongToPlaylist(crossRef: MusicPlaylistCrossRef)
+
     @Delete
     suspend fun deleteSongInPlaylist(crossRef: MusicPlaylistCrossRef)
 

@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 
 @Composable
 fun SimpleDropdownMenuOnly(
@@ -17,9 +17,9 @@ fun SimpleDropdownMenuOnly(
     onDismissRequest: () -> Unit,
     items: List<Option>,
     onItemClick: (Option) -> Unit,
-    viewModel: MyPlaylistViewModel= viewModel()
+    viewModel: MyPlaylistViewModel = viewModel()
 ) {
-    val state = viewModel.state.collectAsState()
+    viewModel.state.collectAsState()
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest

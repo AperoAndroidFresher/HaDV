@@ -6,7 +6,7 @@ import com.example.dovietha_bt.database.entity.Music
 import com.example.dovietha_bt.database.repository.MusicRepository
 import kotlinx.coroutines.flow.Flow
 
-class MusicRepositoryImpl(context: Context): MusicRepository {
+class MusicRepositoryImpl(context: Context) : MusicRepository {
     val musicDao = AppDB.getInstance(context).MusicDao()
     override suspend fun getAllMusics(): Flow<List<Music>> {
         return musicDao.getAllMusics()
@@ -16,7 +16,7 @@ class MusicRepositoryImpl(context: Context): MusicRepository {
         return musicDao.getMusicsById(id)
     }
 
-    override suspend fun insertMusic(music: Music):Long {
+    override suspend fun insertMusic(music: Music): Long {
         return musicDao.insertMusic(music)
     }
 }

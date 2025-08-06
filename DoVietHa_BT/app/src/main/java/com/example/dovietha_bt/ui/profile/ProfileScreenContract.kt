@@ -19,20 +19,20 @@ data class InfoState(
     val currentTheme: Theme = lightTheme
 )
 
-sealed interface InfoIntent{
-    data object LoadInfo:InfoIntent
-    object Editable: InfoIntent
-    data class UpdateName(val name: String): InfoIntent
-    data class UpdatePhone(val phone: String): InfoIntent
-    data class UpdateUni(val uni: String): InfoIntent
-    data class UpdateDesc(val desc: String): InfoIntent
+sealed interface InfoIntent {
+    data object LoadInfo : InfoIntent
+    object Editable : InfoIntent
+    data class UpdateName(val name: String) : InfoIntent
+    data class UpdatePhone(val phone: String) : InfoIntent
+    data class UpdateUni(val uni: String) : InfoIntent
+    data class UpdateDesc(val desc: String) : InfoIntent
     data class UpdateAvatar(val avatarUri: Uri?) : InfoIntent
-    object ToggleTheme: InfoIntent
-    object SubmitInfo: InfoIntent
+    object ToggleTheme : InfoIntent
+    object SubmitInfo : InfoIntent
     object TriggerImagePicker : InfoIntent
 }
 
-sealed interface InfoEvent{
-    object ShowDialog: InfoEvent
+sealed interface InfoEvent {
+    object ShowDialog : InfoEvent
     object ShowImagePicker : InfoEvent
 }

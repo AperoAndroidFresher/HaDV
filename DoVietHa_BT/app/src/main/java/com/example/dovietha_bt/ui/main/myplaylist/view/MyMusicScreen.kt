@@ -24,21 +24,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),
     Option(R.drawable.ic_share, "Share (Coming soon)")
 )
+
 @Composable
-fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: PlaylistVM = PlaylistVM()) {
+fun MyMusicScreen(
+    viewModel: MyPlaylistViewModel = viewModel(),
+    playlist: PlaylistVM = PlaylistVM()
+) {
     val state = viewModel.state.collectAsState()
     val currentList = state.value.playlists.find {
         it.id == playlist.id
-    }?: return
+    } ?: return
 
     LaunchedEffect(Unit) {
         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
@@ -81,7 +85,7 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playli
             }
         }
         if (state.value.isViewChange) {
-            GridList(currentList.musics,viewModel,options)
+            GridList(currentList.musics, viewModel, options)
         } else {
             ColumnList(
                 list = currentList.musics,
@@ -89,7 +93,7 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playli
                 onOptionClick = { option, music ->
                     if (option.desc == "Remove from playlist") {
                         viewModel.processIntent(
-                            MyPlaylistIntent.RemoveSong(music.id,currentList.id)
+                            MyPlaylistIntent.RemoveSong(music.id, currentList.id)
                         )
                         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     }
