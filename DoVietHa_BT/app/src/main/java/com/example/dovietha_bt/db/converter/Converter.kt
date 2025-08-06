@@ -2,9 +2,9 @@ package com.example.dovietha_bt.db.converter
 
 import com.example.dovietha_bt.db.entity.Music
 import com.example.dovietha_bt.db.entity.Playlist
-import com.example.dovietha_bt.getEmbeddedImageBytes
-import com.example.dovietha_bt.myplaylist.model.MusicVM
-import com.example.dovietha_bt.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
+import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
+import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 
 fun Playlist.toPlaylistVM(listMusic: List<MusicVM>): PlaylistVM{
     return PlaylistVM(
@@ -32,4 +32,10 @@ fun MusicVM.toMusic(): Music{
         duration = this.duration,
         image = this.pathImg
     )
+}
+fun formatDuration(durationInMillis: Long): String {
+    val totalSeconds = durationInMillis / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d", minutes, seconds)
 }
