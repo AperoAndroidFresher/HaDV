@@ -1,9 +1,9 @@
-package com.example.dovietha_bt.db.repository.impl
+package com.example.dovietha_bt.database.repository.impl
 
 import android.content.Context
-import com.example.dovietha_bt.db.AppDB
-import com.example.dovietha_bt.db.entity.Music
-import com.example.dovietha_bt.db.repository.MusicRepository
+import com.example.dovietha_bt.database.AppDB
+import com.example.dovietha_bt.database.entity.Music
+import com.example.dovietha_bt.database.repository.MusicRepository
 import kotlinx.coroutines.flow.Flow
 
 class MusicRepositoryImpl(context: Context): MusicRepository {

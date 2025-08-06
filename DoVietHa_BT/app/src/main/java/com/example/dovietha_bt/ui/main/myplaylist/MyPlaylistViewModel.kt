@@ -3,11 +3,11 @@ package com.example.dovietha_bt.ui.main.myplaylist
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.db.converter.toMusicVM
-import com.example.dovietha_bt.db.converter.toPlaylistVM
-import com.example.dovietha_bt.db.repository.impl.MusicPlaylistRepositoryImpl
-import com.example.dovietha_bt.db.repository.impl.MusicRepositoryImpl
-import com.example.dovietha_bt.db.repository.impl.PlaylistRepositoryImpl
+import com.example.dovietha_bt.database.converter.toMusicVM
+import com.example.dovietha_bt.database.converter.toPlaylistVM
+import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
+import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
+import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
 import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistState

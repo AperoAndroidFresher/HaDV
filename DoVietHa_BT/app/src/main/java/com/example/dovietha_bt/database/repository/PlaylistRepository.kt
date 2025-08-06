@@ -1,7 +1,6 @@
-package com.example.dovietha_bt.db.repository
+package com.example.dovietha_bt.database.repository
 
-import com.example.dovietha_bt.db.dao.PlaylistDao
-import com.example.dovietha_bt.db.entity.Playlist
+import com.example.dovietha_bt.database.entity.Playlist
 import kotlinx.coroutines.flow.Flow
 
 

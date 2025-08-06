@@ -33,7 +33,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
+import com.example.dovietha_bt.common.Option
 
 @Composable
 fun MusicItemColumn(

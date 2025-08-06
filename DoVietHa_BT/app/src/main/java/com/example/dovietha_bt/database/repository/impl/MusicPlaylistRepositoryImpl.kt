@@ -1,10 +1,9 @@
-package com.example.dovietha_bt.db.repository.impl
+package com.example.dovietha_bt.database.repository.impl
 
 import android.content.Context
-import com.example.dovietha_bt.db.AppDB
-import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
-import com.example.dovietha_bt.db.repository.MusicPlaylistRepository
-import kotlinx.coroutines.flow.Flow
+import com.example.dovietha_bt.database.AppDB
+import com.example.dovietha_bt.database.entity.MusicPlaylistCrossRef
+import com.example.dovietha_bt.database.repository.MusicPlaylistRepository
 
 class MusicPlaylistRepositoryImpl(context: Context): MusicPlaylistRepository {
     val musicPlaylistDao = AppDB.Companion.getInstance(context).MusicPlaylistCrossRefDao()

@@ -1,9 +1,9 @@
-package com.example.dovietha_bt.db.repository.impl
+package com.example.dovietha_bt.database.repository.impl
 
 import android.content.Context
-import com.example.dovietha_bt.db.AppDB
-import com.example.dovietha_bt.db.entity.Playlist
-import com.example.dovietha_bt.db.repository.PlaylistRepository
+import com.example.dovietha_bt.database.AppDB
+import com.example.dovietha_bt.database.entity.Playlist
+import com.example.dovietha_bt.database.repository.PlaylistRepository
 import kotlinx.coroutines.flow.Flow
 
 

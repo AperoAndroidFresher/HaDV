@@ -33,7 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistItemColumn
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 import com.example.dovietha_bt.ui.main.myplaylist.view.ColumnList
 

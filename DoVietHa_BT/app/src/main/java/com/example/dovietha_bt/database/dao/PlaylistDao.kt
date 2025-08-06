@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.db.dao
+package com.example.dovietha_bt.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.dovietha_bt.db.entity.Playlist
+import com.example.dovietha_bt.database.entity.Playlist
 import kotlinx.coroutines.flow.Flow
 
 @Dao

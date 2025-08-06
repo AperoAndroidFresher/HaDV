@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.db.entity
+package com.example.dovietha_bt.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

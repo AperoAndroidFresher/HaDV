@@ -1,7 +1,7 @@
-package com.example.dovietha_bt.db.converter
+package com.example.dovietha_bt.database.converter
 
-import com.example.dovietha_bt.db.entity.Music
-import com.example.dovietha_bt.db.entity.Playlist
+import com.example.dovietha_bt.database.entity.Music
+import com.example.dovietha_bt.database.entity.Playlist
 import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM

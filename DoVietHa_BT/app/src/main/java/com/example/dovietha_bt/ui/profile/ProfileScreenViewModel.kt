@@ -3,8 +3,8 @@ package com.example.dovietha_bt.ui.profile
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.db.repository.impl.UserRepositoryImpl
-import com.example.dovietha_bt.model.UserInformation
+import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
+import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.flow.MutableSharedFlow

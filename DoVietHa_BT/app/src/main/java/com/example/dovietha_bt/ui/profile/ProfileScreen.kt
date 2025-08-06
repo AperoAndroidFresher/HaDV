@@ -62,7 +62,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.model.UserInformation
+import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.ui.profile.components.InputText
 import kotlinx.coroutines.delay
 

@@ -1,10 +1,10 @@
-package com.example.dovietha_bt.db.dao
+package com.example.dovietha_bt.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.dovietha_bt.db.entity.Music
+import com.example.dovietha_bt.database.entity.Music
 import kotlinx.coroutines.flow.Flow
 
 @Dao

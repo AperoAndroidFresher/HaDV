@@ -1,7 +1,4 @@
-package com.example.dovietha_bt.db.repository
-
-import com.example.dovietha_bt.db.entity.MusicPlaylistCrossRef
-import kotlinx.coroutines.flow.Flow
+package com.example.dovietha_bt.database.repository
 
 interface MusicPlaylistRepository {
     suspend fun addSongToPlaylist(musicId:Long, playlistId:Long)
