@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-
+    implementation("com.airbnb.android:lottie-compose:6.6.7")
     implementation(libs.androidx.room.runtime)
     kapt("androidx.room:room-compiler:2.7.2")
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
@@ -53,6 +53,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.7.2")
     //noinspection UseTomlInstead
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation(libs.okhttp)
     implementation(libs.converter.gson)
 // Test helpers
     testImplementation("androidx.room:room-testing:2.7.2")

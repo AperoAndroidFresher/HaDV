@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 
 @Composable
-fun DismissKeyboardOnTap(content: @Composable () -> Unit, modifier: Modifier = Modifier) {
+fun DismissKeyboardOnTap(content: @Composable () -> Unit) {
     val focusManager = LocalFocusManager.current
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .clickable(
                 indication = null, // không hiệu ứng ripple

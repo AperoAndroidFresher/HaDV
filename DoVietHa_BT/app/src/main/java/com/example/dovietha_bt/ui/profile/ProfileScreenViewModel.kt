@@ -3,8 +3,8 @@ package com.example.dovietha_bt.ui.profile
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.db.repository.impl.UserRepositoryImpl
-import com.example.dovietha_bt.model.UserInformation
+import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ProfileScreenViewModel(application: Application) : AndroidViewModel(application) {
-    private val _state = MutableStateFlow<InfoState>(InfoState())
+    private val _state = MutableStateFlow(InfoState())
     var state = _state.asStateFlow()
     private val _event = MutableSharedFlow<InfoEvent>()
     var event = _event.asSharedFlow()
@@ -28,10 +28,10 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
 
             is InfoIntent.LoadInfo -> {
                 _state.value = _state.value.copy(
-                    name = UserInformation.name ?:"",
-                    phone = UserInformation.phone?:"",
-                    uni = UserInformation.university?:"",
-                    desc = UserInformation.desc?:"",
+                    name = UserInformation.name ?: "",
+                    phone = UserInformation.phone ?: "",
+                    uni = UserInformation.university ?: "",
+                    desc = UserInformation.desc ?: "",
                     avatarUri = UserInformation.image
                 )
             }
@@ -77,6 +77,7 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
             }
         }
     }
+
     private suspend fun submitUserInfo() {
         val nameErr =
             _state.value.name.isBlank() || Regex("[^a-zA-Z ]").containsMatchIn(_state.value.name)

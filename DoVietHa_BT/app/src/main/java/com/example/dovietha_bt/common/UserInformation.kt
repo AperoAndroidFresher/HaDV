@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.model
+package com.example.dovietha_bt.common
 
 import android.net.Uri
 

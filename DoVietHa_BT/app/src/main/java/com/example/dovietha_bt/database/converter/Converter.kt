@@ -1,12 +1,13 @@
-package com.example.dovietha_bt.db.converter
+package com.example.dovietha_bt.database.converter
 
-import com.example.dovietha_bt.db.entity.Music
-import com.example.dovietha_bt.db.entity.Playlist
+import android.annotation.SuppressLint
 import com.example.dovietha_bt.common.getEmbeddedImageBytes
+import com.example.dovietha_bt.database.entity.Music
+import com.example.dovietha_bt.database.entity.Playlist
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
 
-fun Playlist.toPlaylistVM(listMusic: List<MusicVM>): PlaylistVM{
+fun Playlist.toPlaylistVM(listMusic: List<MusicVM>): PlaylistVM {
     return PlaylistVM(
         id = this.playlistId,
         name = this.name,
@@ -14,17 +15,19 @@ fun Playlist.toPlaylistVM(listMusic: List<MusicVM>): PlaylistVM{
         musics = listMusic
     )
 }
-fun Music.toMusicVM(): MusicVM{
+
+fun Music.toMusicVM(): MusicVM {
     return MusicVM(
         id = this.musicId,
         name = this.name,
         author = this.author,
         duration = this.duration,
-        image = getEmbeddedImageBytes(this.image ?:""),
-        pathImg = this.image?:""
+        image = getEmbeddedImageBytes(this.image ?: ""),
+        pathImg = this.image ?: ""
     )
 }
-fun MusicVM.toMusic(): Music{
+
+fun MusicVM.toMusic(): Music {
     return Music(
         musicId = this.id,
         name = this.name,
@@ -33,6 +36,8 @@ fun MusicVM.toMusic(): Music{
         image = this.pathImg
     )
 }
+
+@SuppressLint("DefaultLocale")
 fun formatDuration(durationInMillis: Long): String {
     val totalSeconds = durationInMillis / 1000
     val minutes = totalSeconds / 60

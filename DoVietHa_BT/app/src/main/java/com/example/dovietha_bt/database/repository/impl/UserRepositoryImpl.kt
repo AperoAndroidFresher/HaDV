@@ -1,11 +1,11 @@
-package com.example.dovietha_bt.db.repository.impl
+package com.example.dovietha_bt.database.repository.impl
 
 import android.content.Context
-import com.example.dovietha_bt.db.AppDB
-import com.example.dovietha_bt.db.entity.User
-import com.example.dovietha_bt.db.repository.UserRepository
+import com.example.dovietha_bt.database.AppDB
+import com.example.dovietha_bt.database.entity.User
+import com.example.dovietha_bt.database.repository.UserRepository
 
-class UserRepositoryImpl(context: Context): UserRepository {
+class UserRepositoryImpl(context: Context) : UserRepository {
     val userDao = AppDB.getInstance(context).UserDao()
     override suspend fun addUser(user: User) {
         userDao.addUser(user)
@@ -21,7 +21,7 @@ class UserRepositoryImpl(context: Context): UserRepository {
 
     override suspend fun updateUser(user: User?) {
         val existUser = userDao.getUsersByUsername(user?.userName ?: "")
-        if(existUser==null){
+        if (existUser == null) {
             throw Exception("User not register")
         }
         val updateUser = existUser.copy(

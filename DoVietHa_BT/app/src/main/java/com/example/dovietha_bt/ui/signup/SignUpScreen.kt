@@ -41,8 +41,8 @@ fun SignUpScreen(
     val context = LocalContext.current
     val state = viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
-        viewModel.event.collect {event ->
-            when(event){
+        viewModel.event.collect { event ->
+            when (event) {
                 SignUpEvent.ShowNotify -> {
                     Toast.makeText(context, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show()
                 }
@@ -118,7 +118,7 @@ fun SignUpScreen(
                 onClick = {
                     viewModel.processIntent(SignUpIntent.IsValid)
                     if (state.value.isValid) {
-                        Log.d("LOG","$state.value.isValid")
+                        Log.d("LOG", "$state.value.isValid")
                         onClick(state.value.username, state.value.password)
                     }
                 },

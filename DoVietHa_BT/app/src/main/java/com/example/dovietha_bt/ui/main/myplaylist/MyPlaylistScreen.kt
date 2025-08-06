@@ -34,16 +34,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
 import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
-import com.example.dovietha_bt.model.UserInformation
 
 @Composable
 fun MyPlaylistScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
     onClick: (PlaylistVM) -> Unit = {},
-    ) {
+) {
     val state = viewModel.state.collectAsState()
     var playlistName by remember { mutableStateOf("") }
     var addClicked by remember { mutableStateOf(false) }
@@ -107,7 +107,7 @@ fun MyPlaylistScreen(
                 onDismissRequest = { addClicked = false },
                 addPlaylist = {
                     viewModel.processIntent(
-                        MyPlaylistIntent.AddPlaylist(playlistName, UserInformation.name?: "")
+                        MyPlaylistIntent.AddPlaylist(playlistName, UserInformation.name ?: "")
                     )
                     viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     Log.d("TAG", "AddDialog: ${state.value.playlists}")

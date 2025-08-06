@@ -24,12 +24,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.dovietha_bt.common.permission
 import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
+import com.example.dovietha_bt.ui.main.library.LibraryScreen
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistScreen
 import com.example.dovietha_bt.ui.main.myplaylist.view.MyMusicScreen
-import com.example.dovietha_bt.common.permission
-import com.example.dovietha_bt.ui.main.library.LibraryScreen
 
 @Preview(showBackground = true)
 @Composable

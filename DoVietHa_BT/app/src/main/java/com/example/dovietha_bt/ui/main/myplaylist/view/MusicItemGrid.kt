@@ -31,26 +31,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
 
 @Preview(showBackground = true)
 @Composable
 fun MusicItemGrid(
-    image: ByteArray? =null,
+    image: ByteArray? = null,
     name: String = "Name",
     author: String = "Author",
     duration: String = "00:00",
-    option: List<Option> =emptyList(),
+    option: List<Option> = emptyList(),
     onItemClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel()
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val state = viewModel.state.collectAsState()
+        viewModel.state.collectAsState()
         var menuExpanded by remember { mutableStateOf(false) }
-        Box() {
+        Box {
             Image(
                 painter = musicImage(image), "",
                 modifier = Modifier

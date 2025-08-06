@@ -6,7 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import com.example.dovietha_bt.db.converter.formatDuration
+import com.example.dovietha_bt.database.converter.formatDuration
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 
 fun getAllMp3Files(context: Context): List<MusicVM> {
@@ -35,7 +35,14 @@ fun getAllMp3Files(context: Context): List<MusicVM> {
             val duration = it.getString(durationColumn)
             val data = it.getString(dataColumn)
             val image = getEmbeddedImageBytes(data)
-            val music = MusicVM(id = id, image = image, name = title, author = artist, duration = formatDuration(duration.toLong()), pathImg = data)
+            val music = MusicVM(
+                id = id,
+                image = image,
+                name = title,
+                author = artist,
+                duration = formatDuration(duration.toLong()),
+                pathImg = data
+            )
             Log.d("check", "ID: $id, title: $title, artist: $artist, data: $data, image:$image")
             listMusic.add(music)
         }

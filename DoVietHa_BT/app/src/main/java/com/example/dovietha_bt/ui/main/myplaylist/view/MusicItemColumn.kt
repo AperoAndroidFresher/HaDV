@@ -32,8 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
 
 @Composable
 fun MusicItemColumn(
@@ -45,7 +45,7 @@ fun MusicItemColumn(
     onOptionClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel()
 ) {
-    val state = viewModel.state.collectAsState()
+    viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
     Row(
         modifier = Modifier.Companion
@@ -111,7 +111,7 @@ fun MusicItemColumn(
 }
 
 @Composable
-fun musicImage( image: ByteArray?) : AsyncImagePainter{
+fun musicImage(image: ByteArray?): AsyncImagePainter {
     return rememberAsyncImagePainter(
         model = image ?: R.drawable.avatar,
         placeholder = painterResource(R.drawable.avatar),

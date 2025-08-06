@@ -7,13 +7,17 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.ui.main.myplaylist.model.Option
 
 @Composable
-fun GridList(list: List<MusicVM> = listOf(), viewModel: MyPlaylistViewModel = viewModel(), option: List<Option> = emptyList()) {
+fun GridList(
+    list: List<MusicVM> = listOf(),
+    viewModel: MyPlaylistViewModel = viewModel(),
+    option: List<Option> = emptyList()
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -26,7 +30,7 @@ fun GridList(list: List<MusicVM> = listOf(), viewModel: MyPlaylistViewModel = vi
                 item.author,
                 item.duration,
                 onItemClick = {
-                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item.id,0))
+                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item.id, 0))
                 },
                 option = option
             )
