@@ -107,7 +107,6 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -116,6 +115,7 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.padding(7.dp))
+
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -196,9 +196,8 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
 
                 Row(Modifier.fillMaxWidth()) {
                     InputText(
-                        "NAME",
-                        "Enter your name...",
-                        modifier = Modifier.weight(1f),
+                        title = "NAME",
+                        desc = "Enter your name...",
                         value = state.value.name,
                         onValueChange = {
                             viewModel.processIntent(InfoIntent.UpdateName(it))
@@ -207,15 +206,15 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                             capitalization = KeyboardCapitalization.Words
                         ),
                         editable = state.value.isEditing,
-                        isError = state.value.nameError
+                        isError = state.value.nameError,
+                        modifier = Modifier.weight(1f)
                     )
 
                     Spacer(Modifier.padding(8.dp))
 
                     InputText(
-                        "PHONE NUMBER",
-                        "Your phone number...",
-                        modifier = Modifier.weight(1f),
+                        title = "PHONE NUMBER",
+                        desc = "Your phone number...",
                         value = state.value.phone,
                         onValueChange = {
                             viewModel.processIntent(InfoIntent.UpdatePhone(it))
@@ -224,13 +223,14 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                             keyboardType = KeyboardType.Phone
                         ),
                         editable = state.value.isEditing,
-                        isError = state.value.phoneError
+                        isError = state.value.phoneError,
+                        modifier = Modifier.weight(1f)
                     )
                 }
 
                 InputText(
-                    "UNIVERSITY NAME",
-                    "Your university name...",
+                    title = "UNIVERSITY NAME",
+                    desc = "Your university name...",
                     value = state.value.uni,
                     onValueChange = {
                         viewModel.processIntent(InfoIntent.UpdateUni(it))
@@ -240,8 +240,8 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                 )
 
                 InputText(
-                    "DESCRIBE YOURSELF",
-                    "Enter a description about yourself...",
+                    title = "DESCRIBE YOURSELF",
+                    desc = "Enter a description about yourself...",
                     isSingleLine = false,
                     textFieldModifier = Modifier.height(200.dp),
                     value = state.value.desc,
@@ -315,7 +315,6 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                             }
                         }
                     }
-
                 }
             }
         }

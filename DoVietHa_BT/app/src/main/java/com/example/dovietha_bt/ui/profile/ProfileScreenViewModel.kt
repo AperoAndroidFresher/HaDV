@@ -38,42 +38,7 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
 
             is InfoIntent.SubmitInfo -> {
                 viewModelScope.launch {
-                    val nameErr =
-                        _state.value.name.isBlank() || Regex("[^a-zA-Z ]").containsMatchIn(_state.value.name)
-                    val phoneErr =
-                        _state.value.phone.isBlank() || Regex("[^0-9]").containsMatchIn(_state.value.phone)
-                    val universityErr =
-                        _state.value.uni.isBlank() || Regex("[^a-zA-Z ]").containsMatchIn(_state.value.uni)
-
-                    _state.value = _state.value.copy(
-                        nameError = nameErr,
-                        phoneError = phoneErr,
-                        uniError = universityErr
-                    )
-
-                    if (!nameErr && !phoneErr && !universityErr) {
-                        val recentUser =userRepository.getUserByUsername(UserInformation.username)
-
-                        UserInformation.name = _state.value.name
-                        UserInformation.phone = _state.value.phone
-                        UserInformation.university = _state.value.uni
-                        UserInformation.desc = _state.value.desc
-                        UserInformation.image = _state.value.avatarUri
-
-                        val updateUser = recentUser?.copy(
-                            profileName = UserInformation.name,
-                            phoneNumber = UserInformation.phone,
-                            university = UserInformation.university,
-                            desc = UserInformation.desc,
-                            avatarUrl = UserInformation.image.toString())
-
-                        userRepository.updateUser(updateUser)
-
-                        _state.value = _state.value.copy(isEditing = false)
-
-                        _event.emit(InfoEvent.ShowDialog)
-
-                    }
+                    submitUserInfo()
                 }
             }
 
@@ -112,4 +77,45 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
             }
         }
     }
+    private suspend fun submitUserInfo() {
+        val nameErr =
+            _state.value.name.isBlank() || Regex("[^a-zA-Z ]").containsMatchIn(_state.value.name)
+        val phoneErr =
+            _state.value.phone.isBlank() || Regex("[^0-9]").containsMatchIn(_state.value.phone)
+        val universityErr =
+            _state.value.uni.isBlank() || Regex("[^a-zA-Z ]").containsMatchIn(_state.value.uni)
+
+        _state.value = _state.value.copy(
+            nameError = nameErr,
+            phoneError = phoneErr,
+            uniError = universityErr
+        )
+
+        if (!nameErr && !phoneErr && !universityErr) {
+            val recentUser = userRepository.getUserByUsername(UserInformation.username)
+
+            UserInformation.name = _state.value.name
+            UserInformation.phone = _state.value.phone
+            UserInformation.university = _state.value.uni
+            UserInformation.desc = _state.value.desc
+            UserInformation.image = _state.value.avatarUri
+
+            val updateUser = recentUser?.copy(
+                profileName = UserInformation.name,
+                phoneNumber = UserInformation.phone,
+                university = UserInformation.university,
+                desc = UserInformation.desc,
+                avatarUrl = UserInformation.image.toString()
+            )
+
+            if (updateUser != null) {
+                userRepository.updateUser(updateUser)
+            }
+
+            _state.value = _state.value.copy(isEditing = false)
+
+            _event.emit(InfoEvent.ShowDialog)
+        }
+    }
+
 }

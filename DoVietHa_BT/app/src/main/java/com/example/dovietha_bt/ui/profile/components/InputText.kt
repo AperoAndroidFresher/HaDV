@@ -18,20 +18,26 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun InputText(
-    title: String = "Title",
-    desc: String = "Desc...",
     modifier: Modifier = Modifier,
     textFieldModifier: Modifier = Modifier,
+    title: String = "Title",
+    desc: String = "Desc...",
     value: String = "",
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit = {},
     isSingleLine: Boolean = true,
     editable: Boolean = false,
     isError: Boolean = false,
-    ) {
+) {
     Column(modifier.fillMaxWidth()) {
-        Text(title, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary
+        )
+
         Spacer(Modifier.padding(8.dp))
+
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
@@ -43,8 +49,6 @@ fun InputText(
                     fontSize = 14.sp
                 )
             },
-            modifier = textFieldModifier
-                .fillMaxWidth(),
             shape = RoundedCornerShape(15.dp),
             singleLine = isSingleLine,
             keyboardOptions = keyboardOptions,
@@ -53,10 +57,20 @@ fun InputText(
                 focusedContainerColor = MaterialTheme.colorScheme.onSecondary,
                 unfocusedContainerColor = MaterialTheme.colorScheme.onSecondary,
                 disabledContainerColor = MaterialTheme.colorScheme.onSecondary
-            )
+            ),
+            modifier = textFieldModifier
+                .fillMaxWidth()
         )
+
         Spacer(Modifier.padding(4.dp))
-        if (isError) Text("Invalid format", color = Color.Red)
+
+        if (isError) {
+            Text(
+                text = "Invalid format",
+                color = Color.Red
+            )
+        }
+
         Spacer(Modifier.padding(7.dp))
     }
 }
