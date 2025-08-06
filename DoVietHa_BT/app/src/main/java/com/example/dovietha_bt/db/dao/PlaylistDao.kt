@@ -3,6 +3,7 @@ package com.example.dovietha_bt.db.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.dovietha_bt.db.entity.Playlist
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 interface PlaylistDao {
     @Query("SELECT * FROM playlist")
     fun getAllPlaylist(): Flow<List<Playlist>>
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPlaylist(playlist: Playlist)
     @Delete
     suspend fun removePlaylist(playlist: Playlist)

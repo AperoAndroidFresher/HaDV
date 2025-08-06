@@ -43,7 +43,7 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playli
     }?: return
 
     LaunchedEffect(Unit) {
-
+        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
     }
     Column(
         Modifier
@@ -93,6 +93,7 @@ fun MyMusicScreen(viewModel: MyPlaylistViewModel = viewModel(), playlist: Playli
                         viewModel.processIntent(
                             MyPlaylistIntent.RemoveSong(music.id,currentList.id)
                         )
+                        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     }
                 }
             )
