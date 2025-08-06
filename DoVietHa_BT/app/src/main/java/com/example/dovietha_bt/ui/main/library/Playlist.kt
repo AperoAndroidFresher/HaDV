@@ -26,10 +26,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistItemColumn
@@ -87,21 +93,38 @@ fun LibraryScreen(
                     Spacer(Modifier.padding(8.dp))
 
                     Button(
-                        onClick = {}
+                        onClick = {
+                            viewModel.processIntent(LibraryIntent.ShowRemote)
+                        }
                     ) {
                         Text("Remote")
                     }
                 }
-                ColumnList(
-                    list = state.value.musics,
-                    option = libOptions,
-                    onOptionClick = { option, music ->
-                        if (option.desc == "Add to playlist") {
-                            showDialog = true
-                            musicAdded = music
-                        }
+                if(state.value.isLoading){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0x88000000)),
+                        contentAlignment = Alignment.Center
+                    ){
+                        LottieAnimationLoading()
                     }
-                )
+                }
+                else if(state.value.isDisconnect){
+                    DisconnectRemote { viewModel.processIntent(LibraryIntent.ShowRemote) }
+                }
+                else{
+                    ColumnList(
+                        list = state.value.musics,
+                        option = libOptions,
+                        onOptionClick = { option, music ->
+                            if (option.desc == "Add to playlist") {
+                                showDialog = true
+                                musicAdded = music
+                            }
+                        }
+                    )
+                }
             }
         }
         if (showDialog) {
@@ -168,4 +191,15 @@ fun PlaylistCase(list: List<PlaylistVM> = emptyList(), onClick: (PlaylistVM) -> 
             )
         }
     }
+}
+@Composable
+fun LottieAnimationLoading() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.Asset("lottie/lottie_remote_item_loading.json"))
+    val progress by animateLottieCompositionAsState(
+        composition, iterations = LottieConstants.IterateForever
+    )
+
+    LottieAnimation(
+        composition = composition, progress = { progress }, modifier = Modifier.size(100.dp)
+    )
 }

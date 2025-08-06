@@ -13,10 +13,9 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             DoVietHa_BTTheme {
-                DismissKeyboardOnTap(content = { Navigator() })
+                DismissKeyboardOnTap{ Navigator() }
             }
         }
     }
