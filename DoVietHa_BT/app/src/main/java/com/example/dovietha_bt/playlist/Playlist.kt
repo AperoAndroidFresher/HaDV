@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.playlist
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +53,7 @@ fun LibraryScreen(
     var musicAdded by remember { mutableStateOf(MusicVM()) }
     var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        viewModel.processIntent(LibraryIntent.LoadPlaylists)
         viewModel.processIntent(LibraryIntent.LoadSong)
         event.collect { event ->
             when (event) {
@@ -111,6 +113,7 @@ fun LibraryScreen(
                 onAddClicked = onAddClicked,
                 onPlaylistClick = {
                     viewModel.processIntent(LibraryIntent.AddToPlaylist(musicAdded,it.id))
+                    viewModel.processIntent(LibraryIntent.LoadPlaylists)
                     showDialog =false
                 }
             )

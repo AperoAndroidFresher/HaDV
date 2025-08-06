@@ -12,6 +12,7 @@ data class LibraryState(
 
 sealed interface LibraryIntent{
     object LoadSong: LibraryIntent
+    object LoadPlaylists: LibraryIntent
     data class AddToPlaylist(val music: MusicVM, val playlistId: Long): LibraryIntent
     object ShowLocal: LibraryIntent
     object ShowRemote: LibraryIntent

@@ -1,5 +1,7 @@
 package com.example.dovietha_bt.myplaylist.model
 
+import com.example.dovietha_bt.playlist.LibraryIntent
+
 data class MusicVM(
     val id:Long = 0,
     val image: ByteArray? = null,
@@ -27,6 +29,7 @@ data class MyPlaylistState(
 )
 
 sealed interface MyPlaylistIntent{
+    object LoadPlaylists: MyPlaylistIntent
     data class AddPlaylist(val playlistName: String, val username: String): MyPlaylistIntent
     data class RemovePlaylist(val playlistId: Long) : MyPlaylistIntent
     data class RenamePlaylist(val playlistId: Long, val newPlaylistName: String): MyPlaylistIntent

@@ -44,11 +44,13 @@ import com.example.dovietha_bt.profile.UserInformation
 fun MyPlaylistScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
     onClick: (PlaylistVM) -> Unit = {},
-
     ) {
     val state = viewModel.state.collectAsState()
     var playlistName by remember { mutableStateOf("") }
     var addClicked by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
+    }
     Column(
         Modifier
             .fillMaxSize()
@@ -93,6 +95,7 @@ fun MyPlaylistScreen(
                 onOptionClick = { option, playlist ->
                     if (option.desc == "Remove Playlist") {
                         viewModel.processIntent(MyPlaylistIntent.RemovePlaylist(playlist.id))
+                        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     }
                 },
                 option = listOf(Option(image = R.drawable.ic_remove, desc = "Remove Playlist")),
@@ -107,6 +110,7 @@ fun MyPlaylistScreen(
                     viewModel.processIntent(
                         MyPlaylistIntent.AddPlaylist(playlistName, UserInformation.name?: "")
                     )
+                    viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     Log.d("TAG", "AddDialog: ${state.value.playlists}")
                 },
                 onValueChange = { playlistName = it }
