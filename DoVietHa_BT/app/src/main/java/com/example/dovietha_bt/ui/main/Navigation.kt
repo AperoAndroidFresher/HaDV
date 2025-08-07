@@ -41,6 +41,7 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
     LaunchedEffect(Unit) {
         permission(context)
         viewModel.processIntent(MainScreenIntent.LoadUser)
+        Log.d("ProfileScreenViewModel", "submitUserInfo: ${UserInformation.username}")
     }
     Scaffold(
         bottomBar = {

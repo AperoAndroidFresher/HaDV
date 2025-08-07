@@ -37,12 +37,11 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
 
             LoginIntent.IsValid -> {
                 viewModelScope.launch {
-                    val savedUser = UserPreferences(application)
                     val check = userRepository.getUserByUsername(_state.value.username)
                     if (check == null || check.password != _state.value.password) {
                         _event.emit(LoginEvent.ShowNotify)
                     } else {
-                        savedUser.saveUser(check.userName)
+                        UserPreferences.saveUser(check.userName)
                         UserInformation.updateData(check)
                         _state.value = _state.value.copy(isValid = true)
                     }
