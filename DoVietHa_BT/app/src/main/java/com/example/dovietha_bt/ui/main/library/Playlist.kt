@@ -59,7 +59,7 @@ fun LibraryScreen(
     var showDialog by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.processIntent(LibraryIntent.LoadPlaylists)
-        viewModel.processIntent(LibraryIntent.LoadSong)
+        viewModel.processIntent(LibraryIntent.LoadLocalSong)
         event.collect { event ->
             when (event) {
                 LibraryEvent.ShowDialog -> showDialog = true
@@ -84,7 +84,7 @@ fun LibraryScreen(
                 Row {
                     Button(
                         onClick = {
-                            viewModel.processIntent(LibraryIntent.LoadSong)
+                            viewModel.processIntent(LibraryIntent.LoadLocalSong)
                         }
                     ) {
                         Text("Local")
@@ -94,7 +94,7 @@ fun LibraryScreen(
 
                     Button(
                         onClick = {
-                            viewModel.processIntent(LibraryIntent.ShowRemote)
+                            viewModel.processIntent(LibraryIntent.LoadRemoteSong)
                         }
                     ) {
                         Text("Remote")
@@ -110,8 +110,8 @@ fun LibraryScreen(
                         LottieAnimationLoading()
                     }
                 }
-                else if(state.value.isDisconnect){
-                    DisconnectRemote { viewModel.processIntent(LibraryIntent.ShowRemote) }
+                else if(state.value.canLoadMusic){
+                    DisconnectRemote { viewModel.processIntent(LibraryIntent.LoadRemoteSong) }
                 }
                 else{
                     ColumnList(
@@ -203,3 +203,4 @@ fun LottieAnimationLoading() {
         composition = composition, progress = { progress }, modifier = Modifier.size(100.dp)
     )
 }
+

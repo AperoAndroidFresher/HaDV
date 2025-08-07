@@ -3,9 +3,11 @@ package com.example.dovietha_bt.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.dovietha_bt.UserPreferences
 import com.example.dovietha_bt.ui.login.LoginScreen
 import com.example.dovietha_bt.ui.main.UnitedScreen
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
@@ -27,6 +29,7 @@ sealed interface Screen {
 
 @Composable
 fun Navigator() {
+    val context = LocalContext.current
     val backStack = remember { mutableStateListOf<Screen>(Screen.SplashScreen) }
     NavDisplay(
         backStack = backStack,
@@ -34,8 +37,14 @@ fun Navigator() {
         entryProvider = entryProvider {
             entry<Screen.SplashScreen> {
                 SplashScreen {
-                    backStack.clear()
-                    backStack.add(Screen.Login())
+                    if (UserPreferences(context).getUsername().isNullOrBlank()) {
+                        backStack.clear()
+                        backStack.add(Screen.Login())
+                    }
+                    else{
+                        backStack.clear()
+                        backStack.add(Screen.UnitedScreen)
+                    }
                 }
             }
             entry<Screen.Login> { (username, password) ->
@@ -46,23 +55,28 @@ fun Navigator() {
                     onLogin = {
                         backStack.clear()
                         backStack.add(Screen.UnitedScreen)
-                    })
+                    }
+                )
             }
             entry<Screen.SignUp> {
-                SignUpScreen({ username, password ->
-                    backStack.add(Screen.Login(username, password))
-                })
+                SignUpScreen(
+                    { username, password ->
+                        backStack.add(Screen.Login(username, password))
+                    }
+                )
             }
             entry<Screen.UnitedScreen> {
-                UnitedScreen {
-                    backStack.add(
-                        Screen.Profile
-                    )
-                }
+                UnitedScreen(
+                    {
+                        backStack.add(
+                            Screen.Profile,
+                        )
+                    },
+                )
             }
             entry<Screen.Profile> {
                 ProfileScreen()
             }
-        }
+        },
     )
 }

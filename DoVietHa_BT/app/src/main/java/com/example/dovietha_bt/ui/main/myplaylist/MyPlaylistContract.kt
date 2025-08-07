@@ -6,7 +6,8 @@ data class MusicVM(
     val name: String = "",
     val author: String = "",
     val duration: String = "",
-    val pathImg: String = ""
+    val path: String = "",
+    val localFile:String = ""
 )
 
 data class PlaylistVM(
