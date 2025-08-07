@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+        UserPreferences.init(this)
         setContent {
             DoVietHa_BTTheme {
                 DismissKeyboardOnTap{ Navigator() }

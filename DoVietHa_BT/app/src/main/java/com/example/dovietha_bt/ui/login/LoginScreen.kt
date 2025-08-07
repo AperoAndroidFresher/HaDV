@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.UserPreferences
 import com.example.dovietha_bt.ui.components.InfoInput
 import com.example.dovietha_bt.ui.components.PasswordInput
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
@@ -112,6 +114,7 @@ fun LoginScreen(
                     onClick = {
                         viewModel.processIntent(LoginIntent.IsValid)
                         if (state.value.isValid) onLogin()
+                        Log.d("TAG","${UserPreferences.getUsername()}")
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

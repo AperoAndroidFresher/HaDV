@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -36,16 +37,18 @@ fun Navigator() {
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
             entry<Screen.SplashScreen> {
-                SplashScreen {
-                    if (UserPreferences(context).getUsername().isNullOrBlank()) {
-                        backStack.clear()
-                        backStack.add(Screen.Login())
-                    }
-                    else{
-                        backStack.clear()
-                        backStack.add(Screen.UnitedScreen)
-                    }
-                }
+                SplashScreen(
+                    changeScreen = {
+                        Log.d("TAG","${UserPreferences.getUsername()}")
+                        if (UserPreferences.getUsername().isNullOrBlank()) {
+                            backStack.clear()
+                            backStack.add(Screen.Login())
+                        } else {
+                            backStack.clear()
+                            backStack.add(Screen.UnitedScreen)
+                        }
+                    },
+                )
             }
             entry<Screen.Login> { (username, password) ->
                 LoginScreen(
@@ -55,14 +58,14 @@ fun Navigator() {
                     onLogin = {
                         backStack.clear()
                         backStack.add(Screen.UnitedScreen)
-                    }
+                    },
                 )
             }
             entry<Screen.SignUp> {
                 SignUpScreen(
                     { username, password ->
                         backStack.add(Screen.Login(username, password))
-                    }
+                    },
                 )
             }
             entry<Screen.UnitedScreen> {

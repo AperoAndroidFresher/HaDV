@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.database.entity.User
 import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import com.example.dovietha_bt.ui.theme.darkTheme
 import com.example.dovietha_bt.ui.theme.lightTheme
@@ -95,22 +96,17 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
         if (!nameErr && !phoneErr && !universityErr) {
             val recentUser = userRepository.getUserByUsername(UserInformation.username)
 
-            UserInformation.name = _state.value.name
-            UserInformation.phone = _state.value.phone
-            UserInformation.university = _state.value.uni
-            UserInformation.desc = _state.value.desc
-            UserInformation.image = _state.value.avatarUri
-
             val updateUser = recentUser?.copy(
-                profileName = UserInformation.name,
-                phoneNumber = UserInformation.phone,
-                university = UserInformation.university,
-                desc = UserInformation.desc,
-                avatarUrl = UserInformation.image.toString()
+                profileName = _state.value.name,
+                phoneNumber = _state.value.phone,
+                university = _state.value.uni,
+                desc = _state.value.desc,
+                avatarUrl = _state.value.avatarUri.toString()
             )
-
+            
             if (updateUser != null) {
                 userRepository.updateUser(updateUser)
+                UserInformation.updateData(updateUser)
             }
 
             _state.value = _state.value.copy(isEditing = false)
