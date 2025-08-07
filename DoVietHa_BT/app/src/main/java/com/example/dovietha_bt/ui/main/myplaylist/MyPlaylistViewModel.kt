@@ -8,9 +8,6 @@ import com.example.dovietha_bt.database.converter.toPlaylistVM
 import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

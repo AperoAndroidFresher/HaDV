@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,17 +33,17 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
-import com.example.dovietha_bt.ui.main.myplaylist.view.SimpleDropdownMenuOnly
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 
 @Composable
-fun PlaylistItemColumn(
+fun MusicItemColumn(
     image: ByteArray? = null,
     name: String = "Name",
-    sumSongs: Int = 0,
+    author: String = "author",
+    duration: String = "",
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel(),
-    onClick: () -> Unit = {}
+    viewModel: MyPlaylistViewModel = viewModel()
 ) {
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -51,18 +51,17 @@ fun PlaylistItemColumn(
         modifier = Modifier.Companion
             .fillMaxWidth()
             .height(72.dp)
-            .clickable(onClick = onClick)
 
     ) {
         Image(
             musicImage(image),
             "",
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .size(72.dp)
                 .clip(
                     RoundedCornerShape(5.dp)
                 ),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Companion.Crop
         )
         Column(
             Modifier.Companion
@@ -78,7 +77,7 @@ fun PlaylistItemColumn(
             )
             Spacer(Modifier.Companion.padding(1.dp))
             Text(
-                text = "$sumSongs songs",
+                text = author,
                 fontWeight = FontWeight.Companion.Bold,
                 fontSize = 16.sp,
                 color = Color.Companion.DarkGray,
@@ -87,7 +86,10 @@ fun PlaylistItemColumn(
             )
         }
         Row(modifier = Modifier.Companion.align(Alignment.Companion.CenterVertically)) {
-
+            Text(
+                duration,
+                fontSize = 20.sp,
+            )
             Spacer(Modifier.Companion.padding(8.dp))
             Icon(
                 painterResource(R.drawable.ic_option),

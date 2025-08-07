@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.database.entity.Music
 import com.example.dovietha_bt.database.entity.Playlist
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
+import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 
 fun Playlist.toPlaylistVM(listMusic: List<MusicVM>): PlaylistVM {
     return PlaylistVM(

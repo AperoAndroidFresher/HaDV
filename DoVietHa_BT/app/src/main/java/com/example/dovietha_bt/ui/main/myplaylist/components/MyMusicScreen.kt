@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.view
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -26,8 +26,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
+import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),

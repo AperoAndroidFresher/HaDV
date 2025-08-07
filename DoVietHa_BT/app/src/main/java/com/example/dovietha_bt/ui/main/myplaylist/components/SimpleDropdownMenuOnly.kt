@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.view
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem

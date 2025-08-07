@@ -7,7 +7,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import com.example.dovietha_bt.database.converter.formatDuration
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
+import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 
 fun getAllMp3Files(context: Context): List<MusicVM> {
     val listMusic = mutableListOf<MusicVM>()
@@ -36,7 +36,6 @@ fun getAllMp3Files(context: Context): List<MusicVM> {
             val data = it.getString(dataColumn)
             val image = getEmbeddedImageBytes(data)
             val music = MusicVM(
-                id = id,
                 image = image,
                 name = title,
                 author = artist,

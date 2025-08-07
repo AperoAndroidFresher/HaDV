@@ -1,7 +1,7 @@
 package com.example.dovietha_bt.ui.main.library
 
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
+import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 
 data class LibraryState(
     val musics: List<MusicVM> = emptyList(),

@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.view
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -29,21 +29,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 
 @Composable
-fun MusicItemColumn(
+fun PlaylistItemColumn(
     image: ByteArray? = null,
     name: String = "Name",
-    author: String = "author",
-    duration: String = "",
+    sumSongs: Int = 0,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel()
+    viewModel: MyPlaylistViewModel = viewModel(),
+    onClick: () -> Unit = {}
 ) {
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -51,17 +49,18 @@ fun MusicItemColumn(
         modifier = Modifier.Companion
             .fillMaxWidth()
             .height(72.dp)
+            .clickable(onClick = onClick)
 
     ) {
         Image(
             musicImage(image),
             "",
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .size(72.dp)
                 .clip(
                     RoundedCornerShape(5.dp)
                 ),
-            contentScale = ContentScale.Companion.Crop
+            contentScale = ContentScale.Crop
         )
         Column(
             Modifier.Companion
@@ -77,7 +76,7 @@ fun MusicItemColumn(
             )
             Spacer(Modifier.Companion.padding(1.dp))
             Text(
-                text = author,
+                text = "$sumSongs songs",
                 fontWeight = FontWeight.Companion.Bold,
                 fontSize = 16.sp,
                 color = Color.Companion.DarkGray,
@@ -86,10 +85,7 @@ fun MusicItemColumn(
             )
         }
         Row(modifier = Modifier.Companion.align(Alignment.Companion.CenterVertically)) {
-            Text(
-                duration,
-                fontSize = 20.sp,
-            )
+
             Spacer(Modifier.Companion.padding(8.dp))
             Icon(
                 painterResource(R.drawable.ic_option),
@@ -108,13 +104,4 @@ fun MusicItemColumn(
             )
         }
     }
-}
-
-@Composable
-fun musicImage(image: ByteArray?): AsyncImagePainter {
-    return rememberAsyncImagePainter(
-        model = image ?: R.drawable.avatar,
-        placeholder = painterResource(R.drawable.avatar),
-        error = painterResource(R.drawable.avatar)
-    )
 }
