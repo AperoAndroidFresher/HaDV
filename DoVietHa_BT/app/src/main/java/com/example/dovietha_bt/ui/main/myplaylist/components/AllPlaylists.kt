@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.view
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.dovietha_bt.common.Option
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-
+import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 
 @Composable
-fun ColumnList(
-    list: List<MusicVM> = listOf(),
+fun AllPlaylists(
+    list: List<PlaylistVM> = emptyList(),
     option: List<Option> = emptyList(),
-    onOptionClick: (Option, MusicVM) -> Unit
+    onOptionClick: (Option, PlaylistVM) -> Unit,
+    onClick: (PlaylistVM) -> Unit
 ) {
     LazyColumn(
         Modifier.Companion
@@ -23,13 +23,12 @@ fun ColumnList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(list) { item ->
-            MusicItemColumn(
-                image = item.image,
+            PlaylistItemColumn(
                 name = item.name,
-                author = item.author,
-                duration = item.duration,
+                sumSongs = item.musics.size,
                 onOptionClick = { onOptionClick(it, item) },
-                option = option
+                option = option,
+                onClick = { onClick(item) }
             )
         }
     }

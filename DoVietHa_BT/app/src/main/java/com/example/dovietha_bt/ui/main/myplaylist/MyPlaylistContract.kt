@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.model
+package com.example.dovietha_bt.ui.main.myplaylist
 
 data class MusicVM(
     val id: Long = 0,

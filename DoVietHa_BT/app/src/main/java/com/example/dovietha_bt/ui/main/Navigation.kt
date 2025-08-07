@@ -29,7 +29,7 @@ import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
 import com.example.dovietha_bt.ui.main.library.LibraryScreen
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistScreen
-import com.example.dovietha_bt.ui.main.myplaylist.view.MyMusicScreen
+import com.example.dovietha_bt.ui.main.myplaylist.components.MyMusicScreen
 
 @Preview(showBackground = true)
 @Composable

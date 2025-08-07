@@ -8,7 +8,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.ui.login.LoginScreen
 import com.example.dovietha_bt.ui.main.UnitedScreen
-import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 import com.example.dovietha_bt.ui.profile.ProfileScreen
 import com.example.dovietha_bt.ui.signup.SignUpScreen
 import com.example.dovietha_bt.ui.splashscreen.SplashScreen

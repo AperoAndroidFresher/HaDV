@@ -1,4 +1,4 @@
-package com.example.dovietha_bt.ui.main.myplaylist.view
+package com.example.dovietha_bt.ui.main.myplaylist.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -9,8 +9,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.model.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
+import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
 
 @Composable
 fun GridList(

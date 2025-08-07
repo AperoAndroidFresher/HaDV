@@ -36,8 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.common.UserInformation
-import com.example.dovietha_bt.ui.main.myplaylist.model.MyPlaylistIntent
-import com.example.dovietha_bt.ui.main.myplaylist.model.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.components.AllPlaylists
 
 @Composable
 fun MyPlaylistScreen(
@@ -70,7 +69,7 @@ fun MyPlaylistScreen(
             Icon(
                 painter = painterResource(R.drawable.ic_add),
                 contentDescription = "",
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd).clickable(onClick={addClicked = true})
             )
         }
         if (state.value.playlists.isEmpty()) {
