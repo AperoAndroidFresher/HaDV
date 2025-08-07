@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.common.permission
 import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
@@ -33,11 +35,12 @@ import com.example.dovietha_bt.ui.main.myplaylist.components.MyMusicScreen
 
 @Preview(showBackground = true)
 @Composable
-fun UnitedScreen(goProfile: () -> Unit = {}) {
+fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = viewModel()) {
     val context = LocalContext.current
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
     LaunchedEffect(Unit) {
         permission(context)
+        viewModel.processIntent(MainScreenIntent.LoadUser)
     }
     Scaffold(
         bottomBar = {

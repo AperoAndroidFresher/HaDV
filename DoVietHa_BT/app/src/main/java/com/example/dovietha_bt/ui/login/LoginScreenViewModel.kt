@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.UserPreferences
 import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +20,7 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
     var state = _state.asStateFlow()
     private val _event = MutableSharedFlow<LoginEvent>()
     var event = _event.asSharedFlow()
-
+    val userRepository = UserRepositoryImpl(application)
     fun processIntent(intent: LoginIntent) {
         when (intent) {
             is LoginIntent.EditPassword -> {
@@ -36,18 +37,13 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
 
             LoginIntent.IsValid -> {
                 viewModelScope.launch {
-                    val check =
-                        UserRepositoryImpl(application).getUserByUsername(_state.value.username)
+                    val savedUser = UserPreferences(application)
+                    val check = userRepository.getUserByUsername(_state.value.username)
                     if (check == null || check.password != _state.value.password) {
                         _event.emit(LoginEvent.ShowNotify)
                     } else {
-                        UserInformation.username = check.userName
-                        UserInformation.name = check.profileName
-                        UserInformation.phone = check.phoneNumber
-                        UserInformation.university = check.university
-                        UserInformation.desc = check.desc
-                        UserInformation.image =
-                            check.avatarUrl.takeIf { it?.isNotBlank() == true }?.toUri()
+                        savedUser.saveUser(check.userName)
+                        UserInformation.updateData(check)
                         _state.value = _state.value.copy(isValid = true)
                     }
                 }

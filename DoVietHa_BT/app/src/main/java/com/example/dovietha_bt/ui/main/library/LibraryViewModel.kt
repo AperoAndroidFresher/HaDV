@@ -1,36 +1,34 @@
 package com.example.dovietha_bt.ui.main.library
 
 import android.app.Application
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.api.music.ApiMusicClient
 import com.example.dovietha_bt.api.music.ApiMusic
+import com.example.dovietha_bt.api.music.ApiMusicClient
 import com.example.dovietha_bt.common.getAllMp3Files
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.common.toMusicVM
+import com.example.dovietha_bt.database.converter.toMusic
 import com.example.dovietha_bt.database.converter.toMusicVM
 import com.example.dovietha_bt.database.converter.toPlaylistVM
 import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
+import com.example.dovietha_bt.downloadMusicWithEnqueue
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class LibraryViewModel(application: Application) : AndroidViewModel(application) {
+    val appContext = application.applicationContext
     private var _state = MutableStateFlow(LibraryState())
     val state = _state.asStateFlow()
     private var _event = MutableSharedFlow<LibraryEvent>()
@@ -65,65 +63,122 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
 
             is LibraryIntent.AddToPlaylist -> {
                 CoroutineScope(Dispatchers.IO).launch {
+                    musicRepository.insertMusic(intent.music.toMusic())
                     musicPlaylistRepository.addSongToPlaylist(intent.music.id, intent.playlistId)
-
                     _state.value = _state.value.copy()
                 }
             }
 
-            LibraryIntent.ShowLocal -> {
-
-            }
-
-            LibraryIntent.ShowRemote -> {
+            LibraryIntent.LoadRemoteSong -> {
                 getListMusic()
             }
 
-            LibraryIntent.LoadSong -> {
+            LibraryIntent.LoadLocalSong -> {
                 viewModelScope.launch {
                     _state.value = _state.value.copy(
                         musics = getAllMp3Files(getApplication()),
                         isLocal = true,
-                        isDisconnect = false
+                        canLoadMusic = false,
                     )
                 }
             }
         }
     }
 
-    fun getListMusic(){
+    fun getListMusic() {
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {
-                it.copy(
-                    isLoading = true, isLocal = false
-                )
-            }
-            delay(3000L)
-            val call = ApiMusicClient.build().getMusics()
-            call.enqueue(object : Callback<List<ApiMusic>>{
+            _state.update { it.copy(isLoading = true, isLocal = false) }
+
+            fetchApiMusicList(
+                onSuccess = { apiList ->
+                    downloadAllIfNeeded(apiList)
+                    val musicVMList = convertToMusicVM(apiList)
+                    _state.update {
+                        it.copy(
+                            musics = musicVMList,
+                            isLoading = false,
+                            canLoadMusic = false,
+                        )
+                    }
+                },
+                onError = {
+                    val musics = getDownloadedMusicListFromFileNames()
+                    if (musics.isEmpty()) {
+                        _state.update { it.copy(isLoading = false, canLoadMusic = true) }
+                    } else {
+                        _state.update { it.copy(musics = musics, isLoading = false, canLoadMusic = false) }
+                    }
+                },
+            )
+        }
+    }
+
+    private fun fetchApiMusicList(
+        onSuccess: (List<ApiMusic>) -> Unit,
+        onError: () -> Unit,
+    ) {
+        val call = ApiMusicClient.build().getMusics()
+        call.enqueue(
+            object : Callback<List<ApiMusic>> {
                 override fun onResponse(
-                    call: Call<List<ApiMusic>?>,
-                    response: Response<List<ApiMusic>?>
+                    call: Call<List<ApiMusic>>,
+                    response: Response<List<ApiMusic>>,
                 ) {
-                    when{
-                        response.isSuccessful->{
-                            val api =response.body()?.map{it.toMusicVM()}?: emptyList()
-                            _state.update {
-                                it.copy(musics = api , isLoading = false , isDisconnect = false)
-                            }
-                        }
+                    if (response.isSuccessful) {
+                        val list = response.body() ?: emptyList()
+                        onSuccess(list)
+                    } else {
+                        onError()
                     }
                 }
 
-                override fun onFailure(
-                    call: Call<List<ApiMusic>?>,
-                    t: Throwable
-                ) {
-                    _state.update { it.copy(isLoading = false, isDisconnect = true) }
-                    Log.v(TAG,"onFailure: ${t.message}")
+                override fun onFailure(call: Call<List<ApiMusic>>, t: Throwable) {
+                    Log.e("API", "Lỗi API: ${t.message}")
+                    onError()
                 }
+            },
+        )
+    }
 
-            })
+    private fun downloadAllIfNeeded(apiMusicList: List<ApiMusic>) {
+        for (music in apiMusicList) {
+            val file = File(appContext.filesDir, "${music.title}.mp3")
+            if (!file.exists()) {
+                downloadMusicWithEnqueue(
+                    context = appContext,
+                    url = music.path,
+                    fileName = "${music.title}_${music.artist}.mp3",
+                ) { success, message ->
+                    Log.d("Download", if (success) "Đã tải: ${music.title}" else "Lỗi: $message")
+                }
+            }
+        }
+    }
+
+    private fun convertToMusicVM(apiList: List<ApiMusic>): List<MusicVM> {
+        return apiList.map {
+            val localFile = File(appContext.filesDir, "${it.title}.mp3")
+            it.toMusicVM(localFile = if (localFile.exists()) localFile.absolutePath else "")
+        }
+    }
+
+    fun getDownloadedMusicListFromFileNames(): List<MusicVM> {
+        val dir = appContext.filesDir
+        val mp3Files = dir.listFiles { _, name -> name.endsWith(".mp3") } ?: return emptyList()
+
+        return mp3Files.map { file ->
+            val nameParts = file.nameWithoutExtension.split("_")
+            val title = nameParts.getOrNull(0) ?: file.nameWithoutExtension
+            val artist = nameParts.getOrNull(1) ?: "Unknown"
+            val id = file.name.hashCode().toLong()
+
+            MusicVM(
+                id = id,
+                name = title,
+                author = artist,
+                path = file.absolutePath,
+                image = getEmbeddedImageBytes(file.absolutePath),
+            )
         }
     }
 }

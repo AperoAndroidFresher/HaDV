@@ -36,11 +36,12 @@ fun getAllMp3Files(context: Context): List<MusicVM> {
             val data = it.getString(dataColumn)
             val image = getEmbeddedImageBytes(data)
             val music = MusicVM(
+                id = id,
                 image = image,
                 name = title,
                 author = artist,
                 duration = formatDuration(duration.toLong()),
-                pathImg = data
+                path = data
             )
             Log.d("check", "ID: $id, title: $title, artist: $artist, data: $data, image:$image")
             listMusic.add(music)
@@ -61,3 +62,4 @@ fun getEmbeddedImageBytes(songPath: String): ByteArray? {
         retriever.release()
     }
 }
+
