@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.example.dovietha_bt.UserPreferences
+import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.ui.login.LoginScreen
 import com.example.dovietha_bt.ui.main.UnitedScreen
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM

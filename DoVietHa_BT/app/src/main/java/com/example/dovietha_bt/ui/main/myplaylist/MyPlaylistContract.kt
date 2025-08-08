@@ -6,8 +6,7 @@ data class MusicVM(
     val name: String = "",
     val author: String = "",
     val duration: String = "",
-    val path: String = "",
-    val localFile:String = ""
+    val path: String = ""
 )
 
 data class PlaylistVM(
@@ -20,7 +19,6 @@ data class PlaylistVM(
 
 data class MyPlaylistState(
     val playlists: List<PlaylistVM> = emptyList(),
-    val musics: List<MusicVM> = emptyList(),
     val isViewChange: Boolean = false,
     val showOption: Boolean = false,
     val playlistName: String = ""

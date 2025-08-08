@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui.main.myplaylist.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +41,9 @@ fun MyMusicScreen(
     playlist: PlaylistVM = PlaylistVM()
 ) {
     val state = viewModel.state.collectAsState()
+    
     val currentList = state.value.playlists.find {
+        Log.d("CURRENT LIST","${playlist}")
         it.id == playlist.id
     } ?: return
 

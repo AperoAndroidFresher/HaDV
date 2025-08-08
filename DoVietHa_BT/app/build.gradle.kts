@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation("com.airbnb.android:lottie-compose:6.6.7")
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.lifecycle.service)
     kapt("androidx.room:room-compiler:2.7.2")
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
     // See Add the KSP plugin to your project

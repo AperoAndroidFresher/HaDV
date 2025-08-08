@@ -15,7 +15,7 @@ import com.example.dovietha_bt.database.converter.toPlaylistVM
 import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
-import com.example.dovietha_bt.downloadMusicWithEnqueue
+import com.example.dovietha_bt.common.downloadMusicWithEnqueue
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import kotlin.math.absoluteValue
 
 class LibraryViewModel(application: Application) : AndroidViewModel(application) {
     val appContext = application.applicationContext
@@ -58,14 +59,16 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                         .collect { playlistVMList ->
                             _state.update { it.copy(playlists = playlistVMList) }
                         }
+                    
                 }
             }
 
             is LibraryIntent.AddToPlaylist -> {
                 CoroutineScope(Dispatchers.IO).launch {
+//                    Log.d("LIBRARY DEBUG","${intent.music}")
                     musicRepository.insertMusic(intent.music.toMusic())
                     musicPlaylistRepository.addSongToPlaylist(intent.music.id, intent.playlistId)
-                    _state.value = _state.value.copy()
+                    
                 }
             }
 
@@ -80,6 +83,9 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                         isLocal = true,
                         canLoadMusic = false,
                     )
+                    _state.value.musics.forEach {
+                        musicRepository.insertMusic(it.toMusic())
+                    }
                 }
             }
         }
@@ -93,6 +99,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                 onSuccess = { apiList ->
                     downloadAllIfNeeded(apiList)
                     val musicVMList = convertToMusicVM(apiList)
+                    Log.d("LIBRARY DEBUG","${musicVMList}")
                     _state.update {
                         it.copy(
                             musics = musicVMList,
@@ -100,6 +107,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                             canLoadMusic = false,
                         )
                     }
+                    
                 },
                 onError = {
                     val musics = getDownloadedMusicListFromFileNames()
@@ -158,7 +166,8 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     private fun convertToMusicVM(apiList: List<ApiMusic>): List<MusicVM> {
         return apiList.map {
             val localFile = File(appContext.filesDir, "${it.title}.mp3")
-            it.toMusicVM(localFile = if (localFile.exists()) localFile.absolutePath else "")
+            Log.d("LIBRARY DEBUG 1","${localFile.absolutePath}")
+            it.toMusicVM(localPath = if (localFile.exists()) localFile.absolutePath else "").copy(id = "${it.title}_${it.artist}".hashCode().toLong().absoluteValue + 1, path = localFile.absolutePath)
         }
     }
 
@@ -170,8 +179,8 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
             val nameParts = file.nameWithoutExtension.split("_")
             val title = nameParts.getOrNull(0) ?: file.nameWithoutExtension
             val artist = nameParts.getOrNull(1) ?: "Unknown"
-            val id = file.name.hashCode().toLong()
-
+            val id = "${title}_${artist}".hashCode().toLong().absoluteValue + 1
+            
             MusicVM(
                 id = id,
                 name = title,

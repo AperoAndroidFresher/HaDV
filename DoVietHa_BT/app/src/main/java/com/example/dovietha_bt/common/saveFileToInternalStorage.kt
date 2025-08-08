@@ -1,4 +1,4 @@
-package com.example.dovietha_bt
+package com.example.dovietha_bt.common
 
 import android.content.Context
 import okhttp3.Call

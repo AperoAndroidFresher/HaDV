@@ -1,6 +1,7 @@
 package com.example.dovietha_bt.ui.main.myplaylist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.database.converter.toMusicVM
@@ -26,6 +27,7 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
     suspend fun getAllMusics(playlistId: Long): List<MusicVM> = withContext(Dispatchers.IO) {
         musicPlaylistRepository.getAllSongFromPlaylist(playlistId)
             .map {
+                Log.d("MUSIC","${musicRepository.getMusicsById(it).toMusicVM()}")
                 musicRepository.getMusicsById(it).toMusicVM()
             }
     }
@@ -78,12 +80,15 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                         .map { list ->
                             list.map {
                                 val listMusic = getAllMusics(it.playlistId)
+                                Log.d("PLAYLIST","$listMusic")
                                 it.toPlaylistVM(listMusic)
+                                
                             }
                         }
                         .collect { playlistVMList ->
                             _state.update { it.copy(playlists = playlistVMList) }
                         }
+                    
                 }
             }
         }

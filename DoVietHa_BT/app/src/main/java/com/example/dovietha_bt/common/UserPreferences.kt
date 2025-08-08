@@ -1,4 +1,4 @@
-package com.example.dovietha_bt
+package com.example.dovietha_bt.common
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,7 +16,7 @@ object UserPreferences {
         sharedPref?.edit()?.putString("username",username)?.apply()
     }
     fun getUsername(): String? = sharedPref?.getString("username", null)
-    fun logout() {
+    fun logout() { 
         sharedPref?.edit { clear() }
     }
 }

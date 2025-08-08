@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui.main.myplaylist.components
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -41,9 +42,11 @@ fun MusicItemColumn(
     name: String = "Name",
     author: String = "author",
     duration: String = "",
+    uri: Uri ,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel()
+    viewModel: MyPlaylistViewModel = viewModel(),
+    onItemClick:(Uri)->Unit = {}
 ) {
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -51,8 +54,9 @@ fun MusicItemColumn(
         modifier = Modifier.Companion
             .fillMaxWidth()
             .height(72.dp)
+            .clickable(onClick = { onItemClick(uri) }),
 
-    ) {
+        ) {
         Image(
             musicImage(image),
             "",

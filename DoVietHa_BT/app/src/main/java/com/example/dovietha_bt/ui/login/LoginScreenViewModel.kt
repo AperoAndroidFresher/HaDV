@@ -1,11 +1,9 @@
 package com.example.dovietha_bt.ui.login
 
 import android.app.Application
-import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
-import com.example.dovietha_bt.UserPreferences
+import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import kotlinx.coroutines.flow.MutableSharedFlow
