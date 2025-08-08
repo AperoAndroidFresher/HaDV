@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui.main.library
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -118,6 +119,7 @@ fun LibraryScreen(
                         list = state.value.musics,
                         option = libOptions,
                         onOptionClick = { option, music ->
+                           // Log.d("LIBRARY DEBUG","${music}")
                             if (option.desc == "Add to playlist") {
                                 showDialog = true
                                 musicAdded = music

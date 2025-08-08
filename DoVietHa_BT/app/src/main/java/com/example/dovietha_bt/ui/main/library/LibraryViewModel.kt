@@ -65,6 +65,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
 
             is LibraryIntent.AddToPlaylist -> {
                 CoroutineScope(Dispatchers.IO).launch {
+//                    Log.d("LIBRARY DEBUG","${intent.music}")
                     musicRepository.insertMusic(intent.music.toMusic())
                     musicPlaylistRepository.addSongToPlaylist(intent.music.id, intent.playlistId)
                     
@@ -98,6 +99,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                 onSuccess = { apiList ->
                     downloadAllIfNeeded(apiList)
                     val musicVMList = convertToMusicVM(apiList)
+                    Log.d("LIBRARY DEBUG","${musicVMList}")
                     _state.update {
                         it.copy(
                             musics = musicVMList,
@@ -162,11 +164,10 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     }
 
     private fun convertToMusicVM(apiList: List<ApiMusic>): List<MusicVM> {
-        val dir = appContext.filesDir
-        val mp3Files = dir.listFiles { _, name -> name.endsWith(".mp3") } ?: return emptyList()
         return apiList.map {
             val localFile = File(appContext.filesDir, "${it.title}.mp3")
-            it.toMusicVM(localFile = if (localFile.exists()) localFile.absolutePath else "").copy(id = "${it.title}_${it.artist}".hashCode().toLong().absoluteValue + 1)
+            Log.d("LIBRARY DEBUG 1","${localFile.absolutePath}")
+            it.toMusicVM(localPath = if (localFile.exists()) localFile.absolutePath else "").copy(id = "${it.title}_${it.artist}".hashCode().toLong().absoluteValue + 1, path = localFile.absolutePath)
         }
     }
 
