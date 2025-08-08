@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
-import com.example.dovietha_bt.UserPreferences
+import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.ui.components.InfoInput
 import com.example.dovietha_bt.ui.components.PasswordInput
 import com.example.dovietha_bt.ui.theme.DoVietHa_BTTheme
