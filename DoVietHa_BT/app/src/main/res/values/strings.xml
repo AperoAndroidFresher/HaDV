@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DoVietHa_BT</string>
+    <string name="app_name" translatable="false">DoVietHa_BT</string>
     <string name="title_activity_playlist_screen">PlaylistScreen</string>
     <string name="title_activity_login_screen">LoginScreenActivity</string>
     <string name="title_activity_sign_up_screen">SignUpScreenActivity</string>
