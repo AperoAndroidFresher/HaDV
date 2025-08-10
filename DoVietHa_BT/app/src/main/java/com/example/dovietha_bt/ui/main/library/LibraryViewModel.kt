@@ -165,7 +165,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
 
     private fun convertToMusicVM(apiList: List<ApiMusic>): List<MusicVM> {
         return apiList.map {
-            val localFile = File(appContext.filesDir, "${it.title}.mp3")
+            val localFile = File(appContext.filesDir, "${it.title}_${it.artist}.mp3")
             Log.d("LIBRARY DEBUG 1","${localFile.absolutePath}")
             it.toMusicVM(localPath = if (localFile.exists()) localFile.absolutePath else "").copy(id = "${it.title}_${it.artist}".hashCode().toLong().absoluteValue + 1, path = localFile.absolutePath)
         }
