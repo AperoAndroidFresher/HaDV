@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entry
@@ -44,47 +47,39 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
     }
     Scaffold(
         bottomBar = {
-            BottomAppBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                IconButton(
+            NavigationBar {
+                NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+                    label = { Text("Home", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    selected = backStack.lastOrNull() == Screen.Home,
                     onClick = {
                         backStack.clear()
                         backStack.add(Screen.Home)
                     },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
-                        Text("Home")
-                    }
-                }
+                    alwaysShowLabel = true
+                )
 
-                IconButton(
+                NavigationBarItem(
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Playlist") },
+                    label = { Text("Playlist", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    selected = backStack.lastOrNull() == Screen.Library,
                     onClick = {
                         backStack.clear()
                         backStack.add(Screen.Library)
                     },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
-                        Text("Playlist")
-                    }
-                }
-                IconButton(
+                    alwaysShowLabel = true
+                )
+
+                NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Menu, contentDescription = "My playlist") },
+                    label = { Text("My playlist", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    selected = backStack.lastOrNull() == Screen.MyPlaylist,
                     onClick = {
                         backStack.clear()
                         backStack.add(Screen.MyPlaylist)
                     },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Menu, contentDescription = "My playlist")
-                        Text("My playlist")
-                    }
-                }
+                    alwaysShowLabel = true
+                )
             }
         }
     ) { paddingValues ->

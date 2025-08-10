@@ -17,6 +17,7 @@ class MusicService : Service() {
     private var mediaPlayer: MediaPlayer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        startForegroundWithNotification()
         if (intent?.action == "PLAY") {
             val uriString = intent.getStringExtra("MUSIC_URI")
             uriString?.let {
@@ -36,7 +37,7 @@ class MusicService : Service() {
             prepare()
             start()
         }
-        startForegroundWithNotification()
+//        startForegroundWithNotification()
     }
 
     private fun startForegroundWithNotification() {
