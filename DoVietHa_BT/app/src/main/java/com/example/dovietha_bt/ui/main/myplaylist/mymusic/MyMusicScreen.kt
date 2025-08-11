@@ -1,5 +1,9 @@
-package com.example.dovietha_bt.ui.main.myplaylist.components
+package com.example.dovietha_bt.ui.main.myplaylist.mymusic
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,20 +19,35 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.MusicPlayerService
+import com.example.dovietha_bt.MusicService
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.components.ColumnList
+import com.example.dovietha_bt.ui.main.myplaylist.components.GridList
+import kotlinx.coroutines.delay
 
 val options = listOf(
     Option(R.drawable.ic_remove, "Remove from playlist"),
@@ -38,17 +57,37 @@ val options = listOf(
 @Composable
 fun MyMusicScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
-    playlist: PlaylistVM = PlaylistVM()
+    playlist: PlaylistVM = PlaylistVM(),
+    isCloseBar:(Boolean) ->Unit = {}
 ) {
+    val context = LocalContext.current
     val state = viewModel.state.collectAsState()
-    
     val currentList = state.value.playlists.find {
-        Log.d("CURRENT LIST","${playlist}")
         it.id == playlist.id
     } ?: return
 
+    var currentIndex by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(Unit) {
+        MusicServiceConnectionHelper.bind(context)
         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
+
+        // Theo dõi thay đổi index từ service
+        var lastIndex = -1
+        while (true) {
+            val newIndex = MusicServiceConnectionHelper.musicService?.getCurrentIndex() ?: 0
+            if (newIndex != lastIndex) {
+                lastIndex = newIndex
+                currentIndex = newIndex // <- cập nhật State, khiến LaunchedEffect bên dưới chạy lại
+            }
+            delay(300) // kiểm tra mỗi 300ms
+        }
+    }
+
+    LaunchedEffect(currentIndex) {
+        if (currentIndex in currentList.musics.indices) {
+            viewModel.processIntent(MyPlaylistIntent.CurrentSong(currentList.musics[currentIndex]))
+        }
     }
     Column(
         Modifier
@@ -88,21 +127,41 @@ fun MyMusicScreen(
             }
         }
         if (state.value.isViewChange) {
-            GridList(currentList.musics, viewModel, options)
+            GridList(
+                currentList.musics,
+                viewModel,
+                options
+            )
         } else {
             ColumnList(
                 list = currentList.musics,
                 option = options,
                 onOptionClick = { option, music ->
                     if (option.desc == "Remove from playlist") {
-                        viewModel.processIntent(
-                            MyPlaylistIntent.RemoveSong(music.id, currentList.id)
-                        )
+                        viewModel.processIntent(MyPlaylistIntent.RemoveSong(music.id, currentList.id))
                         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
                     }
+                },
+                onItemClick = { index ->
+                    startMusicServiceWithIndex(
+                        index = index,
+                        context = context,
+                        songList = currentList.musics
+                    )
+                    isCloseBar(false)
                 }
             )
         }
     }
 }
+
+fun startMusicServiceWithIndex(index: Int, context: Context, songList: List<MusicVM>) {
+    val intent = Intent(context, MusicPlayerService::class.java).apply {
+        action = MusicPlayerService.ACTION_PLAY
+        putParcelableArrayListExtra("MUSIC_LIST", ArrayList(songList))
+        putExtra("CURRENT_INDEX", index)
+    }
+    ContextCompat.startForegroundService(context, intent)
+}
+
 

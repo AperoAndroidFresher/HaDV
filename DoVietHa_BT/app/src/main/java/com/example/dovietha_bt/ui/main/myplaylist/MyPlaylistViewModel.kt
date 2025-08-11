@@ -91,6 +91,13 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                     
                 }
             }
+
+            is MyPlaylistIntent.CurrentSong -> {
+                _state.update { it.copy(
+                    currentSong = intent.music
+                ) }
+                Log.d("CURRENT SONG","${_state.value.currentSong}")
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.ui.login.LoginScreen
 import com.example.dovietha_bt.ui.main.UnitedScreen
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
+import com.example.dovietha_bt.ui.main.myplaylist.nowplaying.NowPlayingScreen
 import com.example.dovietha_bt.ui.profile.ProfileScreen
 import com.example.dovietha_bt.ui.signup.SignUpScreen
 import com.example.dovietha_bt.ui.splashscreen.SplashScreen
@@ -26,6 +27,7 @@ sealed interface Screen {
     data object MyPlaylist : Screen
     data object Profile : Screen
     data class MusicList(var playlist: PlaylistVM) : Screen
+    data object NowPlaying : Screen
 }
 
 @Composable
@@ -70,15 +72,23 @@ fun Navigator() {
             }
             entry<Screen.UnitedScreen> {
                 UnitedScreen(
-                    {
+                    goProfile = {
                         backStack.add(
                             Screen.Profile,
                         )
                     },
+                    toPlaying = {
+                        backStack.add(
+                            Screen.NowPlaying
+                        )
+                    }
                 )
             }
             entry<Screen.Profile> {
                 ProfileScreen()
+            }
+            entry<Screen.NowPlaying>{
+                NowPlayingScreen()
             }
         },
     )

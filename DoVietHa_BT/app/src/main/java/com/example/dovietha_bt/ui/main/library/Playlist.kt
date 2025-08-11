@@ -105,7 +105,7 @@ fun LibraryScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(Color(0x88000000)),
+                            .background(Color.Transparent),
                         contentAlignment = Alignment.Center
                     ){
                         LottieAnimationLoading()

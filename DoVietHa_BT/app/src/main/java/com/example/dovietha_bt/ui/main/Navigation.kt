@@ -1,22 +1,13 @@
 package com.example.dovietha_bt.ui.main
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,35 +16,44 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.MusicServiceConnectionHelper.musicService
 import com.example.dovietha_bt.common.permission
 import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
 import com.example.dovietha_bt.ui.main.library.LibraryScreen
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistScreen
-import com.example.dovietha_bt.ui.main.myplaylist.components.MyMusicScreen
+import com.example.dovietha_bt.ui.main.myplaylist.mymusic.MyMusicScreen
+import com.example.dovietha_bt.ui.main.myplaylist.nowplaying.MiniPlayer
+import kotlinx.coroutines.delay
 
-@Preview(showBackground = true)
 @Composable
-fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = viewModel()) {
+fun UnitedScreen(
+    toPlaying: () -> Unit = {},
+    goProfile: () -> Unit = {},
+    viewModel: MainScreenViewModel = viewModel(),
+) {
     val context = LocalContext.current
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
+    var isPlayingBarClosed by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         permission(context)
         viewModel.processIntent(MainScreenIntent.LoadUser)
+    }
+    LaunchedEffect(isPlayingBarClosed) {
+        Log.d("AAAAAAAAA", "$isPlayingBarClosed")
     }
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 IconButton(
                     onClick = {
                         backStack.clear()
                         backStack.add(Screen.Home)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Home, contentDescription = "Home")
@@ -66,7 +66,7 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
                         backStack.clear()
                         backStack.add(Screen.Library)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
@@ -78,7 +78,7 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
                         backStack.clear()
                         backStack.add(Screen.MyPlaylist)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Menu, contentDescription = "My playlist")
@@ -86,37 +86,87 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
                     }
                 }
             }
-        }
+        },
     ) { paddingValues ->
-        NavDisplay(
-            modifier = Modifier.padding(paddingValues),
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<Screen.Home> {
-                    Log.d("Check click", "click")
-                    HomeScreen(goProfile = goProfile)
-                }
-                entry<Screen.Library> {
-                    LibraryScreen(
-                        onAddClicked = {
-                            backStack.clear()
-                            backStack.add(Screen.MyPlaylist)
-                        }
-                    )
-                }
-                entry<Screen.MyPlaylist> {
-                    MyPlaylistScreen(onClick = {
-                        backStack.clear()
-                        backStack.add(Screen.MusicList(it))
-                    })
-                }
-                entry<Screen.MusicList> { (list) ->
-                    MyMusicScreen(playlist = list)
-                }
-            }
-        )
-
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            NavDisplay(
+                modifier = Modifier,
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                entryProvider = entryProvider {
+                    entry<Screen.Home> {
+                        Log.d("Check click", "click")
+                        HomeScreen(goProfile = goProfile)
+                    }
+                    entry<Screen.Library> {
+                        LibraryScreen(
+                            onAddClicked = {
+                                backStack.clear()
+                                backStack.add(Screen.MyPlaylist)
+                            },
+                        )
+                    }
+                    entry<Screen.MyPlaylist> {
+                        MyPlaylistScreen(
+                            onClick = {
+                                backStack.clear()
+                                backStack.add(Screen.MusicList(it))
+                            },
+                        )
+                    }
+                    entry<Screen.MusicList> { (list) ->
+                        MyMusicScreen(playlist = list, isCloseBar = { isPlayingBarClosed = it })
+                    }
+                },
+            )
+            if (!isPlayingBarClosed)
+                MiniPlayerContainer(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    onClick = toPlaying,
+                    closePlayingBar = { isPlayingBarClosed = it },
+                )
+        }
     }
+}
 
+@Composable
+fun MiniPlayerContainer(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    closePlayingBar: (Boolean) -> Unit = {},
+) {
+    var progress by remember { mutableFloatStateOf(0f) }
+    var isPlaying by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            val service = musicService
+            if (service != null) {
+                val duration = service.getDuration()
+                val currentPos = service.getCurrentPosition()
+                isPlaying = service.isPlaying() == true
+                progress = if (duration > 0) currentPos / duration.toFloat() else 0f
+            }
+            delay(500)
+        }
+    }
+    MiniPlayer(
+        modifier = modifier,
+        onClick = onClick,
+        isPlaying = isPlaying,
+        progress = progress,
+        closePlayingBar = closePlayingBar,
+        onPlayPause = {
+            if(isPlaying){
+                musicService?.pause()
+            }
+            else{
+                musicService?.resume()
+            }
+        }
+    )
 }
