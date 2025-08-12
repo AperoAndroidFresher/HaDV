@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.ui.login.LoginScreen
 import com.example.dovietha_bt.ui.main.UnitedScreen
@@ -88,7 +89,16 @@ fun Navigator() {
                 ProfileScreen()
             }
             entry<Screen.NowPlaying>{
-                NowPlayingScreen()
+                NowPlayingScreen(
+                    onBackClick = {
+                        backStack.clear()
+                        backStack.add(Screen.UnitedScreen)
+                    },
+                    onCloseClick = {
+                        backStack.clear()
+                        backStack.add(Screen.UnitedScreen)
+                    }
+                )
             }
         },
     )

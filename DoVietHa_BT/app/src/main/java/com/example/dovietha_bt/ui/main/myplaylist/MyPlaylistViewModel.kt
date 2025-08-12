@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.database.converter.toMusicVM
 import com.example.dovietha_bt.database.converter.toPlaylistVM
 import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryImpl
@@ -36,7 +37,8 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
         when (intent) {
             is MyPlaylistIntent.RemoveSong -> {
                 viewModelScope.launch {
-                    musicPlaylistRepository.deleteSongInPlaylist(intent.playlistId, intent.musicId)
+                    
+                    musicPlaylistRepository.deleteSongInPlaylist(playlistId =intent.playlistId, musicId = intent.musicId)
                 }
             }
 
@@ -97,6 +99,28 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                     currentSong = intent.music
                 ) }
                 Log.d("CURRENT SONG","${_state.value.currentSong}")
+            }
+
+            MyPlaylistIntent.IsPlaying -> {
+                viewModelScope.launch(Dispatchers.IO){
+                    _state.update {
+                        it.copy(
+                            isPlaying = MusicServiceConnectionHelper.musicService?.isPlaying() ?: false,
+                        )
+                    }
+                }
+            }
+
+            MyPlaylistIntent.ToggleShuffle -> {
+                MusicServiceConnectionHelper.musicService?.toggleShuffle()
+                val current = _state.value.isShuffleOn
+                _state.update { it.copy(isShuffleOn = !current) }
+            }
+
+            MyPlaylistIntent.ToggleRepeat -> {
+                MusicServiceConnectionHelper.musicService?.toggleRepeat()
+                val current = _state.value.isRepeatOn
+                _state.update { it.copy(isRepeatOn = !current) }
             }
         }
     }

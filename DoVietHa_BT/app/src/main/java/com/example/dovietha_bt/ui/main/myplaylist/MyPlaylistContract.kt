@@ -25,19 +25,30 @@ data class MyPlaylistState(
     val currentSong: MusicVM = MusicVM(),
     val isViewChange: Boolean = false,
     val showOption: Boolean = false,
-    val playlistName: String = ""
+    val playlistName: String = "",
+    val isPlaying: Boolean = false,
+    val isShuffleOn: Boolean = false,
+    val isRepeatOn: Boolean = false,
 )
 
 sealed interface MyPlaylistIntent {
-    object LoadPlaylists : MyPlaylistIntent
+    
     
     data class AddPlaylist(val playlistName: String, val username: String) : MyPlaylistIntent
     data class RemovePlaylist(val playlistId: Long) : MyPlaylistIntent
     data class RenamePlaylist(val playlistId: Long, val newPlaylistName: String) : MyPlaylistIntent
+    
     object ToggleView : MyPlaylistIntent
+    object LoadPlaylists : MyPlaylistIntent
     data class CurrentSong(val music: MusicVM): MyPlaylistIntent
     data class RemoveSong(val musicId: Long, val playlistId: Long) : MyPlaylistIntent
     
+    data object IsPlaying : MyPlaylistIntent
+
+    object ToggleShuffle : MyPlaylistIntent
+    object ToggleRepeat : MyPlaylistIntent
+    
+    //thừa
     data object ShowOption : MyPlaylistIntent
     data object HideOption : MyPlaylistIntent
 }

@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.media.MediaMetadata
 import android.media.MediaPlayer
 import android.os.Binder
@@ -23,9 +22,11 @@ class MusicPlayerService : Service() {
     private lateinit var mediaSession: MediaSessionCompat
     private var mediaPlayer: MediaPlayer? = null
     var songList = listOf<MusicVM>()
-    private var currentIndex = 0
+    private var _currentIndex = 0
     private var isRepeat = false
     private var isShuffle = false
+
+    var onSongChanged: ((MusicVM) -> Unit)? = null
 
     inner class MusicBinder : Binder() {
         fun getService(): MusicPlayerService = this@MusicPlayerService
@@ -46,7 +47,6 @@ class MusicPlayerService : Service() {
         
         when (intent?.action) {
             ACTION_PLAY -> {
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     intent.getParcelableArrayListExtra("MUSIC_LIST", MusicVM::class.java)?.let {
                         songList = it
@@ -60,8 +60,8 @@ class MusicPlayerService : Service() {
                     }
                 }
                 
-                currentIndex = intent.getIntExtra("CURRENT_INDEX", 0)
-                Log.d("Check Song Index","$currentIndex")
+                _currentIndex = intent.getIntExtra("CURRENT_INDEX", 0)
+                Log.d("Check Song Index","$_currentIndex")
                 playCurrent()
             }
             ACTION_RESUME -> resume()
@@ -78,7 +78,8 @@ class MusicPlayerService : Service() {
 
     fun playCurrent() {
         mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(this, songList[currentIndex].path.toUri())
+        mediaPlayer = MediaPlayer.create(this, songList[_currentIndex].path.toUri())
+        onSongChanged?.invoke(getCurrentSong())
         mediaPlayer?.setOnCompletionListener {
             if (isRepeat) {
                 playCurrent()
@@ -89,29 +90,31 @@ class MusicPlayerService : Service() {
         mediaPlayer?.start()
         startForegroundNotification()
     }
+    
     fun resume() {
         mediaPlayer?.start()
     }
+    
     fun pause() {
         mediaPlayer?.pause()
     }
 
     fun next() {
         mediaPlayer?.release()
-        currentIndex = if (isShuffle) {
+        _currentIndex = if (isShuffle) {
             (songList.indices).random()
         } else {
-            (currentIndex + 1) % songList.size
+            (_currentIndex + 1) % songList.size
         }
         playCurrent()
     }
 
     fun previous() {
         mediaPlayer?.release()
-        currentIndex = if (isShuffle) {
+        _currentIndex = if (isShuffle) {
             (songList.indices).random()
         } else {
-            if (currentIndex - 1 < 0) songList.size - 1 else currentIndex - 1
+            if (_currentIndex - 1 < 0) songList.size - 1 else _currentIndex - 1
         }
         playCurrent()
     }
@@ -128,19 +131,25 @@ class MusicPlayerService : Service() {
         stopForeground(true)
         stopSelf()
     }
+    
+    fun seekTo(position: Int) {
+        mediaPlayer?.seekTo(position)
+    }
 
     fun toggleRepeat() {
         isRepeat = !isRepeat
+        Log.d("CHECK RS","isRepeat: $isRepeat")
     }
 
     fun toggleShuffle() {
         isShuffle = !isShuffle
+        Log.d("CHECK RS","isShuffle: $isShuffle")
     }
 
     fun getCurrentPosition(): Int {
         return mediaPlayer?.currentPosition ?: 0
     }
-
+    
     fun getDuration(): Int {
         return mediaPlayer?.duration ?: 0
     }
@@ -150,7 +159,15 @@ class MusicPlayerService : Service() {
     }
     
     fun getCurrentIndex():Int{
-        return currentIndex
+        return _currentIndex
+    }
+    
+    fun getCurrentSong(): MusicVM {
+        return if (_currentIndex >= 0 && _currentIndex < songList.size) {
+            songList[_currentIndex]
+        } else {
+            MusicVM()
+        }
     }
 
     private fun createNotificationChannel() {
