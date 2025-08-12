@@ -70,7 +70,6 @@ fun MyMusicScreen(
 
     LaunchedEffect(Unit) {
         MusicServiceConnectionHelper.bind(context)
-        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
 
         // Theo dõi thay đổi index từ service
         var lastIndex = -1
