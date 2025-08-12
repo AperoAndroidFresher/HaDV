@@ -46,7 +46,7 @@ fun MusicItemColumn(
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel(),
-    onItemClick:(Uri)->Unit = {}
+    onItemClick:()->Unit = {}
 ) {
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
@@ -54,7 +54,7 @@ fun MusicItemColumn(
         modifier = Modifier.Companion
             .fillMaxWidth()
             .height(72.dp)
-            .clickable(onClick = { onItemClick(uri) }),
+            .clickable(onClick = { onItemClick() }),
 
         ) {
         Image(

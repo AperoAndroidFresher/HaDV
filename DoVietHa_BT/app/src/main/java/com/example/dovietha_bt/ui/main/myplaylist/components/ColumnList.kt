@@ -23,16 +23,15 @@ import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 fun ColumnList(
     list: List<MusicVM> = listOf(),
     option: List<Option> = emptyList(),
-    onOptionClick: (Option, MusicVM) -> Unit
+    onOptionClick: (Option, MusicVM) -> Unit,
+    onItemClick:(Int) -> Unit = {}
 ) {
-    val context = LocalContext.current
     LazyColumn(
         Modifier.Companion
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(list) { item ->
-            //Log.d("LIBRARY DEBUG B","${item}")
             MusicItemColumn(
                 image = item.image,
                 name = item.name,
@@ -41,16 +40,9 @@ fun ColumnList(
                 uri = item.path.toUri(),
                 option = option,
                 onOptionClick = { onOptionClick(it, item) },
-                onItemClick = {uri ->  startMusicServiceWithUri(uri,context)}
+                onItemClick = { onItemClick(list.indexOf(item)) },
             )
         }
     }
 }
 
-private fun startMusicServiceWithUri(uri: Uri, context: Context) {
-    val intent = Intent(context, MusicService::class.java).apply {
-        action = "PLAY"
-        putExtra("MUSIC_URI", uri.toString())
-    }
-    ContextCompat.startForegroundService(context, intent)
-}

@@ -16,7 +16,7 @@ interface MusicPlaylistCrossRefDao {
     suspend fun addSongToPlaylist(crossRef: MusicPlaylistCrossRef)
 
     @Delete
-    suspend fun deleteSongInPlaylist(crossRef: MusicPlaylistCrossRef)
+    suspend fun deleteSongInPlaylist(crossRef: MusicPlaylistCrossRef):Int
 
 //    @Query("""
 //        DELETE FROM MusicPlaylistCrossRef WHERE playlistId = :playlistId
