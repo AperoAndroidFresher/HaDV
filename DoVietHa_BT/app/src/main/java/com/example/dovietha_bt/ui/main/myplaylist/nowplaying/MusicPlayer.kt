@@ -9,7 +9,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +36,7 @@ fun MiniPlayer(
     closePlayingBar: (Boolean) -> Unit = {},
 ) {
     val state = viewModel.state.collectAsState()
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -64,7 +66,6 @@ fun MiniPlayer(
                         painter = painterResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
                         contentDescription = null,
                         tint = Color.White,
-                        
                     )
                 }
 
@@ -99,4 +100,5 @@ fun MiniPlayer(
         }
     }
 }
+
 
