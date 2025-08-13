@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.common.Option
@@ -22,14 +23,15 @@ fun GridList(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(32.dp)
+        horizontalArrangement = Arrangement.spacedBy(32.dp),
+        modifier = Modifier
     ) {
         items(list) { item ->
             MusicItemGrid(
                 image = getEmbeddedImageBytes(item.path),
-                item.name,
-                item.author,
-                item.duration,
+                name = item.name,
+                author = item.author,
+                duration = item.duration,
                 onItemClick = {
                     viewModel.processIntent(MyPlaylistIntent.RemoveSong(item.id, 0))
                 },

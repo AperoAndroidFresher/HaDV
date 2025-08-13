@@ -37,6 +37,7 @@ import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 @Preview(showBackground = true)
 @Composable
 fun MusicItemGrid(
+    modifier: Modifier = Modifier,
     image: ByteArray? = null,
     name: String = "Name",
     author: String = "Author",
@@ -46,6 +47,7 @@ fun MusicItemGrid(
     viewModel: MyPlaylistViewModel = viewModel()
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         viewModel.state.collectAsState()

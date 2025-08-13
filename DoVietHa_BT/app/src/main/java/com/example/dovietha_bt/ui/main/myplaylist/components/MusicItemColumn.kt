@@ -38,6 +38,7 @@ import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 
 @Composable
 fun MusicItemColumn(
+    modifier: Modifier = Modifier,
     image: ByteArray? = null,
     name: String = "Name",
     author: String = "author",
@@ -50,7 +51,7 @@ fun MusicItemColumn(
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier.Companion
+        modifier = modifier
             .fillMaxWidth()
             .height(72.dp)
             .clickable(onClick = { onItemClick() }),

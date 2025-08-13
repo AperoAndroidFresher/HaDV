@@ -41,6 +41,7 @@ import com.example.dovietha_bt.MusicService
 import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.move
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
@@ -65,6 +66,8 @@ fun MyMusicScreen(
     val currentList = state.value.playlists.find {
         it.id == playlist.id
     } ?: return
+    
+    val list = currentList.musics.toMutableList()
 
     var currentIndex by remember { mutableIntStateOf(0) }
 
@@ -148,7 +151,8 @@ fun MyMusicScreen(
                         songList = currentList.musics
                     )
                     isCloseBar(false)
-                }
+                },
+                onMove = { from, to -> list.move(from, to) }
             )
         }
     }
