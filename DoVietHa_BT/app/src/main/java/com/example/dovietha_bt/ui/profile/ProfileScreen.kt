@@ -68,7 +68,7 @@ import kotlinx.coroutines.delay
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
+fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel(),navigateToLogin: () -> Unit = {}){
     val state = viewModel.state.collectAsState()
     val context = LocalContext.current
     val eventFlow = viewModel.event
@@ -88,6 +88,10 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                     launcher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
+                }
+                
+                InfoEvent.NavigateToLogin -> {
+                    navigateToLogin()
                 }
             }
         }
@@ -260,6 +264,21 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                     ) {
                         Text(
                             text = "Submit",
+                            fontSize = 16.sp,
+                        )
+                    }
+                }
+                else{
+                    Button(
+                        onClick = {
+                            viewModel.processIntent(InfoIntent.Logout)
+                        },
+                        Modifier.size(172.dp, 64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors()
+                    ) {
+                        Text(
+                            text = "Logout",
                             fontSize = 16.sp,
                         )
                     }
