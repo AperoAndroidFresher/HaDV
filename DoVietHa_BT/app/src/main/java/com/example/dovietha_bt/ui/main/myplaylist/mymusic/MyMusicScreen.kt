@@ -2,9 +2,6 @@ package com.example.dovietha_bt.ui.main.myplaylist.mymusic
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,14 +33,11 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.MusicPlayerService
-import com.example.dovietha_bt.MusicService
 import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.move
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
-import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
-import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
 import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 import com.example.dovietha_bt.ui.main.myplaylist.components.ColumnList
 import com.example.dovietha_bt.ui.main.myplaylist.components.GridList
@@ -57,21 +50,20 @@ val options = listOf(
 
 @Composable
 fun MyMusicScreen(
-    viewModel: MyPlaylistViewModel = viewModel(),
+    viewModel: MyMusicScreenViewModel = viewModel(),
     playlist: PlaylistVM = PlaylistVM(),
     isCloseBar:(Boolean) ->Unit = {}
 ) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsState()
-    val currentList = state.value.playlists.find {
-        it.id == playlist.id
-    } ?: return
     
-    val list = currentList.musics.toMutableList()
+    val list = playlist.musics.toMutableList()
 
     var currentIndex by remember { mutableIntStateOf(0) }
+    var isViewChange by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.processIntent(MyMusicIntent.LoadSongs(playlist.id))
         MusicServiceConnectionHelper.bind(context)
 
         // Theo dõi thay đổi index từ service
@@ -87,8 +79,8 @@ fun MyMusicScreen(
     }
 
     LaunchedEffect(currentIndex) {
-        if (currentIndex in currentList.musics.indices) {
-            viewModel.processIntent(MyPlaylistIntent.CurrentSong(currentList.musics[currentIndex]))
+        if (currentIndex in playlist.musics.indices) {
+            viewModel.processIntent(MyMusicIntent.CurrentSong(playlist.musics[currentIndex]))
         }
     }
     Column(
@@ -112,12 +104,12 @@ fun MyMusicScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painterResource(if (!state.value.isViewChange) R.drawable.ic_view else R.drawable.ic_list),
+                    painterResource(if (isViewChange) R.drawable.ic_view else R.drawable.ic_list),
                     "",
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .size(26.dp)
-                        .clickable(onClick = { viewModel.processIntent(MyPlaylistIntent.ToggleView) })
+                        .clickable(onClick = { isViewChange = !isViewChange })
                 )
                 Spacer(Modifier.padding(8.dp))
                 Icon(
@@ -128,27 +120,38 @@ fun MyMusicScreen(
                 )
             }
         }
-        if (state.value.isViewChange) {
+        if (isViewChange) {
             GridList(
-                currentList.musics,
-                viewModel,
-                options
-            )
-        } else {
-            ColumnList(
-                list = currentList.musics,
+                list = state.value.listSong,
                 option = options,
                 onOptionClick = { option, music ->
                     if (option.desc == "Remove from playlist") {
-                        viewModel.processIntent(MyPlaylistIntent.RemoveSong(music.id, currentList.id))
-                        viewModel.processIntent(MyPlaylistIntent.LoadPlaylists)
+                        viewModel.processIntent(MyMusicIntent.RemoveSong(music.id, playlist.id))
                     }
                 },
                 onItemClick = { index ->
                     startMusicServiceWithIndex(
                         index = index,
                         context = context,
-                        songList = currentList.musics
+                        songList = state.value.listSong
+                    )
+                    isCloseBar(false)
+                }
+            )
+        } else {
+            ColumnList(
+                list = state.value.listSong,
+                option = options,
+                onOptionClick = { option, music ->
+                    if (option.desc == "Remove from playlist") {
+                        viewModel.processIntent(MyMusicIntent.RemoveSong(music.id, playlist.id))
+                    }
+                },
+                onItemClick = { index ->
+                    startMusicServiceWithIndex(
+                        index = index,
+                        context = context,
+                        songList = state.value.listSong
                     )
                     isCloseBar(false)
                 },
