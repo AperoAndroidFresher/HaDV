@@ -40,13 +40,13 @@ fun ColumnList(
     option: List<Option> = emptyList(),
     onOptionClick: (Option, MusicVM) -> Unit,
     onItemClick:(Int) -> Unit = {},
-    onMove: (Int, Int) -> Unit ,
+    onMove: (Int, Int) -> Unit ={_,_-> },
 ) {
     val scope = rememberCoroutineScope()
     var overScrollJob by remember { mutableStateOf<Job?>(null) }
     val dragDropListState = rememberDragDropListState(onMove = onMove)
     LazyColumn(
-        Modifier
+        modifier = Modifier
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDrag = { change, offset ->
@@ -74,15 +74,15 @@ fun ColumnList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         state = dragDropListState.lazyListState,
     ) {
-        itemsIndexed(list) { index,item ->
+        items(list.size) { index ->
             MusicItemColumn(
-                image = getEmbeddedImageBytes(item.path),
-                name = item.name,
-                author = item.author,
-                duration = item.duration,
+                image = getEmbeddedImageBytes(list[index].path),
+                name = list[index].name,
+                author = list[index].author,
+                duration = list[index].duration,
                 option = option,
-                onOptionClick = { onOptionClick(it, item) },
-                onItemClick = { onItemClick(list.indexOf(item)) },
+                onOptionClick = { onOptionClick(it, list[index]) },
+                onItemClick = { onItemClick(list.indexOf(list[index])) },
                 modifier = Modifier.composed {
                     val offsetOrNull = dragDropListState.elementDisplacement.takeIf {
                         index == dragDropListState.currentIndexOfDraggedItem

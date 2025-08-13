@@ -50,7 +50,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
         when (intent) {
             is LibraryIntent.LoadPlaylists -> {
                 viewModelScope.launch {
-                    playlistRepository.getAllPlaylist()
+                    playlistRepository.getAllPlaylist(intent.username)
                         .map { list ->
                             list.map {
                                 val listMusic = getAllMusics(it.playlistId)

@@ -17,8 +17,9 @@ import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
 @Composable
 fun GridList(
     list: List<MusicVM> = listOf(),
-    viewModel: MyPlaylistViewModel = viewModel(),
-    option: List<Option> = emptyList()
+    option: List<Option> = emptyList(),
+    onOptionClick: (Option, MusicVM) -> Unit,
+    onItemClick:(Int) -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -32,10 +33,9 @@ fun GridList(
                 name = item.name,
                 author = item.author,
                 duration = item.duration,
-                onItemClick = {
-                    viewModel.processIntent(MyPlaylistIntent.RemoveSong(item.id, 0))
-                },
-                option = option
+                onOptionClick = { onOptionClick(it, item) },
+                option = option,
+                onItemClick = {onItemClick(list.indexOf(item))}
             )
         }
     }
