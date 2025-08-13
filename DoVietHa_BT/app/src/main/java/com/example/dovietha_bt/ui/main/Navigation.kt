@@ -40,12 +40,11 @@ fun UnitedScreen(
     LaunchedEffect(Unit) {
         delay(100L)
         permission(context)
-        isPlayingBarClosed = musicService?.getCurrentSong() == null
+        isPlayingBarClosed = musicService?.getCurrentSong() == null || musicService?.getCurrentIndex() ==-1
+        Log.d("Is Playing Bar Closed", "progress: ${musicService?.getCurrentSong()}")
+        delay(100L)
         Log.d("Is Playing Bar Closed", "progress: ${musicService?.getCurrentSong()}")
         viewModel.processIntent(MainScreenIntent.LoadUser)
-    }
-    LaunchedEffect(isPlayingBarClosed) {
-        Log.d("AAAAAAAAA", "$isPlayingBarClosed")
     }
     Scaffold(
         bottomBar = {

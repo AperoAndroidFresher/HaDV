@@ -1,6 +1,5 @@
 package com.example.dovietha_bt.ui.main.myplaylist.components
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -59,7 +58,7 @@ fun MusicItemColumn(
 
         ) {
         Image(
-            musicImage(image),
+            byteArrayImageToAsync(image),
             "",
             modifier = Modifier.Companion
                 .size(72.dp)
@@ -116,7 +115,7 @@ fun MusicItemColumn(
 }
 
 @Composable
-fun musicImage(image: ByteArray?): AsyncImagePainter {
+fun byteArrayImageToAsync(image: ByteArray?): AsyncImagePainter {
     return rememberAsyncImagePainter(
         model = image ?: R.drawable.avatar,
         placeholder = painterResource(R.drawable.avatar),

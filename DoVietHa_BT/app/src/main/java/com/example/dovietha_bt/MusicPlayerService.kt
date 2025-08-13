@@ -128,6 +128,8 @@ class MusicPlayerService : Service() {
             it.release()
         }
         mediaPlayer = null
+        songList = emptyList()
+        _currentIndex = -1
         stopForeground(true)
         stopSelf()
     }
@@ -194,8 +196,8 @@ class MusicPlayerService : Service() {
         val prevPendingIntent = PendingIntent.getService(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE)
 
         // Mô phỏng thông tin bài hát
-        val songTitle = "Tên bài hát"
-        val songArtist = "Tên nghệ sĩ"
+        val songTitle = getCurrentSong().name
+        val songArtist = getCurrentSong().author
 
         val metadata = MediaMetadataCompat.Builder()
             .putString(MediaMetadata.METADATA_KEY_TITLE, songTitle)

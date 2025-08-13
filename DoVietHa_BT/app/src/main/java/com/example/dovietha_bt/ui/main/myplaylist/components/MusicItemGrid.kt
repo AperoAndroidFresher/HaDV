@@ -55,7 +55,7 @@ fun MusicItemGrid(
         var menuExpanded by remember { mutableStateOf(false) }
         Box {
             Image(
-                painter = musicImage(image), "",
+                painter = byteArrayImageToAsync(image), "",
                 modifier = Modifier
                     .size(135.dp)
                     .clip(RoundedCornerShape(5.dp)),

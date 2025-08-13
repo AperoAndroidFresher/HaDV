@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.UserInformation
 
 @Preview(showBackground = true)
 @Composable
@@ -64,15 +65,22 @@ fun MusicRankingScreen(
                 Box(
                     modifier = Modifier
                         .size(40.dp)
-                        .background(Color.Gray, CircleShape)
+                        .clip(CircleShape)
                         .clickable(onClick = onClick),
-                ) 
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.avatar),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 
                 Spacer(modifier = Modifier.width(8.dp))
                 
                 Column {
                     Text("Welcome back !", color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
-                    Text("chandrama", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                    Text(text = UserInformation.name ?: UserInformation.username, color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                 }
             }
             
@@ -95,58 +103,7 @@ fun MusicRankingScreen(
         }
         
         item {
-            LazyHorizontalGrid(
-                rows = GridCells.Fixed(3),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(state.value.topAlbums) { album ->
-                    Row(
-                        modifier = Modifier
-                            .width(180.dp)
-                            .background(Color.DarkGray, RoundedCornerShape(8.dp)),
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_launcher_background),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .clip(RoundedCornerShape(8.dp)),
-                        )
-                        
-                        Column(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(horizontal = 12.dp),
-                        ) {
-                            Text(
-                                text = album.name,
-                                color = Color.White,
-                                fontSize = 14.sp,
-                                textAlign = TextAlign.Center,
-                                fontWeight = Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            
-                            Spacer(Modifier.padding(3.dp))
-                            
-                            Text(
-                                text = album.artist,
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    }
-                }
-            }
+            TopAlbumList(state.value.topAlbums)
         }
         
         item {
@@ -190,6 +147,67 @@ fun SectionTitle(title: String) {
     ) {
         Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = Bold)
         Text("See all", color = Color.Cyan, fontSize = 12.sp)
+    }
+}
+
+@Composable
+fun TopAlbumList(list: List<TopAlbum>){
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(3),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(list) { album ->
+            TopAlbum(album)
+        }
+    }
+}
+
+@Composable
+fun TopAlbum(album: TopAlbum){
+    Row(
+        modifier = Modifier
+            .width(180.dp)
+            .background(Color.DarkGray, RoundedCornerShape(8.dp)),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(8.dp)),
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(horizontal = 12.dp),
+        ) {
+            Text(
+                text = album.name,
+                color = Color.White,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Spacer(Modifier.padding(3.dp))
+
+            Text(
+                text = album.artist,
+                color = Color.White,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 

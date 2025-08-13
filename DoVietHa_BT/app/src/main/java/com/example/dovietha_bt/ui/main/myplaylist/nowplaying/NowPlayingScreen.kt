@@ -52,7 +52,7 @@ fun NowPlayingScreen(
                 progress.value =if (duration > 0) {
                     currentPos.toFloat() / duration.toFloat()
                 } else {
-                    0f // Giá trị mặc định an toàn nếu duration không hợp lệ
+                    0f 
                 }
                 currentTime.value = formatDuration(currentPos.toLong())
                 totalTime.value = formatDuration(duration.toLong())
@@ -140,13 +140,12 @@ private fun NowPlayingHeader(
                 )
             }
         }
-
-        // Text ở giữa (trung tâm Box)
+        
         Text(
             text = "Now Playing",
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
+            fontWeight = Bold,
             textAlign = TextAlign.Center,
         )
     }

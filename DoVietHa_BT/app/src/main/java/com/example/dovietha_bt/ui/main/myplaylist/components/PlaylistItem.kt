@@ -44,7 +44,7 @@ fun PlaylistItemColumn(
 
         ) {
         Image(
-            musicImage(image),
+            byteArrayImageToAsync(image),
             "",
             modifier = Modifier
                 .size(72.dp)
