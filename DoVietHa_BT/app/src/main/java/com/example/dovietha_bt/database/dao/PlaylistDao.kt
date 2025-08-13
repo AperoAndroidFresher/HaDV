@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistDao {
-    @Query("SELECT * FROM playlist")
-    fun getAllPlaylist(): Flow<List<Playlist>>
+    @Query("SELECT * FROM playlist WHERE username = :username")
+    fun getAllPlaylist(username: String): Flow<List<Playlist>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPlaylist(playlist: Playlist)

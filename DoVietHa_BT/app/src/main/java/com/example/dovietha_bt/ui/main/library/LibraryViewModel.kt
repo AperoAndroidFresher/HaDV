@@ -31,6 +31,7 @@ import kotlin.math.absoluteValue
 class LibraryViewModel(application: Application) : AndroidViewModel(application) {
     val appContext = application.applicationContext
     private var _state = MutableStateFlow(LibraryState())
+    
     val state = _state.asStateFlow()
     private var _event = MutableSharedFlow<LibraryEvent>()
     val event = _event.asSharedFlow()
@@ -49,7 +50,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
         when (intent) {
             is LibraryIntent.LoadPlaylists -> {
                 viewModelScope.launch {
-                    playlistRepository.getAllPlaylist()
+                    playlistRepository.getAllPlaylist(intent.username)
                         .map { list ->
                             list.map {
                                 val listMusic = getAllMusics(it.playlistId)
@@ -107,7 +108,6 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                             canLoadMusic = false,
                         )
                     }
-                    
                 },
                 onError = {
                     val musics = getDownloadedMusicListFromFileNames()
@@ -171,7 +171,7 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun getDownloadedMusicListFromFileNames(): List<MusicVM> {
+    private fun getDownloadedMusicListFromFileNames(): List<MusicVM> {
         val dir = appContext.filesDir
         val mp3Files = dir.listFiles { _, name -> name.endsWith(".mp3") } ?: return emptyList()
 
@@ -186,7 +186,6 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
                 name = title,
                 author = artist,
                 path = file.absolutePath,
-                image = getEmbeddedImageBytes(file.absolutePath),
             )
         }
     }

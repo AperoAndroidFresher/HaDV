@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,11 +39,11 @@ import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 
 @Composable
 fun MusicItemColumn(
+    modifier: Modifier = Modifier,
     image: ByteArray? = null,
     name: String = "Name",
     author: String = "author",
     duration: String = "",
-    uri: Uri ,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel(),
@@ -51,7 +52,7 @@ fun MusicItemColumn(
     viewModel.state.collectAsState()
     var menuExpanded by remember { mutableStateOf(false) }
     Row(
-        modifier = Modifier.Companion
+        modifier = modifier
             .fillMaxWidth()
             .height(72.dp)
             .clickable(onClick = { onItemClick() }),
@@ -98,7 +99,7 @@ fun MusicItemColumn(
             Icon(
                 painterResource(R.drawable.ic_option),
                 "",
-                tint = Color.Companion.Black,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.Companion
                     .size(20.dp)
                     .align(Alignment.Companion.CenterVertically)

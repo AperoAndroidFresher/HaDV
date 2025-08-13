@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 
 class PlaylistRepositoryImpl(context: Context) : PlaylistRepository {
     val playlistDao = AppDB.getInstance(context).PlaylistDao()
-    override suspend fun getAllPlaylist(): Flow<List<Playlist>> {
-        return playlistDao.getAllPlaylist()
+    override suspend fun getAllPlaylist(username: String): Flow<List<Playlist>> {
+        return playlistDao.getAllPlaylist(username)
     }
 
     override suspend fun addPlaylist(username: String, name: String) {

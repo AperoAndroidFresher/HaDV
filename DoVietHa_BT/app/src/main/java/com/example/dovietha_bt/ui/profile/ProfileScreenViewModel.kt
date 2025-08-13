@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.common.UserPreferences
 import com.example.dovietha_bt.database.entity.User
 import com.example.dovietha_bt.database.repository.impl.UserRepositoryImpl
 import com.example.dovietha_bt.ui.theme.darkTheme
@@ -74,6 +75,13 @@ class ProfileScreenViewModel(application: Application) : AndroidViewModel(applic
             is InfoIntent.TriggerImagePicker -> {
                 viewModelScope.launch {
                     _event.emit(InfoEvent.ShowImagePicker)
+                }
+            }
+
+            InfoIntent.Logout -> {
+                viewModelScope.launch {
+                    UserPreferences.logout()
+                    _event.emit(InfoEvent.NavigateToLogin)
                 }
             }
         }
