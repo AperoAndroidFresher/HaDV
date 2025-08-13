@@ -41,15 +41,23 @@ fun ColumnList(
     onOptionClick: (Option, MusicVM) -> Unit,
     onItemClick:(Int) -> Unit = {},
     onMove: (Int, Int) -> Unit ={_,_-> },
+    isEditMode: Boolean = false
 ) {
     val scope = rememberCoroutineScope()
     var overScrollJob by remember { mutableStateOf<Job?>(null) }
     val dragDropListState = rememberDragDropListState(onMove = onMove)
     LazyColumn(
         modifier = Modifier
-            .pointerInput(Unit) {
+            .pointerInput(isEditMode) { // 🔧 CHỈNH SỬA: Thêm `isEditMode` vào key để recomposition xảy ra khi điều kiện thay đổi
                 detectDragGesturesAfterLongPress(
+                    onDragStart = { offset ->
+                        if (isEditMode) { // 🔧 CHỈNH SỬA: Chỉ gọi nếu điều kiện đúng
+                            dragDropListState.onDragStart(offset)
+                        }
+                    },
                     onDrag = { change, offset ->
+                        if (!isEditMode) return@detectDragGesturesAfterLongPress // 🔧 CHỈNH SỬA: Không cho kéo nếu sai điều kiện
+
                         change.consumeAllChanges()
                         dragDropListState.onDrag(offset = offset)
 
@@ -63,11 +71,16 @@ fun ColumnList(
                                 overScrollJob = scope.launch {
                                     dragDropListState.lazyListState.scrollBy(it)
                                 }
-                            } ?: kotlin.run { overScrollJob?.cancel() }
+                            } ?: run {
+                            overScrollJob?.cancel()
+                        }
                     },
-                    onDragStart = { offset -> dragDropListState.onDragStart(offset) },
-                    onDragEnd = { dragDropListState.onDragInterrupted() },
-                    onDragCancel = { dragDropListState.onDragInterrupted() },
+                    onDragEnd = {
+                        if (isEditMode) dragDropListState.onDragInterrupted() // 🔧 CHỈNH SỬA: Chỉ khi đúng điều kiện
+                    },
+                    onDragCancel = {
+                        if (isEditMode) dragDropListState.onDragInterrupted() // 🔧 CHỈNH SỬA: Chỉ khi đúng điều kiện
+                    }
                 )
             }
             .fillMaxSize(),

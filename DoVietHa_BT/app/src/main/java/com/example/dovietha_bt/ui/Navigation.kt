@@ -25,7 +25,7 @@ sealed interface Screen {
     data object UnitedScreen : Screen
     data object Home : Screen
     data object Library : Screen
-    data object MyPlaylist : Screen
+    data class MyPlaylist(var isAddClick: Boolean = false) : Screen
     data object Profile : Screen
     data class MusicList(var playlist: PlaylistVM) : Screen
     data object NowPlaying : Screen

@@ -78,9 +78,9 @@ fun UnitedScreen(
                     }
                 }
                 IconButton(
-                    onClick = {
+                    onClick = { 
                         backStack.clear()
-                        backStack.add(Screen.MyPlaylist)
+                        backStack.add(Screen.MyPlaylist(false))
                     },
                     modifier = Modifier.weight(1f),
                 ) {
@@ -108,18 +108,19 @@ fun UnitedScreen(
                     }
                     entry<Screen.Library> {
                         LibraryScreen(
-                            onAddClicked = {
-                                backStack.clear()
-                                backStack.add(Screen.MyPlaylist)
+                            onAddClicked = {it ->
+                                backStack.clear() 
+                                backStack.add(Screen.MyPlaylist(it))
                             },
                         )
                     }
-                    entry<Screen.MyPlaylist> {
+                    entry<Screen.MyPlaylist> {(check)->
                         MyPlaylistScreen(
                             onClick = {
                                 backStack.clear()
                                 backStack.add(Screen.MusicList(it))
                             },
+                            isAddClicked = check
                         )
                     }
                     entry<Screen.MusicList> { (list) ->

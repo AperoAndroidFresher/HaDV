@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MyMusicScreenViewModel(application: Application) : AndroidViewModel(application) {
-    val playlistRepository = PlaylistRepositoryImpl(application)
     val musicPlaylistRepository = MusicPlaylistRepositoryImpl(application)
     val musicRepository = MusicRepositoryImpl(application)
     private var _state = MutableStateFlow(MyMusicState())
@@ -53,6 +52,15 @@ class MyMusicScreenViewModel(application: Application) : AndroidViewModel(applic
                             listSong = updatedList.toList()
                         )
                     }
+                }
+            }
+
+            is MyMusicIntent.MoveSong -> {
+                _state.update { state ->
+                    val updatedSongs = state.listSong.toMutableList()
+                    val song = updatedSongs.removeAt(intent.from)
+                    updatedSongs.add(intent.to, song)
+                    state.copy(listSong = updatedSongs)
                 }
             }
         }

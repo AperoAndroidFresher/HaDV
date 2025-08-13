@@ -37,7 +37,7 @@ val libOptions = listOf(
 @Composable
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(),
-    onAddClicked: () -> Unit = {},
+    onAddClicked: (Boolean) -> Unit = {},
 ) {
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
@@ -117,7 +117,7 @@ fun LibraryScreen(
                 playlistList = state.value.playlists,
                 onDismissRequest = { showDialog = false },
                 modifier = Modifier.align(Alignment.Center),
-                onAddClicked = onAddClicked,
+                onAddClicked = { onAddClicked(true) },
                 onPlaylistClick = {
                     viewModel.processIntent(LibraryIntent.AddToPlaylist(musicAdded, it.id))
                     viewModel.processIntent(LibraryIntent.LoadPlaylists(UserInformation.username))

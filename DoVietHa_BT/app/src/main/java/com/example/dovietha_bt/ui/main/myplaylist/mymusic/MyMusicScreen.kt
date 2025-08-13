@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ fun MyMusicScreen(
     val context = LocalContext.current
     val state = viewModel.state.collectAsState()
     
-    val list = playlist.musics.toMutableList()
+    var isSort by remember { mutableStateOf(false) }
 
     var currentIndex by remember { mutableIntStateOf(0) }
     var isViewChange by remember { mutableStateOf(false) }
@@ -112,12 +113,14 @@ fun MyMusicScreen(
                         .clickable(onClick = { isViewChange = !isViewChange })
                 )
                 Spacer(Modifier.padding(8.dp))
-                Icon(
-                    painterResource(R.drawable.ic_sort_up),
-                    "",
-                    tint = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.size(26.dp)
-                )
+                IconButton(onClick = {isSort=!isSort}){
+                    Icon(
+                        painterResource(if(!isSort) R.drawable.ic_sort_up else R.drawable.ic_check),
+                        "",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(26.dp),
+                    )
+                }
             }
         }
         if (isViewChange) {
@@ -155,7 +158,8 @@ fun MyMusicScreen(
                     )
                     isCloseBar(false)
                 },
-                onMove = { from, to -> list.move(from, to) }
+                onMove = { from, to -> viewModel.processIntent(MyMusicIntent.MoveSong(from, to))},
+                isEditMode = isSort
             )
         }
     }

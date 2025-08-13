@@ -93,10 +93,12 @@ class MusicPlayerService : Service() {
     
     fun resume() {
         mediaPlayer?.start()
+        startForegroundNotification()
     }
     
     fun pause() {
         mediaPlayer?.pause()
+        startForegroundNotification()
     }
 
     fun next() {
@@ -185,17 +187,25 @@ class MusicPlayerService : Service() {
     }
 
     private fun startForegroundNotification() {
-        val playIntent = Intent(this, MusicPlayerService::class.java).apply { action = ACTION_RESUME }
-        val pauseIntent = Intent(this, MusicPlayerService::class.java).apply { action = ACTION_PAUSE }
+        val isPlaying = mediaPlayer?.isPlaying == true
+
+        val playPauseIntent = Intent(this, MusicPlayerService::class.java).apply {
+            action = if (isPlaying) ACTION_PAUSE else ACTION_RESUME
+        }
+
+        val playPausePendingIntent = PendingIntent.getService(
+            this, 0, playPauseIntent, PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val playPauseIcon = if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+        val playPauseTitle = if (isPlaying) "Pause" else "Play"
+
         val nextIntent = Intent(this, MusicPlayerService::class.java).apply { action = ACTION_NEXT }
         val prevIntent = Intent(this, MusicPlayerService::class.java).apply { action = ACTION_PREVIOUS }
 
-        val playPendingIntent = PendingIntent.getService(this, 0, playIntent, PendingIntent.FLAG_IMMUTABLE)
-        val pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE)
         val nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE)
         val prevPendingIntent = PendingIntent.getService(this, 0, prevIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        // Mô phỏng thông tin bài hát
         val songTitle = getCurrentSong().name
         val songArtist = getCurrentSong().author
 
@@ -208,22 +218,22 @@ class MusicPlayerService : Service() {
 
         val style = androidx.media.app.NotificationCompat.MediaStyle()
             .setMediaSession(mediaSession.sessionToken)
-            .setShowActionsInCompactView(1, 2, 3) // Chọn thứ tự hiển thị nút
+            .setShowActionsInCompactView(1) // Chỉ hiển thị nút Play/Pause
 
         val notification = NotificationCompat.Builder(this, "music_channel_id")
             .setContentTitle(songTitle)
             .setContentText(songArtist)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .addAction(R.drawable.ic_launcher_foreground, "Previous", prevPendingIntent)
-            .addAction(R.drawable.ic_launcher_foreground, "Play", playPendingIntent)
-            .addAction(R.drawable.ic_launcher_foreground, "Pause", pausePendingIntent)
-            .addAction(R.drawable.ic_launcher_foreground, "Next", nextPendingIntent)
+            .addAction(R.drawable.ic_previous, "Previous", prevPendingIntent)
+            .addAction(playPauseIcon, playPauseTitle, playPausePendingIntent)
+            .addAction(R.drawable.ic_next, "Next", nextPendingIntent)
             .setStyle(style)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
             .build()
+
         startForeground(1, notification)
     }
 

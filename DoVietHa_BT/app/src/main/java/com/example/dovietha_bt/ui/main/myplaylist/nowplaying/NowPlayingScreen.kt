@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.MusicServiceConnectionHelper.musicService
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.database.converter.formatDuration
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.ui.main.myplaylist.components.byteArrayImageToAsync
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -37,6 +39,11 @@ fun NowPlayingScreen(
 ) {
     val service = musicService
     val state = viewModel.state.collectAsState()
+
+    val currentSong = state.value.currentSong
+    val imageBytes by remember(currentSong.path) {
+        mutableStateOf(getEmbeddedImageBytes(currentSong.path))
+    }
 
     val currentTime = remember { mutableStateOf("00:00") }
     val totalTime = remember { mutableStateOf("00:00") }
@@ -77,7 +84,7 @@ fun NowPlayingScreen(
                 onCloseClick()
             }
         )
-        Body(state.value.currentSong.name, state.value.currentSong.author)
+        Body(state.value.currentSong.name, state.value.currentSong.author, imageBytes)
         MusicPlayerControls(
             onPlayClick = {
                 viewModel.processIntent(MyPlaylistIntent.IsPlaying)
@@ -155,10 +162,11 @@ private fun NowPlayingHeader(
 private fun Body(
     title: String = "Title",
     artist: String = "Artist",
+    image: ByteArray? = null,
 ) {
     Column(Modifier.padding(horizontal = 32.dp, vertical = 16.dp)) {
         Image(
-            painter = painterResource(R.drawable.avatar),
+            painter = if(image!=null) byteArrayImageToAsync(image) else painterResource (R.drawable.avatar),
             contentDescription = "",
         )
         Spacer(Modifier.padding(8.dp))

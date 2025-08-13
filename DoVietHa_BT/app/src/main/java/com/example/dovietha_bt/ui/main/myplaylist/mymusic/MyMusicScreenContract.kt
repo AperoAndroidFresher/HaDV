@@ -12,4 +12,5 @@ sealed interface MyMusicIntent{
     data class LoadSongs(val playlistId: Long) : MyMusicIntent
     data class CurrentSong(val music: MusicVM): MyMusicIntent
     data class RemoveSong(val musicId: Long, val playlistId: Long) : MyMusicIntent
+    data class MoveSong(val from:Int,val to:Int):MyMusicIntent
 }

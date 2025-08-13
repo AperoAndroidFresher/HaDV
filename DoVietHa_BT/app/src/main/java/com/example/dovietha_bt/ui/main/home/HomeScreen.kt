@@ -1,5 +1,6 @@
 package com.example.dovietha_bt.ui.main.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,17 +24,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.UserInformation
+
+val colors = listOf(0xFFFF7777, 0xFFFFFA77, 0xFF4462FF, 0xFF14FF00, 0xFFE231FF, 0xFF00FFFF, 0xFFFB003C, 0xFFF2A5FF)
 
 @Preview(showBackground = true)
 @Composable
@@ -47,13 +48,13 @@ fun MusicRankingScreen(
     viewModel: HomeViewModel = viewModel(),
 ) {
     val state = viewModel.state.collectAsState()
-    
+
     LaunchedEffect(Unit) {
         viewModel.processIntent(HomeIntent.LoadTopAlbums)
         viewModel.processIntent(HomeIntent.LoadTopArtists)
         viewModel.processIntent(HomeIntent.LoadTopTracks)
     }
-    
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -67,26 +68,31 @@ fun MusicRankingScreen(
                         .size(40.dp)
                         .clip(CircleShape)
                         .clickable(onClick = onClick),
-                ){
+                ) {
                     Image(
                         painter = painterResource(R.drawable.avatar),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 Column {
                     Text("Welcome back !", color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
-                    Text(text = UserInformation.name ?: UserInformation.username, color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                    Log.d("Check name","${UserInformation.name}")
+                    Text(
+                        text = UserInformation.name?:UserInformation.username,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 12.sp,
+                    )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(20.dp))
         }
-        
+
         item {
             Text(
                 text = "\uD83C\uDFC6 Rankings",
@@ -94,32 +100,45 @@ fun MusicRankingScreen(
                 fontWeight = Bold,
                 color = Color.Cyan,
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
         }
-        
+
         item {
             SectionTitle(title = "Top Albums")
         }
-        
+
         item {
             TopAlbumList(state.value.topAlbums)
         }
-        
+
         item {
             SectionTitle(title = "Top Tracks")
         }
-        
+
         item {
+
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 8.dp),
             ) {
                 items(state.value.topTracks) { track ->
-                    TrackCard(track)
+                    val colorIndex = state.value.topTracks.indexOf(track) % colors.size
+                    Box(modifier = Modifier.size(140.dp).clip(RoundedCornerShape(8.dp))){
+                        TrackCard(track)
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .background(Color(colors[colorIndex])),
+                        )
+                    }
                 }
             }
+
         }
+        
 
         item {
             SectionTitle(title = "Top Artist")
@@ -151,7 +170,7 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun TopAlbumList(list: List<TopAlbum>){
+fun TopAlbumList(list: List<TopAlbum>) {
     LazyHorizontalGrid(
         rows = GridCells.Fixed(3),
         modifier = Modifier
@@ -168,7 +187,7 @@ fun TopAlbumList(list: List<TopAlbum>){
 }
 
 @Composable
-fun TopAlbum(album: TopAlbum){
+fun TopAlbum(album: TopAlbum) {
     Row(
         modifier = Modifier
             .width(180.dp)
@@ -214,10 +233,7 @@ fun TopAlbum(album: TopAlbum){
 @Composable
 fun TrackCard(track: TopTrack) {
     Box(
-        modifier = Modifier
-            .size(140.dp)
-            .background(Color.DarkGray, RoundedCornerShape(8.dp))
-            .clip(RoundedCornerShape(8.dp)),
+        modifier = Modifier.fillMaxSize()
     ) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
@@ -225,7 +241,7 @@ fun TrackCard(track: TopTrack) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-        
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -263,7 +279,7 @@ fun ArtistCard(name: String) {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-        
+
         Column(
             modifier = Modifier
                 .fillMaxSize()

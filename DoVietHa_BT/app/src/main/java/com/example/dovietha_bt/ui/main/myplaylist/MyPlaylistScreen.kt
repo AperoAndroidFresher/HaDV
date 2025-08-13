@@ -45,11 +45,12 @@ import com.example.dovietha_bt.ui.main.myplaylist.components.AllPlaylists
 fun MyPlaylistScreen(
     viewModel: MyPlaylistViewModel = viewModel(),
     onClick: (PlaylistVM) -> Unit = {},
+    isAddClicked:Boolean = false
 ) {
     val state = viewModel.state.collectAsState()
     var playlistName by remember { mutableStateOf("") }
     var playlistId by remember { mutableStateOf(0L) }
-    var addClicked by remember { mutableStateOf(false) }
+    var addClicked by remember { mutableStateOf(isAddClicked) }
     var renameClicked by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists(UserInformation.username))
