@@ -37,7 +37,6 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
         when (intent) {
             is MyPlaylistIntent.RemoveSong -> {
                 viewModelScope.launch {
-                    
                     musicPlaylistRepository.deleteSongInPlaylist(playlistId =intent.playlistId, musicId = intent.musicId)
                 }
             }
@@ -76,15 +75,14 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                 }
             }
 
-            MyPlaylistIntent.LoadPlaylists -> {
+            is MyPlaylistIntent.LoadPlaylists -> {
                 viewModelScope.launch {
-                    playlistRepository.getAllPlaylist()
+                    playlistRepository.getAllPlaylist(intent.username)
                         .map { list ->
                             list.map {
                                 val listMusic = getAllMusics(it.playlistId)
                                 Log.d("PLAYLIST","$listMusic")
                                 it.toPlaylistVM(listMusic)
-                                
                             }
                         }
                         .collect { playlistVMList ->
@@ -121,6 +119,16 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
                 MusicServiceConnectionHelper.musicService?.toggleRepeat()
                 val current = _state.value.isRepeatOn
                 _state.update { it.copy(isRepeatOn = !current) }
+            }
+
+            //Error
+            is MyPlaylistIntent.MoveSong -> {
+                _state.update { state -> 
+                    val updateSong = state.playlists[intent.currentIndex].musics.toMutableList()
+                    val song = updateSong.removeAt(intent.from)
+                    updateSong.add(intent.to, song)
+                    state.copy(playlists = state.playlists.apply { updateSong })
+                }
             }
         }
     }

@@ -86,7 +86,10 @@ fun Navigator() {
                 )
             }
             entry<Screen.Profile> {
-                ProfileScreen()
+                ProfileScreen(navigateToLogin = {
+                    backStack.clear()
+                    backStack.add(Screen.Login())
+                })
             }
             entry<Screen.NowPlaying>{
                 NowPlayingScreen(
@@ -95,6 +98,7 @@ fun Navigator() {
                         backStack.add(Screen.UnitedScreen)
                     },
                     onCloseClick = {
+                        MusicServiceConnectionHelper.musicService?.kill()
                         backStack.clear()
                         backStack.add(Screen.UnitedScreen)
                     }

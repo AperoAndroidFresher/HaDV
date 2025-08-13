@@ -38,8 +38,10 @@ fun UnitedScreen(
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
     var isPlayingBarClosed by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
+        delay(100L)
         permission(context)
         isPlayingBarClosed = musicService?.getCurrentSong() == null
+        Log.d("Is Playing Bar Closed", "progress: ${musicService?.getCurrentSong()}")
         viewModel.processIntent(MainScreenIntent.LoadUser)
     }
     LaunchedEffect(isPlayingBarClosed) {
@@ -126,7 +128,7 @@ fun UnitedScreen(
                     }
                 },
             )
-            Log.d("Is Playing Bar Closed", "progress: ${isPlayingBarClosed}")
+            //Log.d("Is Playing Bar Closed", "progress: ${isPlayingBarClosed}")
             if (!isPlayingBarClosed)
                 MiniPlayerContainer(
                     modifier = Modifier.align(Alignment.BottomEnd),

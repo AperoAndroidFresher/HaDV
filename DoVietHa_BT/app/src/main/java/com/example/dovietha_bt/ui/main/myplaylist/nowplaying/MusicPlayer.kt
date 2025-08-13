@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.ui.main.myplaylist.mymusic.MyMusicScreenViewModel
 
 @Preview(showBackground = true)
 @Composable
@@ -32,7 +33,7 @@ fun MiniPlayer(
     onPlayPause: () -> Unit = {},
     onClose: () -> Unit = {},
     onClick: () -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel(),
+    viewModel: MyMusicScreenViewModel = viewModel(),
     closePlayingBar: (Boolean) -> Unit = {},
 ) {
     val state = viewModel.state.collectAsState()
