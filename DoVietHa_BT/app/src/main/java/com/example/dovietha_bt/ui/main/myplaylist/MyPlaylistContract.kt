@@ -6,7 +6,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MusicVM(
     val id: Long = 0,
-    val image: ByteArray? = null,
     val name: String = "",
     val author: String = "",
     val duration: String = "",
@@ -32,8 +31,6 @@ data class MyPlaylistState(
 )
 
 sealed interface MyPlaylistIntent {
-    
-    
     data class AddPlaylist(val playlistName: String, val username: String) : MyPlaylistIntent
     data class RemovePlaylist(val playlistId: Long) : MyPlaylistIntent
     data class RenamePlaylist(val playlistId: Long, val newPlaylistName: String) : MyPlaylistIntent

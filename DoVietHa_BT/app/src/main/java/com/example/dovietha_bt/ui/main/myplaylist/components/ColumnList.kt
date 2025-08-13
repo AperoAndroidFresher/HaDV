@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.example.dovietha_bt.MusicService
 import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 
 
@@ -33,11 +34,10 @@ fun ColumnList(
     ) {
         items(list) { item ->
             MusicItemColumn(
-                image = item.image,
+                image = getEmbeddedImageBytes(item.path),
                 name = item.name,
                 author = item.author,
                 duration = item.duration,
-                uri = item.path.toUri(),
                 option = option,
                 onOptionClick = { onOptionClick(it, item) },
                 onItemClick = { onItemClick(list.indexOf(item)) },

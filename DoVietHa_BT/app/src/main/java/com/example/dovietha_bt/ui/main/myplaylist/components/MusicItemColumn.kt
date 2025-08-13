@@ -42,7 +42,6 @@ fun MusicItemColumn(
     name: String = "Name",
     author: String = "author",
     duration: String = "",
-    uri: Uri ,
     option: List<Option> = emptyList(),
     onOptionClick: (Option) -> Unit = {},
     viewModel: MyPlaylistViewModel = viewModel(),

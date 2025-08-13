@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.common.Option
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 import com.example.dovietha_bt.ui.main.myplaylist.MusicVM
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
@@ -25,7 +26,7 @@ fun GridList(
     ) {
         items(list) { item ->
             MusicItemGrid(
-                image = item.image,
+                image = getEmbeddedImageBytes(item.path),
                 item.name,
                 item.author,
                 item.duration,

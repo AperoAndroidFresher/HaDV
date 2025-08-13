@@ -49,7 +49,11 @@ fun NowPlayingScreen(
                 val currentPos = launchedService.getCurrentPosition()
                 val duration = launchedService.getDuration()
 
-                progress.value = currentPos / duration.toFloat()
+                progress.value =if (duration > 0) {
+                    currentPos.toFloat() / duration.toFloat()
+                } else {
+                    0f // Giá trị mặc định an toàn nếu duration không hợp lệ
+                }
                 currentTime.value = formatDuration(currentPos.toLong())
                 totalTime.value = formatDuration(duration.toLong())
             }

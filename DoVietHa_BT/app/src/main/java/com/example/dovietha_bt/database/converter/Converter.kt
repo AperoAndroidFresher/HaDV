@@ -23,7 +23,6 @@ fun Music.toMusicVM(): MusicVM {
         name = this.name,
         author = this.author,
         duration = this.duration,
-        image = getEmbeddedImageBytes(this.image ?: ""),
         path = this.image ?: ""
     )
 }
