@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dovietha_bt.R
 
 @Preview(showBackground = true)
@@ -37,14 +41,24 @@ fun HomeScreen(goProfile: () -> Unit = {}) {
 }
 
 @Composable
-fun MusicRankingScreen(onClick: () -> Unit = {}) {
+fun MusicRankingScreen(
+    onClick: () -> Unit = {},
+    viewModel: HomeViewModel = viewModel(),
+) {
+    val state = viewModel.state.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(HomeIntent.LoadTopAlbums)
+        viewModel.processIntent(HomeIntent.LoadTopArtists)
+        viewModel.processIntent(HomeIntent.LoadTopTracks)
+    }
+    
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
     ) {
-        // Welcome row
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
@@ -52,37 +66,35 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
                         .size(40.dp)
                         .background(Color.Gray, CircleShape)
                         .clickable(onClick = onClick),
-                ) // thay bằng Image nếu có avatar thật
+                ) 
+                
                 Spacer(modifier = Modifier.width(8.dp))
+                
                 Column {
                     Text("Welcome back !", color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
                     Text("chandrama", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                 }
             }
+            
             Spacer(modifier = Modifier.height(20.dp))
         }
-
-        // Rankings title
+        
         item {
             Text(
                 text = "\uD83C\uDFC6 Rankings",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = Bold,
                 color = Color.Cyan,
             )
+            
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        // Top Albums - Section header
+        
         item {
             SectionTitle(title = "Top Albums")
         }
-
-        // Top Albums - LazyVerticalGrid (2 rows, nhiều cột)
+        
         item {
-            val albums = listOf(
-                "Palette", "Modern", "In Search of ...", "Modern", "Modern", "Modern",
-            )
             LazyHorizontalGrid(
                 rows = GridCells.Fixed(3),
                 modifier = Modifier
@@ -92,7 +104,7 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(albums) { album ->
+                items(state.value.topAlbums) { album ->
                     Row(
                         modifier = Modifier
                             .width(180.dp)
@@ -105,11 +117,14 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(8.dp)),
                         )
-                        Column(modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(horizontal = 12.dp)) {
+                        
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(horizontal = 12.dp),
+                        ) {
                             Text(
-                                text = album,
+                                text = album.name,
                                 color = Color.White,
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center,
@@ -117,9 +132,11 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
+                            
                             Spacer(Modifier.padding(3.dp))
+                            
                             Text(
-                                text = "Taylor",
+                                text = album.artist,
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center,
@@ -131,23 +148,17 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
                 }
             }
         }
-
-        // Top Tracks - Section header
+        
         item {
             SectionTitle(title = "Top Tracks")
         }
-
-        // Top Tracks - LazyRow
+        
         item {
-            val tracks = listOf(
-                Track("Espresso", "Sabrina Carpenter", 972864),
-                Track("Chill Mix", "Sabrina Carpenter", 972864),
-            )
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 8.dp),
             ) {
-                items(tracks) { track ->
+                items(state.value.topTracks) { track ->
                     TrackCard(track)
                 }
             }
@@ -157,15 +168,13 @@ fun MusicRankingScreen(onClick: () -> Unit = {}) {
             SectionTitle(title = "Top Artist")
         }
 
-        // Top Artist - LazyRow
         item {
-            val artists = listOf("QuanBui", "TranDucBo")
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(vertical = 8.dp),
             ) {
-                items(artists) { artist ->
-                    ArtistCard(artist)
+                items(state.value.topArtists) { artist ->
+                    ArtistCard(artist.name)
                 }
             }
         }
@@ -179,30 +188,26 @@ fun SectionTitle(title: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = Bold)
         Text("See all", color = Color.Cyan, fontSize = 12.sp)
     }
 }
 
-data class Track(val title: String, val artist: String, val listener: Int)
-
 @Composable
-fun TrackCard(track: Track) {
+fun TrackCard(track: TopTrack) {
     Box(
         modifier = Modifier
             .size(140.dp)
             .background(Color.DarkGray, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp)),
     ) {
-        // Background Image (nằm dưới cùng)
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-
-        // Overlay nội dung text
+        
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -210,14 +215,16 @@ fun TrackCard(track: Track) {
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = track.title,
+                text = track.name,
                 color = Color.White,
-                fontWeight = FontWeight.Bold,
+                fontWeight = Bold,
                 fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
 
             Column {
-                Text(text = "${track.listener}", color = Color.White, fontSize = 12.sp)
+                Text(text = track.listener, color = Color.White, fontSize = 12.sp)
                 Text(text = track.artist, color = Color.White, fontSize = 12.sp)
             }
         }
@@ -232,15 +239,13 @@ fun ArtistCard(name: String) {
             .background(Color.DarkGray, RoundedCornerShape(8.dp))
             .clip(RoundedCornerShape(8.dp)),
     ) {
-        // Background Image (nằm dưới cùng)
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-
-        // Overlay nội dung text
+        
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -250,8 +255,10 @@ fun ArtistCard(name: String) {
             Text(
                 text = name,
                 color = Color.White,
-                fontWeight = FontWeight.Bold,
+                fontWeight = Bold,
                 fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
