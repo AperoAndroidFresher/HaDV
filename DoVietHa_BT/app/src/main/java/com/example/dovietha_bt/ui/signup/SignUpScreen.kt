@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,7 @@ fun SignUpScreen(
         viewModel.event.collect { event ->
             when (event) {
                 SignUpEvent.ShowNotify -> {
-                    Toast.makeText(context, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.this_account_already_exists), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -67,7 +68,7 @@ fun SignUpScreen(
                         contentScale = ContentScale.Crop
                     )
                     Text(
-                        "Sign Up",
+                        stringResource(R.string.sign_up),
                         color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = Bold,
                         fontSize = 30.sp,
@@ -77,7 +78,7 @@ fun SignUpScreen(
                 Spacer(Modifier.padding(16.dp))
                 InfoInput(
                     R.drawable.ic_user_outline,
-                    "Username",
+                    stringResource(R.string.username),
                     value = state.value.username,
                     onValueChange = {
                         viewModel.processIntent(SignUpIntent.EditUsername(it))
@@ -85,7 +86,7 @@ fun SignUpScreen(
                     checkError = state.value.errUsername
                 )
                 PasswordInput(
-                    hint = "Password",
+                    hint = stringResource(R.string.password),
                     isShowPassword = state.value.isShowPassword,
                     onToggle = { viewModel.processIntent(SignUpIntent.IsShowPassword) },
                     value = state.value.password,
@@ -95,23 +96,23 @@ fun SignUpScreen(
                     checkError = state.value.errPassword
                 )
                 PasswordInput(
-                    hint = "Confirm password",
+                    hint = stringResource(R.string.confirm_password),
                     isShowPassword = state.value.isShowConfirmPass,
                     onToggle = {
                         viewModel.processIntent(SignUpIntent.IsShowConfirmPassword)
                     },
                     value = state.value.confirmPassword,
                     onValueChange = { viewModel.processIntent(SignUpIntent.EditConfirmPass(it)) },
-                    checkError = state.value.errConfirmPass
+                    checkError = state.value.errConfirmPass,
                 )
                 InfoInput(
                     R.drawable.ic_email,
-                    "Email",
+                    stringResource(R.string.email),
                     value = state.value.email,
                     onValueChange = {
                         viewModel.processIntent(SignUpIntent.EditEmail(it))
                     },
-                    checkError = state.value.errEmail
+                    checkError = state.value.errEmail,
                 )
             }
             Button(
@@ -127,7 +128,7 @@ fun SignUpScreen(
                     .height(60.dp)
                     .align(Alignment.BottomCenter)
             ) {
-                Text("Sign up", fontSize = 18.sp)
+                Text(stringResource(R.string.sign_up), fontSize = 18.sp)
             }
 
         }

@@ -14,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,7 +68,7 @@ fun PlaylistItemColumn(
             )
             Spacer(Modifier.Companion.padding(1.dp))
             Text(
-                text = "$sumSongs songs",
+                text = stringResource(R.string.songs, sumSongs),
                 fontWeight = FontWeight.Companion.Bold,
                 fontSize = 16.sp,
                 color = Color.Companion.DarkGray,

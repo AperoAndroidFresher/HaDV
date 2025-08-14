@@ -13,8 +13,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dovietha_bt.R
 
 @Composable
 fun InputText(
@@ -66,8 +68,8 @@ fun InputText(
 
         if (isError) {
             Text(
-                text = "Invalid format",
-                color = Color.Red
+                text = stringResource(R.string.invalid_format),
+                color = Color.Red,
             )
         }
 

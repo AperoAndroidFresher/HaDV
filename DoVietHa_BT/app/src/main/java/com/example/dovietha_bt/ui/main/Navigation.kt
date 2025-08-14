@@ -11,11 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.dovietha_bt.MusicServiceConnectionHelper.musicService
+import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.permission
 import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
@@ -55,8 +57,8 @@ fun UnitedScreen(
                     modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
-                        Text("Home")
+                        Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
+                        Text(stringResource(R.string.home))
                     }
                 }
 
@@ -68,8 +70,8 @@ fun UnitedScreen(
                     modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
-                        Text("Playlist")
+                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = stringResource(R.string.library))
+                        Text(stringResource(R.string.library))
                     }
                 }
                 IconButton(
@@ -80,8 +82,8 @@ fun UnitedScreen(
                     modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Menu, contentDescription = "My playlist")
-                        Text("My playlist")
+                        Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.my_playlist))
+                        Text(stringResource(R.string.my_playlist))
                     }
                 }
             }

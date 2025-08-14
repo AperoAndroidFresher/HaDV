@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,7 +81,7 @@ fun MusicRankingScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Column {
-                    Text("Welcome back !", color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
+                    Text(stringResource(R.string.welcome_back), color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
                     Log.d("Check name","${UserInformation.name}")
                     Text(
                         text = UserInformation.name?:UserInformation.username,
@@ -95,7 +96,7 @@ fun MusicRankingScreen(
 
         item {
             Text(
-                text = "\uD83C\uDFC6 Rankings",
+                text = stringResource(R.string.rankings),
                 fontSize = 20.sp,
                 fontWeight = Bold,
                 color = Color.Cyan,
@@ -105,7 +106,7 @@ fun MusicRankingScreen(
         }
 
         item {
-            SectionTitle(title = "Top Albums")
+            SectionTitle(title = stringResource(R.string.top_albums))
         }
 
         item {
@@ -113,7 +114,7 @@ fun MusicRankingScreen(
         }
 
         item {
-            SectionTitle(title = "Top Tracks")
+            SectionTitle(title = stringResource(R.string.top_tracks))
         }
 
         item {
@@ -124,7 +125,9 @@ fun MusicRankingScreen(
             ) {
                 items(state.value.topTracks) { track ->
                     val colorIndex = state.value.topTracks.indexOf(track) % colors.size
-                    Box(modifier = Modifier.size(140.dp).clip(RoundedCornerShape(8.dp))){
+                    Box(modifier = Modifier
+                        .size(140.dp)
+                        .clip(RoundedCornerShape(8.dp))){
                         TrackCard(track)
                         Box(
                             modifier = Modifier

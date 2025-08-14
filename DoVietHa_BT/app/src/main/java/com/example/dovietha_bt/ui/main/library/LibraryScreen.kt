@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,10 +35,6 @@ import com.example.dovietha_bt.ui.main.myplaylist.PlaylistVM
 import com.example.dovietha_bt.ui.main.myplaylist.components.ColumnList
 import com.example.dovietha_bt.ui.main.myplaylist.components.PlaylistItemColumn
 
-val libOptions = listOf(
-    Option(R.drawable.ic_add_music, "Add to playlist"),
-    Option(R.drawable.ic_share, "Share (Coming soon)"),
-)
 
 @Composable
 fun LibraryScreen(
@@ -52,7 +49,13 @@ fun LibraryScreen(
     val context = LocalContext.current
 
     val mediaPlayerController = remember { MediaPlayerController(context) }
-    
+
+    val libOptions = listOf(
+        Option(1, R.drawable.ic_add_music, stringResource(R.string.add_to_playlist)),
+        Option(2, R.drawable.ic_share, stringResource(R.string.share)),
+    )
+
+
     LaunchedEffect(Unit) {
         viewModel.processIntent(LibraryIntent.LoadPlaylists(UserInformation.username))
         viewModel.processIntent(LibraryIntent.LoadLocalSong)
@@ -88,7 +91,7 @@ fun LibraryScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    "Library",
+                    stringResource(R.string.library),
                     fontSize = 24.sp,
                     fontWeight = Bold
                 )
@@ -104,7 +107,7 @@ fun LibraryScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.width(102.dp)
                     ) {
-                        Text("Local")
+                        Text(stringResource(R.string.local))
                     }
 
                     Spacer(Modifier.padding(8.dp))
@@ -119,7 +122,7 @@ fun LibraryScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.width(102.dp)
                     ) {
-                        Text("Remote")
+                        Text(stringResource(R.string.remote))
                     }
                 }
                 Spacer(Modifier.height(24.dp))
@@ -140,7 +143,7 @@ fun LibraryScreen(
                         option = libOptions,
                         onOptionClick = { option, music ->
                             // Log.d("LIBRARY DEBUG","${music}")
-                            if (option.desc == "Add to playlist") {
+                            if (option.id == 1) {
                                 showDialog = true
                                 musicAdded = music
                             }
@@ -189,7 +192,7 @@ fun AddDialog(
         ) {
             Spacer(Modifier.height(30.dp))
             Text(
-                text = "Choose playlist",
+                text = stringResource(R.string.choose_playlist),
                 fontWeight = Bold,
                 fontSize = 18.sp,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -205,7 +208,7 @@ fun AddDialog(
 fun AddCase(onAddClicked: () -> Unit = {}) {
     Spacer(modifier = Modifier.height(62.dp))
     Text(
-        text = "You don't have any playlists. Click the \"+\" button to add",
+        text = stringResource(R.string.you_don_t_have_any_playlists_click_the_button_to_add),
         fontSize = 18.sp,
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onBackground,
