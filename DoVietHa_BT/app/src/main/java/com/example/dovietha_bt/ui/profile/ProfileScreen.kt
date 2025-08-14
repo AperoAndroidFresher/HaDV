@@ -61,6 +61,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.ui.profile.components.InputText
@@ -272,6 +273,7 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel(),navigateToLogi
                     Button(
                         onClick = {
                             viewModel.processIntent(InfoIntent.Logout)
+                            MusicServiceConnectionHelper.unbind(context)
                         },
                         Modifier.size(172.dp, 64.dp),
                         shape = RoundedCornerShape(16.dp),

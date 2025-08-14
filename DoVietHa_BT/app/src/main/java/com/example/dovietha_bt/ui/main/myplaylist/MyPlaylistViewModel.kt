@@ -11,8 +11,10 @@ import com.example.dovietha_bt.database.repository.impl.MusicPlaylistRepositoryI
 import com.example.dovietha_bt.database.repository.impl.MusicRepositoryImpl
 import com.example.dovietha_bt.database.repository.impl.PlaylistRepositoryImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,7 +30,7 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
     suspend fun getAllMusics(playlistId: Long): List<MusicVM> = withContext(Dispatchers.IO) {
         musicPlaylistRepository.getAllSongFromPlaylist(playlistId)
             .map {
-                Log.d("MUSIC","${musicRepository.getMusicsById(it).toMusicVM()}")
+                Log.d("AAAAAAAAAAAAA","${musicRepository.getMusicsById(it).toMusicVM()}")
                 musicRepository.getMusicsById(it).toMusicVM()
             }
     }
@@ -77,18 +79,18 @@ class MyPlaylistViewModel(application: Application) : AndroidViewModel(applicati
 
             is MyPlaylistIntent.LoadPlaylists -> {
                 viewModelScope.launch {
+                    Log.d("PLAYLIST1", intent.username)
                     playlistRepository.getAllPlaylist(intent.username)
                         .map { list ->
                             list.map {
                                 val listMusic = getAllMusics(it.playlistId)
-                                Log.d("PLAYLIST","$listMusic")
                                 it.toPlaylistVM(listMusic)
                             }
                         }
-                        .collect { playlistVMList ->
+                        .collectLatest { playlistVMList ->
                             _state.update { it.copy(playlists = playlistVMList) }
+                            Log.d("PLAYLIST1a", intent.username)
                         }
-                    
                 }
             }
 

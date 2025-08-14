@@ -43,7 +43,7 @@ import com.example.dovietha_bt.ui.main.myplaylist.components.AllPlaylists
 
 @Composable
 fun MyPlaylistScreen(
-    viewModel: MyPlaylistViewModel = viewModel(),
+    viewModel: MyPlaylistViewModel = viewModel(key = UserInformation.username),
     onClick: (PlaylistVM) -> Unit = {},
     isAddClicked:Boolean = false
 ) {
@@ -52,7 +52,7 @@ fun MyPlaylistScreen(
     var playlistId by remember { mutableStateOf(0L) }
     var addClicked by remember { mutableStateOf(isAddClicked) }
     var renameClicked by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(UserInformation.username) {
         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists(UserInformation.username))
     }
     Column(
@@ -68,9 +68,9 @@ fun MyPlaylistScreen(
         ) {
             Text(
                 "My Playlist",
-                modifier = Modifier.align(Alignment.Center),
                 fontSize = 24.sp,
-                fontWeight = Bold
+                fontWeight = Bold,
+                modifier = Modifier.align(Alignment.Center)
             )
             Icon(
                 painter = painterResource(R.drawable.ic_add),
