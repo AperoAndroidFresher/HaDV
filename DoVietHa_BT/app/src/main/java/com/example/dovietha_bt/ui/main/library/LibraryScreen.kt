@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -64,14 +65,20 @@ fun LibraryScreen(
             ) {
                 Text(
                     "Library",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(16.dp),
+                    fontSize = 24.sp,
+                    fontWeight = Bold
                 )
+                Spacer(Modifier.height(24.dp))
                 Row {
                     Button(
                         onClick = {
                             viewModel.processIntent(LibraryIntent.LoadLocalSong)
                         },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if(state.value.isLocal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.width(102.dp)
                     ) {
                         Text("Local")
                     }
@@ -82,10 +89,16 @@ fun LibraryScreen(
                         onClick = {
                             viewModel.processIntent(LibraryIntent.LoadRemoteSong)
                         },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if(!state.value.isLocal) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondaryContainer,
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.width(102.dp)
                     ) {
                         Text("Remote")
                     }
                 }
+                Spacer(Modifier.height(24.dp))
                 if (state.value.isLoading) {
                     Box(
                         modifier = Modifier
