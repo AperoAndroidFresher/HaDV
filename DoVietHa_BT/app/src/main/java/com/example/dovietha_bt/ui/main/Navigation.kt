@@ -1,63 +1,64 @@
 package com.example.dovietha_bt.ui.main
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.example.dovietha_bt.common.UserInformation
+import com.example.dovietha_bt.MusicServiceConnectionHelper.musicService
+import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.permission
 import com.example.dovietha_bt.ui.Screen
 import com.example.dovietha_bt.ui.main.home.HomeScreen
 import com.example.dovietha_bt.ui.main.library.LibraryScreen
 import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistScreen
-import com.example.dovietha_bt.ui.main.myplaylist.components.MyMusicScreen
+import com.example.dovietha_bt.ui.main.myplaylist.mymusic.MyMusicScreen
+import com.example.dovietha_bt.ui.main.myplaylist.nowplaying.MiniPlayer
+import kotlinx.coroutines.delay
 
-@Preview(showBackground = true)
 @Composable
-fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = viewModel()) {
+fun UnitedScreen(
+    toPlaying: () -> Unit = {},
+    goProfile: () -> Unit = {},
+    viewModel: MainScreenViewModel = viewModel(),
+) {
     val context = LocalContext.current
     val backStack = remember { mutableStateListOf<Screen>(Screen.Home) }
+    var isPlayingBarClosed by remember { mutableStateOf(true) }
+    var isPlaying by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        delay(100L)
         permission(context)
+        isPlayingBarClosed = musicService?.getCurrentSong() == null || musicService?.getCurrentIndex() == -1
         viewModel.processIntent(MainScreenIntent.LoadUser)
     }
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
             ) {
                 IconButton(
                     onClick = {
                         backStack.clear()
                         backStack.add(Screen.Home)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Home, contentDescription = "Home")
-                        Text("Home")
+                        Icon(Icons.Filled.Home, contentDescription = stringResource(R.string.home))
+                        Text(stringResource(R.string.home))
                     }
                 }
 
@@ -66,57 +67,122 @@ fun UnitedScreen(goProfile: () -> Unit = {},viewModel: MainScreenViewModel = vie
                         backStack.clear()
                         backStack.add(Screen.Library)
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
-                        Text("Playlist")
+                        Icon(Icons.AutoMirrored.Filled.List, contentDescription = stringResource(R.string.library))
+                        Text(stringResource(R.string.library))
                     }
                 }
                 IconButton(
                     onClick = {
                         backStack.clear()
-                        backStack.add(Screen.MyPlaylist)
+                        backStack.add(Screen.MyPlaylist(isAddClick = false))
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Menu, contentDescription = "My playlist")
-                        Text("My playlist")
+                        Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.my_playlist))
+                        Text(stringResource(R.string.my_playlist))
                     }
                 }
             }
-        }
+        },
     ) { paddingValues ->
-        NavDisplay(
-            modifier = Modifier.padding(paddingValues),
-            backStack = backStack,
-            onBack = { backStack.removeLastOrNull() },
-            entryProvider = entryProvider {
-                entry<Screen.Home> {
-                    Log.d("Check click", "click")
-                    HomeScreen(goProfile = goProfile)
-                }
-                entry<Screen.Library> {
-                    LibraryScreen(
-                        onAddClicked = {
-                            backStack.clear()
-                            backStack.add(Screen.MyPlaylist)
-                        }
-                    )
-                }
-                entry<Screen.MyPlaylist> {
-                    MyPlaylistScreen(onClick = {
-                        backStack.clear()
-                        backStack.add(Screen.MusicList(it))
-                    })
-                }
-                entry<Screen.MusicList> { (list) ->
-                    MyMusicScreen(playlist = list)
-                }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
+            NavDisplay(
+                modifier = Modifier,
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                entryProvider = entryProvider {
+                    entry<Screen.Home> {
+                        Log.d("Check click", "click")
+                        HomeScreen(goProfile = goProfile)
+                    }
+                    entry<Screen.Library> {
+                        LibraryScreen(
+                            onAddClicked = { it ->
+                                backStack.clear()
+                                backStack.add(Screen.MyPlaylist(it))
+                            },
+                            isPlaylistPlaying = isPlaying
+                        )
+                    }
+                    entry<Screen.MyPlaylist> { (check) ->
+                        MyPlaylistScreen(
+                            onClick = {
+                                backStack.clear()
+                                backStack.add(Screen.MusicList(it))
+                            },
+                            isAddClicked = check,
+                        )
+                    }
+                    entry<Screen.MusicList> { (list) ->
+                        MyMusicScreen(
+                            playlist = list, isCloseBar = { isPlayingBarClosed = it },
+                            onItemClick = {
+                                isPlaying = true
+                            },
+                        )
+                    }
+                },
+            )
+
+            if (!isPlayingBarClosed) {
+                MiniPlayerContainer(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    onClick = toPlaying,
+                    closePlayingBar = { isPlayingBarClosed = it },
+                    onPlayPause = {isPlaying = !isPlaying}
+                )
             }
-        )
-
+        }
     }
+}
 
+@Composable
+fun MiniPlayerContainer(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    closePlayingBar: (Boolean) -> Unit = {},
+    onPlayPause: () -> Unit = {},
+) {
+    val progress = remember { mutableStateOf(0f) }
+    val isPlaying = remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            val service = musicService
+            if (service != null && service.isPlaying()) {
+                val duration = service.getDuration()
+                val currentPos = service.getCurrentPosition()
+                progress.value = if (duration > 0) currentPos / duration.toFloat() else 0f
+                isPlaying.value = true
+            } else {
+                progress.value = 0f
+                isPlaying.value = false
+            }
+            delay(500)
+        }
+    }
+    MiniPlayer(
+        modifier = modifier,
+        onClick = onClick,
+        isPlaying = isPlaying.value,
+        progress = progress.value,
+        closePlayingBar = closePlayingBar,
+        onPlayPause = {
+            if (isPlaying.value) {
+                Log.d("MiniPlayerContainer", "progress: ${isPlaying.value}")
+                musicService?.pause()
+            } else {
+                musicService?.resume()
+            }
+            onPlayPause()
+        },
+    )
 }

@@ -34,16 +34,14 @@ fun getAllMp3Files(context: Context): List<MusicVM> {
             val artist = it.getString(artistColumn)
             val duration = it.getString(durationColumn)
             val data = it.getString(dataColumn)
-            val image = getEmbeddedImageBytes(data)
             val music = MusicVM(
                 id = id,
-                image = image,
                 name = title,
                 author = artist,
                 duration = formatDuration(duration.toLong()),
                 path = data
             )
-            Log.d("check", "ID: $id, title: $title, artist: $artist, data: $data, image:$image")
+            Log.d("check", "ID: $id, title: $title, artist: $artist, data: $data")
             listMusic.add(music)
         }
     }

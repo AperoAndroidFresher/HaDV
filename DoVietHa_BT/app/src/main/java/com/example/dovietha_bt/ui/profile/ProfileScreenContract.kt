@@ -30,9 +30,11 @@ sealed interface InfoIntent {
     object ToggleTheme : InfoIntent
     object SubmitInfo : InfoIntent
     object TriggerImagePicker : InfoIntent
+    object Logout : InfoIntent
 }
 
 sealed interface InfoEvent {
     object ShowDialog : InfoEvent
     object ShowImagePicker : InfoEvent
+    object NavigateToLogin : InfoEvent
 }

@@ -37,22 +37,25 @@ import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
 @Preview(showBackground = true)
 @Composable
 fun MusicItemGrid(
+    viewModel: MyPlaylistViewModel = viewModel(),
+    modifier: Modifier = Modifier,
     image: ByteArray? = null,
     name: String = "Name",
     author: String = "Author",
     duration: String = "00:00",
     option: List<Option> = emptyList(),
-    onItemClick: (Option) -> Unit = {},
-    viewModel: MyPlaylistViewModel = viewModel()
+    onOptionClick: (Option) -> Unit = {},
+    onItemClick: () -> Unit = {}
 ) {
     Column(
+        modifier = modifier.clickable(onClick = onItemClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         viewModel.state.collectAsState()
         var menuExpanded by remember { mutableStateOf(false) }
         Box {
             Image(
-                painter = musicImage(image), "",
+                painter = byteArrayImageToAsync(image), "",
                 modifier = Modifier
                     .size(135.dp)
                     .clip(RoundedCornerShape(5.dp)),
@@ -76,7 +79,7 @@ fun MusicItemGrid(
                     expanded = menuExpanded,
                     onDismissRequest = { menuExpanded = false },
                     items = option,
-                    onItemClick = onItemClick
+                    onItemClick = onOptionClick
                 )
             }
         }

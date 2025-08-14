@@ -8,6 +8,5 @@ fun ApiMusic.toMusicVM(localPath: String): MusicVM = MusicVM(
     name = title,
     author = artist,
     duration = formatDuration(duration.toLong()),
-    path = localPath,
-    image = getEmbeddedImageBytes(localPath)
+    path = localPath
 )

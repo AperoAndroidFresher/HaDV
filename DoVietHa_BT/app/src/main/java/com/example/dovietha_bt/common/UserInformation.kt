@@ -25,4 +25,12 @@ object UserInformation {
     fun showData() {
         Log.d("UserInformation", "Username: $username, Name: $name, Phone: $phone, University: $university, Desc: $desc, Image: $image")
     }
+    fun clearData() {
+        username = ""
+        name = null
+        phone = null
+        university = null
+        desc = null
+        image = null
+    }
 }

@@ -7,34 +7,105 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.MusicServiceConnectionHelper.musicService
 import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.getEmbeddedImageBytes
+import com.example.dovietha_bt.database.converter.formatDuration
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistIntent
+import com.example.dovietha_bt.ui.main.myplaylist.MyPlaylistViewModel
+import com.example.dovietha_bt.ui.main.myplaylist.components.byteArrayImageToAsync
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
 @Composable
-fun NowPlayingScreen() {
+fun NowPlayingScreen(
+    viewModel: MyPlaylistViewModel = viewModel(),
+    onBackClick: () -> Unit = {},
+    onCloseClick: () -> Unit = {},
+) {
+    val service = musicService
+    val state = viewModel.state.collectAsState()
+
+    val currentSong = state.value.currentSong
+    val imageBytes by remember(currentSong.path) {
+        mutableStateOf(getEmbeddedImageBytes(currentSong.path))
+    }
+
+    val currentTime = remember { mutableStateOf("00:00") }
+    val totalTime = remember { mutableStateOf("00:00") }
+    val progress = remember { mutableStateOf(0f) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            val launchedService = musicService
+            if (launchedService != null) {
+                val currentPos = launchedService.getCurrentPosition()
+                val duration = launchedService.getDuration()
+
+                progress.value =if (duration > 0) {
+                    currentPos.toFloat() / duration.toFloat()
+                } else {
+                    0f 
+                }
+                currentTime.value = formatDuration(currentPos.toLong())
+                totalTime.value = formatDuration(duration.toLong())
+            }
+            delay(500)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        service?.onSongChanged = {
+            viewModel.processIntent(MyPlaylistIntent.CurrentSong(it))
+        }
+        service?.getCurrentSong()?.let {
+            viewModel.processIntent(MyPlaylistIntent.CurrentSong(it))
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
-        NowPlayingHeader()
-        Body()
+        NowPlayingHeader(
+            onBackClick = onBackClick, 
+            onCloseClick = {
+                onCloseClick()
+            }
+        )
+        Body(state.value.currentSong.name, state.value.currentSong.author, imageBytes)
+        MusicPlayerControls(
+            onPlayClick = {
+                viewModel.processIntent(MyPlaylistIntent.IsPlaying)
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(100)
+                    if (state.value.isPlaying) service?.pause()
+                    else service?.resume()
+                }
+            },
+            onNextClick = { service?.next() },
+            onPrevClick = { service?.previous() },
+            onRepeatClick = { viewModel.processIntent(MyPlaylistIntent.ToggleRepeat) },
+            onShuffleClick = { viewModel.processIntent(MyPlaylistIntent.ToggleShuffle) },
+            isShuffleOn = state.value.isShuffleOn,
+            isRepeatOn = state.value.isRepeatOn,
+            isPlaying = state.value.isPlaying,
+            currentTime = currentTime.value,
+            totalTime = totalTime.value,
+            progress = progress.value,
+        )
     }
 }
 
@@ -77,13 +148,12 @@ private fun NowPlayingHeader(
                 )
             }
         }
-
-        // Text ở giữa (trung tâm Box)
+        
         Text(
-            text = "Now Playing",
+            text = stringResource(R.string.now_playing),
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
+            fontWeight = Bold,
             textAlign = TextAlign.Center,
         )
     }
@@ -93,26 +163,26 @@ private fun NowPlayingHeader(
 private fun Body(
     title: String = "Title",
     artist: String = "Artist",
+    image: ByteArray? = null,
 ) {
     Column(Modifier.padding(horizontal = 32.dp, vertical = 16.dp)) {
         Image(
-            painter = painterResource(R.drawable.avatar),
+            painter = if(image!=null) byteArrayImageToAsync(image) else painterResource (R.drawable.avatar),
             contentDescription = "",
         )
         Spacer(Modifier.padding(8.dp))
         Text(
             text = title,
             fontSize = 24.sp,
-            fontWeight = Bold
+            fontWeight = Bold,
         )
         Spacer(Modifier.padding(4.dp))
         Text(
             text = artist,
-            fontWeight = Bold
+            fontWeight = Bold,
         )
-        MusicPlayerControls()
+
     }
-    
 }
 
 @Composable
@@ -120,78 +190,101 @@ fun MusicPlayerControls(
     currentTime: String = "02:07",
     totalTime: String = "02:43",
     progress: Float = 0.75f,
+    isShuffleOn: Boolean = false,
+    isRepeatOn: Boolean = false,
+    isPlaying: Boolean = false,
     onPlayClick: () -> Unit = {},
     onPrevClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onShuffleClick: () -> Unit = {},
-    onRepeatClick: () -> Unit = {}
+    onRepeatClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp, vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Seek bar
+        // Time slider
         Slider(
             value = progress,
-            onValueChange = {},
+            onValueChange = { newPos ->
+                val duration = musicService?.getDuration() ?: 0
+                val newPos = (duration * newPos).toInt()
+                musicService?.seekTo(newPos)
+            },
+            modifier = Modifier.fillMaxWidth(),
             colors = SliderDefaults.colors(
                 thumbColor = Color.Cyan,
                 activeTrackColor = Color.Cyan,
-                inactiveTrackColor = Color.Gray
-            )
+            ),
         )
 
-        // Time labels
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(text = currentTime, fontSize = 12.sp)
-            Text(text = totalTime, fontSize = 12.sp)
+            Text(text = currentTime, color = MaterialTheme.colorScheme.onBackground)
+            Text(text = totalTime, color = MaterialTheme.colorScheme.onBackground)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Control buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onShuffleClick) {
-                Icon(painter = painterResource(R.drawable.ic_shuffle), contentDescription = "Shuffle",tint = MaterialTheme.colorScheme.onBackground)
+                Icon(
+                    painter = painterResource(R.drawable.ic_shuffle),
+                    contentDescription = "Shuffle",
+                    tint = if (isShuffleOn) Color.Cyan else MaterialTheme.colorScheme.onBackground,
+                )
             }
 
             IconButton(onClick = onPrevClick) {
-                Icon(painter = painterResource(R.drawable.ic_previous), contentDescription = "Previous",tint = MaterialTheme.colorScheme.onBackground)
+                Icon(
+                    painter = painterResource(R.drawable.ic_previous),
+                    contentDescription = "Previous",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
             }
 
-            // Play Button with gradient circle
             Box(
                 modifier = Modifier
                     .size(64.dp)
                     .background(
                         color = Color.Cyan,
-                        shape = CircleShape
+                        shape = CircleShape,
                     )
                     .clickable(onClick = onPlayClick),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_play),
+                    painter = if (isPlaying) painterResource(R.drawable.ic_play) else painterResource(R.drawable.ic_pause),
                     contentDescription = "Play",
                     tint = Color.White,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 )
             }
 
             IconButton(onClick = onNextClick) {
-                Icon(painter = painterResource(R.drawable.ic_next), contentDescription = "Next", tint = MaterialTheme.colorScheme.onBackground)
+                Icon(
+                    painter = painterResource(R.drawable.ic_next),
+                    contentDescription = "Next",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
             }
 
             IconButton(onClick = onRepeatClick) {
-                Icon(painter = painterResource(R.drawable.ic_replay), contentDescription = "Repeat", tint = MaterialTheme.colorScheme.onBackground)
+                Icon(
+                    painter = painterResource(R.drawable.ic_replay),
+                    contentDescription = "Repeat",
+                    tint = if (isRepeatOn) Color.Cyan else MaterialTheme.colorScheme.onBackground,
+                )
             }
         }
     }

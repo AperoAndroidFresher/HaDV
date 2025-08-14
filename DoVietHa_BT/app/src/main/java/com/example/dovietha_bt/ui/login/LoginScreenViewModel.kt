@@ -41,6 +41,7 @@ class LoginScreenViewModel(application: Application) : AndroidViewModel(applicat
                     } else {
                         UserPreferences.saveUser(check.userName)
                         UserInformation.updateData(check)
+                        UserInformation.showData()
                         _state.value = _state.value.copy(isValid = true)
                     }
                 }

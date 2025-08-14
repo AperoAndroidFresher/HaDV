@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -61,6 +62,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.UserInformation
 import com.example.dovietha_bt.ui.profile.components.InputText
@@ -68,7 +70,7 @@ import kotlinx.coroutines.delay
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
+fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel(),navigateToLogin: () -> Unit = {}){
     val state = viewModel.state.collectAsState()
     val context = LocalContext.current
     val eventFlow = viewModel.event
@@ -88,6 +90,10 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                     launcher.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
+                }
+                
+                InfoEvent.NavigateToLogin -> {
+                    navigateToLogin()
                 }
             }
         }
@@ -124,18 +130,20 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                         contentDescription = "",
                         modifier = Modifier
                             .size(28.dp)
-                            .clickable(onClick = {
-                                viewModel.processIntent(InfoIntent.ToggleTheme)
-                            }),
+                            .clickable(
+                                onClick = {
+                                    viewModel.processIntent(InfoIntent.ToggleTheme)
+                                }
+                            ),
                         tint = MaterialTheme.colorScheme.primary
                     )
 
                     Text(
-                        "MY INFORMATION",
+                        text = stringResource(R.string.my_information),
                         fontSize = 20.sp,
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
 
                     if (!state.value.isEditing) {
@@ -184,9 +192,11 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                                 .align(Alignment.BottomCenter)
                                 .background(Color.Black.copy(alpha = 0.5f), CircleShape)
                                 .padding(5.dp)
-                                .clickable(onClick = {
-                                    viewModel.processIntent(InfoIntent.TriggerImagePicker)
-                                }),
+                                .clickable(
+                                    onClick = {
+                                        viewModel.processIntent(InfoIntent.TriggerImagePicker)
+                                    }
+                                ),
                             tint = Color.White,
                         )
                     }
@@ -196,8 +206,8 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
 
                 Row(Modifier.fillMaxWidth()) {
                     InputText(
-                        title = "NAME",
-                        desc = "Enter your name...",
+                        title = stringResource(R.string.name),
+                        desc = stringResource(R.string.enter_your_name),
                         value = state.value.name,
                         onValueChange = {
                             viewModel.processIntent(InfoIntent.UpdateName(it))
@@ -207,14 +217,14 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                         ),
                         editable = state.value.isEditing,
                         isError = state.value.nameError,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
 
                     Spacer(Modifier.padding(8.dp))
 
                     InputText(
-                        title = "PHONE NUMBER",
-                        desc = "Your phone number...",
+                        title = stringResource(R.string.phone_number),
+                        desc = stringResource(R.string.your_phone_number),
                         value = state.value.phone,
                         onValueChange = {
                             viewModel.processIntent(InfoIntent.UpdatePhone(it))
@@ -224,29 +234,29 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                         ),
                         editable = state.value.isEditing,
                         isError = state.value.phoneError,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
                 }
 
                 InputText(
-                    title = "UNIVERSITY NAME",
-                    desc = "Your university name...",
+                    title = stringResource(R.string.university_name),
+                    desc = stringResource(R.string.your_university_name),
                     value = state.value.uni,
                     onValueChange = {
                         viewModel.processIntent(InfoIntent.UpdateUni(it))
                     },
                     editable = state.value.isEditing,
-                    isError = state.value.uniError
+                    isError = state.value.uniError,
                 )
 
                 InputText(
-                    title = "DESCRIBE YOURSELF",
-                    desc = "Enter a description about yourself...",
+                    title = stringResource(R.string.describe_yourself),
+                    desc = stringResource(R.string.enter_a_description_about_yourself),
                     isSingleLine = false,
                     textFieldModifier = Modifier.height(200.dp),
                     value = state.value.desc,
                     onValueChange = { viewModel.processIntent(InfoIntent.UpdateDesc(it)) },
-                    editable = state.value.isEditing
+                    editable = state.value.isEditing,
                 )
 
                 if (state.value.isEditing) {
@@ -259,7 +269,23 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                         colors = ButtonDefaults.buttonColors()
                     ) {
                         Text(
-                            text = "Submit",
+                            text = stringResource(R.string.submit),
+                            fontSize = 16.sp,
+                        )
+                    }
+                }
+                else{
+                    Button(
+                        onClick = {
+                            viewModel.processIntent(InfoIntent.Logout)
+                            MusicServiceConnectionHelper.unbind(context)
+                        },
+                        Modifier.size(172.dp, 64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors()
+                    ) {
+                        Text(
+                            text = stringResource(R.string.logout),
                             fontSize = 16.sp,
                         )
                     }
@@ -296,21 +322,21 @@ fun ProfileScreen(viewModel: ProfileScreenViewModel = viewModel()) {
                                 Spacer(Modifier.padding(8.dp))
 
                                 Text(
-                                    "Success!",
+                                    text = stringResource(R.string.success),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 32.sp,
                                     color = Color(0xFF2E7D32),
-                                    style = TextStyle(letterSpacing = 2.sp)
+                                    style = TextStyle(letterSpacing = 2.sp),
                                 )
 
                                 Spacer(Modifier.padding(9.dp))
 
                                 Text(
-                                    "Your information has been updated!",
+                                    text = stringResource(R.string.your_information_has_been_updated),
                                     modifier = Modifier.padding(horizontal = 50.dp),
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center,
-                                    style = TextStyle(letterSpacing = 1.sp)
+                                    style = TextStyle(letterSpacing = 1.sp),
                                 )
                             }
                         }

@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,7 +57,7 @@ fun LoginScreen(
         event.collect { event ->
             when (event) {
                 LoginEvent.ShowNotify -> {
-                    Toast.makeText(context, "Invalid Infomation", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.invalid_infomation), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -79,24 +80,25 @@ fun LoginScreen(
                     contentScale = ContentScale.Crop
                 )
                 Text(
-                    "Login to your account",
+                    stringResource(R.string.login_to_your_account),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = Bold,
                     fontSize = 30.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
                 Spacer(Modifier.padding(16.dp))
                 InfoInput(
                     leadingIcon = R.drawable.ic_user_outline,
-                    hint = "Username",
+                    hint = stringResource(R.string.username),
                     value = state.value.username,
-                    onValueChange = { viewModel.processIntent(LoginIntent.EditUsername(it)) })
+                    onValueChange = { viewModel.processIntent(LoginIntent.EditUsername(it)) },
+                )
                 PasswordInput(
-                    hint = "Password",
+                    hint = stringResource(R.string.password),
                     isShowPassword = state.value.isShowPassword,
                     onToggle = { viewModel.processIntent(LoginIntent.IsShowPassword) },
                     value = state.value.password,
-                    onValueChange = { viewModel.processIntent(LoginIntent.EditPassword(it)) }
+                    onValueChange = { viewModel.processIntent(LoginIntent.EditPassword(it)) },
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
@@ -104,9 +106,9 @@ fun LoginScreen(
                         onCheckedChange = {}
                     )
                     Text(
-                        "Remember me",
+                        stringResource(R.string.remember_me),
                         fontWeight = Bold,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
                 Spacer(Modifier.padding(8.dp))
@@ -118,7 +120,7 @@ fun LoginScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Log in")
+                    Text(stringResource(R.string.log_in))
                 }
             }
             Row(
@@ -126,7 +128,7 @@ fun LoginScreen(
                     .align(Alignment.BottomCenter)
             ) {
                 Text(
-                    "Don't have an account? ",
+                    stringResource(R.string.don_t_have_an_account),
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.primary,
                         shadow = Shadow(
@@ -134,10 +136,10 @@ fun LoginScreen(
                             offset = Offset(0f, 0f),
                             blurRadius = 14f
                         )
-                    )
+                    ),
                 )
                 Text(
-                    "Sign Up",
+                    stringResource(R.string.sign_up),
                     fontWeight = Bold,
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.primary,
@@ -147,7 +149,7 @@ fun LoginScreen(
                             blurRadius = 14f
                         )
                     ),
-                    modifier = Modifier.clickable(onClick = onClick)
+                    modifier = Modifier.clickable(onClick = onClick),
                 )
             }
 

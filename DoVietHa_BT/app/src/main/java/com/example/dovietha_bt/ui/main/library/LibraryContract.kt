@@ -10,12 +10,12 @@ data class LibraryState(
     val playlist: PlaylistVM = PlaylistVM(),
     val playlists: List<PlaylistVM> = emptyList(),
     val isLoading: Boolean = false,
-    val canLoadMusic:Boolean = false
+    val canLoadMusic: Boolean = false
 )
 
 sealed interface LibraryIntent {
     object LoadLocalSong : LibraryIntent
-    object LoadPlaylists : LibraryIntent
+    data class LoadPlaylists(val username: String) : LibraryIntent
     data class AddToPlaylist(val music: MusicVM, val playlistId: Long) : LibraryIntent
     object LoadRemoteSong : LibraryIntent
 }

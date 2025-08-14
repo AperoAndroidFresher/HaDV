@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -50,7 +51,9 @@ dependencies {
 
     // If this project only uses Java source, use the Java annotationProcessor
     // No additional plugins are necessary
+    implementation(libs.material3)
     annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.androidx.media)
     implementation("androidx.room:room-ktx:2.7.2")
     //noinspection UseTomlInstead
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
