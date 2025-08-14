@@ -10,7 +10,7 @@ data class LibraryState(
     val playlist: PlaylistVM = PlaylistVM(),
     val playlists: List<PlaylistVM> = emptyList(),
     val isLoading: Boolean = false,
-    val canLoadMusic:Boolean = false
+    val canLoadMusic: Boolean = false
 )
 
 sealed interface LibraryIntent {

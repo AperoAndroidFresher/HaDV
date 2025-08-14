@@ -1,5 +1,8 @@
 package com.example.dovietha_bt.ui.main.library
 
+import android.content.Context
+import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,7 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.airbnb.lottie.compose.*
+import com.example.dovietha_bt.MusicServiceConnectionHelper
 import com.example.dovietha_bt.R
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.common.UserInformation
@@ -39,11 +43,16 @@ val libOptions = listOf(
 fun LibraryScreen(
     viewModel: LibraryViewModel = viewModel(),
     onAddClicked: (Boolean) -> Unit = {},
+    isPlaylistPlaying: Boolean = false,
 ) {
     val state = viewModel.state.collectAsState()
     val event = viewModel.event
     var musicAdded by remember { mutableStateOf(MusicVM()) }
     var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    val mediaPlayerController = remember { MediaPlayerController(context) }
+    
     LaunchedEffect(Unit) {
         viewModel.processIntent(LibraryIntent.LoadPlaylists(UserInformation.username))
         viewModel.processIntent(LibraryIntent.LoadLocalSong)
@@ -53,6 +62,21 @@ fun LibraryScreen(
             }
         }
     }
+    
+    LaunchedEffect(isPlaylistPlaying) {
+        Log.d("ISPLAYING","${isPlaylistPlaying}")
+        mediaPlayerController.shouldStopWhenCompleted = isPlaylistPlaying
+        if (isPlaylistPlaying && mediaPlayerController.isPlaying()) {
+            mediaPlayerController.stop()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayerController.stop()
+        }
+    }
+    
     Box {
         Column(
             Modifier
@@ -121,6 +145,9 @@ fun LibraryScreen(
                                 musicAdded = music
                             }
                         },
+                        onItemClick = {index->
+                            mediaPlayerController.play(state.value.musics[index].path)
+                        }
                     )
                 }
             }
@@ -227,3 +254,31 @@ fun LottieAnimationLoading() {
     )
 }
 
+class MediaPlayerController(private val context: Context) {
+    private var mediaPlayer: MediaPlayer? = null
+    var shouldStopWhenCompleted: Boolean = true
+
+    fun play(path: String) {
+        stop()
+
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(path)
+            prepare()
+            start()
+
+            setOnCompletionListener {
+                if (shouldStopWhenCompleted) {
+                    stop()
+                }
+            }
+        }
+    }
+
+    fun stop() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    fun isPlaying(): Boolean = mediaPlayer?.isPlaying == true
+}

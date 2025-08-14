@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.example.dovietha_bt.MusicService
+
 import com.example.dovietha_bt.common.Option
 import com.example.dovietha_bt.common.getEmbeddedImageBytes
 import com.example.dovietha_bt.rememberDragDropListState

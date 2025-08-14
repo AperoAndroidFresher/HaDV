@@ -53,7 +53,8 @@ val options = listOf(
 fun MyMusicScreen(
     viewModel: MyMusicScreenViewModel = viewModel(),
     playlist: PlaylistVM = PlaylistVM(),
-    isCloseBar:(Boolean) ->Unit = {}
+    isCloseBar:(Boolean) ->Unit = {},
+    onItemClick:()->Unit = {}
 ) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsState()
@@ -138,6 +139,7 @@ fun MyMusicScreen(
                         context = context,
                         songList = state.value.listSong
                     )
+                    onItemClick()
                     isCloseBar(false)
                 }
             )
@@ -156,6 +158,7 @@ fun MyMusicScreen(
                         context = context,
                         songList = state.value.listSong
                     )
+                    onItemClick()
                     isCloseBar(false)
                 },
                 onMove = { from, to -> viewModel.processIntent(MyMusicIntent.MoveSong(from, to))},

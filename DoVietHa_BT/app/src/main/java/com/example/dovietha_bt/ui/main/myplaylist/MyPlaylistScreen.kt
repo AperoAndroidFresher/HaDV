@@ -55,6 +55,7 @@ fun MyPlaylistScreen(
     LaunchedEffect(UserInformation.username) {
         viewModel.processIntent(MyPlaylistIntent.LoadPlaylists(UserInformation.username))
     }
+    
     Column(
         Modifier
             .fillMaxSize()

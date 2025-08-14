@@ -28,10 +28,6 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".MusicService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback" />
-        <service
             android:name=".MusicPlayerService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
