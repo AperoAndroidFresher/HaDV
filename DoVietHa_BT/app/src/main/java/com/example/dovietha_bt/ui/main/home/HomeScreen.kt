@@ -1,0 +1,303 @@
+package com.example.dovietha_bt.ui.main.home
+
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dovietha_bt.R
+import com.example.dovietha_bt.common.UserInformation
+
+val colors = listOf(0xFFFF7777, 0xFFFFFA77, 0xFF4462FF, 0xFF14FF00, 0xFFE231FF, 0xFF00FFFF, 0xFFFB003C, 0xFFF2A5FF)
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreen(goProfile: () -> Unit = {}) {
+    MusicRankingScreen(onClick = goProfile)
+}
+
+@Composable
+fun MusicRankingScreen(
+    onClick: () -> Unit = {},
+    viewModel: HomeViewModel = viewModel(),
+) {
+    val state = viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(HomeIntent.LoadTopAlbums)
+        viewModel.processIntent(HomeIntent.LoadTopArtists)
+        viewModel.processIntent(HomeIntent.LoadTopTracks)
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp),
+    ) {
+        item {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .clickable(onClick = onClick),
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.avatar),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Column {
+                    Text(stringResource(R.string.welcome_back), color = MaterialTheme.colorScheme.onBackground, fontSize = 14.sp)
+                    Log.d("Check name","${UserInformation.name}")
+                    Text(
+                        text = UserInformation.name?:UserInformation.username,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 12.sp,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+        item {
+            Text(
+                text = stringResource(R.string.rankings),
+                fontSize = 20.sp,
+                fontWeight = Bold,
+                color = Color.Cyan,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        item {
+            SectionTitle(title = stringResource(R.string.top_albums))
+        }
+
+        item {
+            TopAlbumList(state.value.topAlbums)
+        }
+
+        item {
+            SectionTitle(title = stringResource(R.string.top_tracks))
+        }
+
+        item {
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
+            ) {
+                items(state.value.topTracks) { track ->
+                    val colorIndex = state.value.topTracks.indexOf(track) % colors.size
+                    Box(modifier = Modifier
+                        .size(140.dp)
+                        .clip(RoundedCornerShape(8.dp))){
+                        TrackCard(track)
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth()
+                                .height(8.dp)
+                                .background(Color(colors[colorIndex])),
+                        )
+                    }
+                }
+            }
+
+        }
+        
+
+        item {
+            SectionTitle(title = "Top Artist")
+        }
+
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
+            ) {
+                items(state.value.topArtists) { artist ->
+                    ArtistCard(artist.name)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SectionTitle(title: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 16.sp, fontWeight = Bold)
+        Text("See all", color = Color.Cyan, fontSize = 12.sp)
+    }
+}
+
+@Composable
+fun TopAlbumList(list: List<TopAlbum>) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(3),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(list) { album ->
+            TopAlbum(album)
+        }
+    }
+}
+
+@Composable
+fun TopAlbum(album: TopAlbum) {
+    Row(
+        modifier = Modifier
+            .width(180.dp)
+            .background(Color.DarkGray, RoundedCornerShape(8.dp)),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(8.dp)),
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(horizontal = 12.dp),
+        ) {
+            Text(
+                text = album.name,
+                color = Color.White,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Spacer(Modifier.padding(3.dp))
+
+            Text(
+                text = album.artist,
+                color = Color.White,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+@Composable
+fun TrackCard(track: TopTrack) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = track.name,
+                color = Color.White,
+                fontWeight = Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
+            Column {
+                Text(text = track.listener, color = Color.White, fontSize = 12.sp)
+                Text(text = track.artist, color = Color.White, fontSize = 12.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun ArtistCard(name: String) {
+    Box(
+        modifier = Modifier
+            .size(140.dp)
+            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp)),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = name,
+                color = Color.White,
+                fontWeight = Bold,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
